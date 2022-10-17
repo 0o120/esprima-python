@@ -1012,6 +1012,7 @@ class Scanner(object):
         # Note: replacing with '\uFFFF' enables false positives in unlikely
         # scenarios. For example, `[\u{1044f}-\u{10440}]` is an invalid
         # pattern that would not be detected by this substitution.
+
         astralSubstitute = '\uFFFF'
 
         # Replace every Unicode escape sequence with the equivalent
@@ -1039,7 +1040,12 @@ class Scanner(object):
         try:
             return re.compile(pattern, pyflags)
         except Exception:
-            self.tolerateUnexpectedToken(Messages.InvalidRegExp)
+            # Attempt temp fallback solution
+            import regex
+            try:
+                return regex.compile(pattern, pyflags)
+            except:
+                self.tolerateUnexpectedToken(Messages.InvalidRegExp)
 
     def scanRegExpBody(self):
         ch = self.source[self.index]
