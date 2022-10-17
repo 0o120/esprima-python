@@ -1,3 +1,13 @@
+### Personal Use
+~~~~~~~~~~~~~~~~
+
+```diff
+- Please refer to original repository if you're looking to use this project.
+```
+https://github.com/Kronuz/esprima-python
+
+Thanks :)
+
 |Donate| |PyPI Version| |PyPI License| |PyPI Format| |PyPI Status|
 
 **Esprima** (`esprima.org <https://esprima.org>`__, BSD license) is a
