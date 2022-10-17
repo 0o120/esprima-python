@@ -1,9 +1,10 @@
-### Personal Use
+Personal Use
 ~~~~~~~~~~~~~~~~
 
-```diff
-- Please refer to original repository if you're looking to use this project.
-```
+.. code:: diff
+
+    - Please refer to original repository if you're looking to use this project.
+
 https://github.com/Kronuz/esprima-python
 
 Thanks :)
