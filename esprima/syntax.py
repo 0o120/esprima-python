@@ -57,7 +57,7 @@ class Syntax:
     FunctionExpression = "FunctionExpression"
     Identifier = "Identifier"
     IfStatement = "IfStatement"
-    Import = "Import"
+    ImportExpression = "ImportExpression"
     ImportDeclaration = "ImportDeclaration"
     ImportDefaultSpecifier = "ImportDefaultSpecifier"
     ImportNamespaceSpecifier = "ImportNamespaceSpecifier"

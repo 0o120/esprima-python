@@ -47,6 +47,7 @@ class Messages:
     IllegalImportDeclaration = "Unexpected token"
     IllegalLanguageModeDirective = "Illegal 'use strict' directive in function with non-simple parameter list"
     IllegalReturn = "Illegal return statement"
+    ImportMissingSpecifier = "import() requires a specifier"
     InvalidEscapedReservedWord = "Keyword must not contain escaped characters"
     InvalidHexEscapeSequence = "Invalid hexadecimal escape sequence"
     InvalidLHSInAssignment = "Invalid left-hand side in assignment"

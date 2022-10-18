@@ -320,10 +320,10 @@ class IfStatement(Node):
         self.alternate = alternate
 
 
-class Import(Node):
-    def __init__(self):
-        self.type = Syntax.Import
-
+class ImportExpression(Node):
+    def __init__(self, source):
+        self.type = Syntax.ImportExpression
+        self.source = source
 
 class ImportDeclaration(Node):
     def __init__(self, specifiers, source):

@@ -1075,9 +1075,19 @@ class Parser(object):
         return match
 
     def parseImportCall(self):
+    
         node = self.createNode()
+        source = None
         self.expectKeyword('import')
-        return self.finalize(node, Node.Import())
+        self.expect('(')
+        
+        if self.match(')'):
+            self.tolerateError(Messages.ImportMissingSpecifier)
+        else:
+            source = self.parseExpression()
+        self.expect(')')
+
+        return self.finalize(node, Node.ImportExpression(source))
 
     def parseLeftHandSideExpressionAllowCall(self):
         startToken = self.lookahead
@@ -1111,7 +1121,7 @@ class Parser(object):
                     args = self.parseAsyncArguments()
                 else:
                     args = self.parseArguments()
-                if expr.type is Syntax.Import and len(args) != 1:
+                if expr.type is Syntax.ImportExpression and len(args) != 1:
                     self.tolerateError(Messages.BadImportCallArity)
                 expr = self.finalize(self.startNode(startToken), Node.CallExpression(expr, args))
                 if asyncArrow and self.match('=>'):
