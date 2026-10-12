@@ -42,7 +42,7 @@ EXPECTED_FAULRES = (
 )
 
 
-def test_factory(_path):
+def test_factory(path):
     def test_file(filename):
         result_path = os.path.dirname(filename)
         result_syntax_path = os.path.join(result_path, 'syntax')
@@ -72,7 +72,7 @@ def test_factory(_path):
             with open(filename, 'rb') as f:
                 actual_code = f.read()
             if '.source.' in filename:
-                actual_code = SOURCE_RE.sub(r'\2', actual_code).decode('unicode_escape')
+                actual_code = SOURCE_RE.sub(br'\2', actual_code).decode('unicode_escape')
             else:
                 actual_code = actual_code.decode('utf-8')
 
@@ -136,7 +136,8 @@ def test_factory(_path):
 
             self.assertEqual(expected, actual)
 
-        test_name = os.path.basename(os.path.splitext(filename)[0])
+        test_name = os.path.splitext(os.path.relpath(filename, BASE_DIR))[0]
+        test_name = test_name.replace(os.sep, '_')
         test_name = re.sub(r'[-. _]+', '_', test_name)
         if not test_name.isupper():
             test_name = re.sub(r'(?<=[^_])([A-Z])', r'_\1', test_name)
@@ -214,9 +215,18 @@ for fixture_path in glob.glob(os.path.join(BASE_DIR, 'fixtures', '*')):
     for path in glob.glob(os.path.join(fixture_path, '*')):
         if os.path.isdir(path) or fnmatch.fnmatch(path, '*.js'):
             for test_name, test in test_factory(path):
-                if (class_name, test_name) in EXPECTED_FAULRES:
+                if any(class_name == group and test_name.endswith(name)
+                       for group, name in EXPECTED_FAULRES):
                     test = unittest.expectedFailure(test)
+                if hasattr(Test, 'test_%s' % test_name):
+                    raise RuntimeError('Duplicate fixture test: %s' % test_name)
                 setattr(Test, 'test_%s' % test_name, test)
+
+# A class alias here makes unittest execute the last fixture class twice.
+del Test
+
+# Keep pytest from collecting this fixture-generation utility as a test.
+test_factory.__test__ = False
 
 
 def main():
