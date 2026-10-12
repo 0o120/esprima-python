@@ -371,7 +371,7 @@ class LabeledStatement(Node):
 class Literal(Node):
     def __init__(self, value, raw):
         self.type = Syntax.Literal
-        self.value = value
+        self.value = value.encode('utf-16-le', 'surrogatepass').decode('utf-16-le', 'surrogatepass') if isinstance(value, str) else value
         self.raw = raw
 
 
@@ -554,7 +554,7 @@ class TemplateElement(Node):
     class Value(Object):
         def __init__(self, raw, cooked):
             self.raw = raw
-            self.cooked = cooked
+            self.cooked = cooked.encode('utf-16-le', 'surrogatepass').decode('utf-16-le', 'surrogatepass') if isinstance(cooked, str) else cooked
 
     def __init__(self, raw, cooked, tail):
         self.type = Syntax.TemplateElement

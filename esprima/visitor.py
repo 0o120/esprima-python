@@ -278,6 +278,7 @@ class ToDictVisitor(Visitor):
 
     def visit_dict(self, obj):
         from .schema import NULLABLE_FIELDS
+        import math
         nullable = NULLABLE_FIELDS.get(obj.get('type'), ())
         items = []
         for k, item in obj.items():
@@ -291,6 +292,10 @@ class ToDictVisitor(Visitor):
         items = dict(items)
         if items.get('type') == 'Literal' and ('regex' in items or items.get('raw') == 'null'):
             items["value"] = None
+        numeric = obj.get('value')
+        if obj.get('type') == 'Literal' and isinstance(numeric, float) and not math.isfinite(numeric):
+            items['value'] = None
+            items['number'] = 'NaN' if math.isnan(numeric) else ('Infinity' if numeric > 0 else '-Infinity')
         yield Visited(items)
 
     def visit_SRE_Pattern(self, obj):

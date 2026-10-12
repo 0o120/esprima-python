@@ -20,3 +20,17 @@ class SerializationTests(unittest.TestCase):
         tree = esprima.toDict(esprima.parseScript('x;'))
         self.assertNotIn('loc', tree)
         self.assertNotIn('range', tree)
+
+    def test_nonfinite_numbers_are_json_safe_and_distinct_from_null(self):
+        tree = esprima.toDict(esprima.parseScript('const x=1e400;'))
+        literal = tree['body'][0]['declarations'][0]['init']
+        self.assertIsNone(literal['value'])
+        self.assertEqual(literal['number'], 'Infinity')
+        json.dumps(tree, allow_nan=False)
+
+    def test_utf16_pair_and_scalar_literals_agree(self):
+        escaped = esprima.parseScript(r'"\ud83d\ude00";').body[0].expression.value
+        scalar = esprima.parseScript('"😀";').body[0].expression.value
+        self.assertEqual(escaped, scalar)
+        self.assertEqual(escaped, '😀')
+        self.assertEqual(esprima.parseScript(r'"\ud800";').body[0].expression.value, '\ud800')

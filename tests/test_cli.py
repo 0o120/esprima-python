@@ -26,3 +26,29 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)['sourceType'], 'module')
         self.assertIn('Parsed in', result.stderr)
+
+    def test_api_rejects_nontext_and_nonmapping_inputs(self):
+        import esprima
+        for operation in (esprima.parseScript, esprima.tokenize):
+            with self.assertRaises(TypeError):
+                operation(b'const x=1;')
+            with self.assertRaises(TypeError):
+                operation('x;', options=[])
+
+    def test_custom_mapping_options_do_not_need_copy_method(self):
+        from collections.abc import Mapping
+        import esprima
+
+        class Options(Mapping):
+            def __iter__(self):
+                return iter(('range',))
+
+            def __len__(self):
+                return 1
+
+            def __getitem__(self, key):
+                if key == 'range':
+                    return True
+                raise KeyError(key)
+
+        self.assertEqual(esprima.parseScript('x;', Options()).range, [0, 2])

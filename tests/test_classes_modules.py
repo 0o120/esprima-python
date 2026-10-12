@@ -40,3 +40,9 @@ class ClassModuleTests(unittest.TestCase):
         for source in ('import x from "m" with {type:1};', 'import x from "m" with {type:"json",type:"json"};', 'import {"x"} from "m";', 'import await from "m";'):
             with self.subTest(source=source), self.assertRaises(esprima.Error):
                 esprima.parseModule(source)
+
+    def test_module_names_allow_valid_surrogate_pairs(self):
+        tree = esprima.toDict(esprima.parseModule(r'const x=1; export {x as "\ud83d\ude00"};'))
+        self.assertEqual(tree['body'][1]['specifiers'][0]['exported']['value'], '😀')
+        with self.assertRaises(esprima.Error):
+            esprima.parseModule(r'const x=1; export {x as "\ud800"};')
