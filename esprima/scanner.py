@@ -478,7 +478,7 @@ class Scanner(object):
 
     def octalToDecimal(self, ch):
         # \0 is not octal escape sequence
-        octal = ch != '0'
+        octal = ch != '0' or Character.isDecimalDigit(self.source[self.index])
         code = octalValue(ch)
 
         if not self.eof() and Character.isOctalDigit(self.source[self.index]):

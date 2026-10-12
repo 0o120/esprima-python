@@ -75,6 +75,11 @@ class LexicalModernTests(unittest.TestCase):
             self.assertEqual(scanner.lineNumber, 2)
         self.assertEqual(scan(r'"\8\9"').value, '89')
         self.assertTrue(scan(r'"\8\9"').octal)
+        self.assertEqual(scan(r'"\08\09"').value, '\0' + '8' + '\0' + '9')
+        for source in (r'"\08"', r'"\09"'):
+            self.assertTrue(scan(source).octal)
+            with self.assertRaises(Error):
+                esprima.parseScript('"use strict"; ' + source)
 
     def test_template_invalid_escapes_are_deferred(self):
         for source in (r'`\8`', r'`\01`', r'`\xG1`', r'`\uQQQQ`', r'`\u{110000}`', r'`\u{}`'):
@@ -139,7 +144,7 @@ class RegExpModernTests(unittest.TestCase):
             ('(?<=a)b', 'u'), ('(?<!a)b', 'u'),
             (r'(?<name>a)\k<name>', 'u'), (r'\k<name>(?<name>a)', ''),
             ('(?<a>x)|(?<a>y)', 'u'), ('(?:(?<a>x)|(?<a>y))', ''),
-            ('(?i:a)(?m-s:^b$)', ''), ('(?-ims:a)', 'v'),
+            ('(?i:a)(?m-s:^b$)', ''), ('(?i-:a)', ''), ('(?-ims:a)', 'v'),
             (r'\p{Script=Greek}\P{gc=Nd}', 'u'),
             (r'\p{scx=Hira}\p{L}\p{ASCII}\p{CWCF}', 'v'),
             (r'[\u{1F600}-\u{1F64F}]', 'u'),
@@ -167,6 +172,7 @@ class RegExpModernTests(unittest.TestCase):
             (r'\u{110000}', 'u'), (r'\u{}', 'u'), (r'\1', 'u'),
             (r'\0' + '1', 'u'), (r'\k<missing>', 'u'), (r'(?<a>x)\k<b>', ''),
             ('(?<a>x)(?<a>y)', ''), ('(?<a>(?<a>x))', 'u'),
+            ('(?<a>(?<a>x)|y)', ''), ('(?<a>x|(?<a>y))', 'u'),
             ('(?<1>x)', 'u'), ('(?<>x)', ''),
             (r'[\d-a]', 'u'), ('[z-a]', ''),
             (r'[\u{1F64F}-\u{1F600}]', 'u'),

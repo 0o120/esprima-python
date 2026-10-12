@@ -222,8 +222,6 @@ class _Validator:
             while self.peek() and self.peek() in 'ims':
                 disabled.append(self.peek())
                 self.i += 1
-            if not disabled:
-                self.fail('Empty modifier removal')
         all_flags = enabled + disabled
         if not all_flags or len(set(all_flags)) != len(all_flags) or not self.take(':'):
             self.fail('Invalid regular-expression modifiers')
