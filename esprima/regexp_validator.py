@@ -14,6 +14,18 @@ class RegExpSyntaxError(ValueError):
     """The supplied pattern/flags do not satisfy the ECMAScript grammar."""
 
 
+class RegExpEditionError(RegExpSyntaxError):
+    """Valid modern regexp syntax exceeds the selected language edition."""
+
+
+def normalize_ecma_version(value=2026):
+    if value == 'latest':
+        return 2026
+    if type(value) is not int or value not in (5, *range(2015, 2027)):
+        raise ValueError('ecmaVersion must be 5 or an edition from 2015 to 2026')
+    return value
+
+
 _SYNTAX = frozenset('^$\\.*+?()[]{}|/')
 _SET_RESERVED = frozenset(r'()[]{}\/|-')
 _DOUBLE_RESERVED = frozenset('!#$%&*+,.:;<=>?@^`~')
@@ -30,11 +42,16 @@ def _decimal_less(a, b):
 
 
 class _Validator:
-    def __init__(self, pattern, flags):
+    def __init__(self, pattern, flags, ecma_version=2026):
+        self.ecma_version = normalize_ecma_version(ecma_version)
+        self.features = {}
         if any(flag not in 'dgimsuvy' for flag in flags) or len(set(flags)) != len(flags):
             raise RegExpSyntaxError('Invalid or duplicate regular-expression flag')
         if 'u' in flags and 'v' in flags:
             raise RegExpSyntaxError('The u and v flags are mutually exclusive')
+        for flag, edition in (('u', 2015), ('y', 2015), ('s', 2018), ('d', 2022), ('v', 2024)):
+            if flag in flags:
+                self.require_feature('RegExp flag ' + flag, edition)
         self.unicode = 'u' in flags or 'v' in flags
         self.sets = 'v' in flags
         if self.unicode:
@@ -55,6 +72,11 @@ class _Validator:
         self.disjunction_id = 0
         self.path = []
         self.has_named_captures = self._has_named_captures()
+
+    def require_feature(self, name, edition):
+        self.features[name] = edition
+        if self.ecma_version < edition:
+            raise RegExpEditionError('%s requires ECMAScript %s' % (name, edition))
 
     def _has_named_captures(self):
         escaped = False
@@ -192,8 +214,10 @@ class _Validator:
                 lookahead = True
             elif self.take('<'):
                 if self.take('=') or self.take('!'):
+                    self.require_feature('RegExp lookbehind assertions', 2018)
                     assertion = True
                 else:
+                    self.require_feature('RegExp named capture groups', 2018)
                     capturing = True
                     name = self.group_name()
             else:
@@ -206,6 +230,8 @@ class _Validator:
                     other = dict(other_path)
                     if not any(key in other and other[key] != branch for key, branch in self.path):
                         self.fail('Duplicate capture group name')
+                if name in self.names:
+                    self.require_feature('RegExp disjoint duplicate capture names', 2025)
                 self.names.setdefault(name, []).append(self.path[:])
         self.disjunction()
         if not self.take(')'):
@@ -225,6 +251,7 @@ class _Validator:
         all_flags = enabled + disabled
         if not all_flags or len(set(all_flags)) != len(all_flags) or not self.take(':'):
             self.fail('Invalid regular-expression modifiers')
+        self.require_feature('RegExp scoped modifiers', 2025)
 
     def group_name(self):
         chars = []
@@ -280,6 +307,7 @@ class _Validator:
         return cp
 
     def property_escape(self, negative):
+        self.require_feature('RegExp Unicode property escapes', 2018)
         if not self.take('{'):
             self.fail('Invalid Unicode property escape')
         start = self.i
@@ -495,7 +523,14 @@ class _Validator:
             strings = strings or more_strings
 
 
-def validate_regexp(pattern, flags=''):
+def validate_regexp(pattern, flags='', ecma_version=2026):
     """Validate a JS regexp descriptor, returning None or raising RegExpSyntaxError."""
+    validator = _Validator(pattern, flags, ecma_version)
+    validator.validate()
+
+
+def regexp_features(pattern, flags=''):
+    """Return feature/minimum-edition pairs from parsed grammar, not raw text."""
     validator = _Validator(pattern, flags)
     validator.validate()
+    return dict(validator.features)

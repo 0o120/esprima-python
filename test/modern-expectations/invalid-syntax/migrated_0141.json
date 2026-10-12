@@ -1,0 +1,17 @@
+{
+  "message": "Error: Line 1: Unexpected token let",
+  "index": 9,
+  "lineNumber": 1,
+  "column": 10,
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "script"
+  }
+}

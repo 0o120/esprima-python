@@ -82,5 +82,119 @@
     "kind": ".tree",
     "reason": "Annex B non-octal string escape is valid in sloppy mode, so the old tolerant error is removed.",
     "independent_acceptance": true
+  },
+  "fixtures/ES6/export-declaration/export-named-as-default.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-as-default.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-as-specifier.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-as-specifier.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-as-specifiers.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-as-specifiers.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-keyword-as-specifier.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-keyword-as-specifier.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-keyword-specifier.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-keyword-specifier.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-specifier.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-specifier.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-specifiers.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-specifiers.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/export-declaration/export-named-specifiers-comma.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/export-named-specifiers-comma.json",
+    "kind": ".failure",
+    "reason": "Local module exports must refer to a declared binding; the original parser lacked this early-error check.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2017/async/functions/async-if.js": {
+    "snapshot": "modern-expectations/es2017/async/functions/async-if.json",
+    "kind": ".failure",
+    "reason": "Async function declarations are not valid if-statement bodies, including sloppy Annex B code.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2017/async/functions/async-if-await.js": {
+    "snapshot": "modern-expectations/es2017/async/functions/async-if-await.json",
+    "kind": ".failure",
+    "reason": "Async function declarations are not valid if-statement bodies, including sloppy Annex B code.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/yield/yield-generator-arrow-default.js": {
+    "snapshot": "modern-expectations/ES6/yield/yield-generator-arrow-default.json",
+    "kind": ".failure",
+    "reason": "Generator parameter initializers are rejected by the explicit early-error pass, rather than the old incorrect Identifier interpretation.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/yield/yield-generator-default-parameter.js": {
+    "snapshot": "modern-expectations/ES6/yield/yield-generator-default-parameter.json",
+    "kind": ".failure",
+    "reason": "Generator parameter initializers are rejected by the explicit early-error pass, rather than the old incorrect Identifier interpretation.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2017/async/invalid-await/invalid-await-method.js": {
+    "snapshot": "modern-expectations/es2017/async/invalid-await/invalid-await-method.json",
+    "kind": ".failure",
+    "reason": "Ordinary nested method parameters and property names use their own await context; valid IdentifierName uses no longer inherit the outer async restriction.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2017/async/invalid-await/invalid-await-property.js": {
+    "snapshot": "modern-expectations/es2017/async/invalid-await/invalid-await-property.json",
+    "kind": ".failure",
+    "reason": "Ordinary nested method parameters and property names use their own await context; valid IdentifierName uses no longer inherit the outer async restriction.",
+    "independent_acceptance": false
+  },
+  "fixtures/expression/primary/keyword/invalid-escaped-if.js": {
+    "snapshot": "modern-expectations/expression/primary/keyword/invalid-escaped-if.json",
+    "kind": ".failure",
+    "reason": "Escaped reserved words are rejected in grammar contexts rather than globally during scanning; diagnostic points to the offending token start.",
+    "independent_acceptance": false
+  },
+  "fixtures/expression/primary/keyword/invalid-escaped-null.js": {
+    "snapshot": "modern-expectations/expression/primary/keyword/invalid-escaped-null.json",
+    "kind": ".failure",
+    "reason": "Escaped reserved words are rejected in grammar contexts rather than globally during scanning; diagnostic points to the offending token start.",
+    "independent_acceptance": false
+  },
+  "fixtures/expression/primary/keyword/invalid-escaped-true.js": {
+    "snapshot": "modern-expectations/expression/primary/keyword/invalid-escaped-true.json",
+    "kind": ".failure",
+    "reason": "Escaped reserved words are rejected in grammar contexts rather than globally during scanning; diagnostic points to the offending token start.",
+    "independent_acceptance": false
+  },
+  "fixtures/invalid-syntax/migrated_0141.js": {
+    "snapshot": "modern-expectations/invalid-syntax/migrated_0141.json",
+    "kind": ".failure",
+    "reason": "Escaped reserved words are rejected in grammar contexts rather than globally during scanning; diagnostic points to the offending token start.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/generator/generator-parameter-binding-property-reserved.js": {
+    "snapshot": "modern-expectations/ES6/generator/generator-parameter-binding-property-reserved.json",
+    "kind": ".failure",
+    "reason": "Reject yield as a generator parameter binding at its own token instead of the later closing brace.",
+    "independent_acceptance": false
   }
 }

@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals
 
 import math
 
-from .regexp_validator import validate_regexp, RegExpSyntaxError
+from .regexp_validator import validate_regexp, RegExpSyntaxError, RegExpEditionError
 
 from .objects import Object
 from .compat import xrange, unicode, uchr, uord
@@ -71,10 +71,11 @@ class Comment(Object):
 
 
 class RawToken(Object):
-    def __init__(self, type=None, value=None, pattern=None, flags=None, regex=None, octal=None, cooked=None, head=None, tail=None, lineNumber=None, lineStart=None, start=None, end=None, bigint=None, private=False, invalidEscape=False):
+    def __init__(self, type=None, value=None, pattern=None, flags=None, regex=None, octal=None, cooked=None, head=None, tail=None, lineNumber=None, lineStart=None, start=None, end=None, bigint=None, private=False, invalidEscape=False, escaped=False):
         self.bigint = bigint
         self.private = private
         self.invalidEscape = invalidEscape
+        self.escaped = escaped
         self.type = type
         self.value = value
         self.pattern = pattern
@@ -91,10 +92,11 @@ class RawToken(Object):
 
 
 class ScannerState(Object):
-    def __init__(self, index=None, lineNumber=None, lineStart=None):
+    def __init__(self, index=None, lineNumber=None, lineStart=None, curlyStack=None):
         self.index = index
         self.lineNumber = lineNumber
         self.lineStart = lineStart
+        self.curlyStack = curlyStack
 
 
 class Octal(object):
@@ -117,6 +119,13 @@ class Scanner(object):
         self.curlyStack = []
         self._utf16Offsets = None
         self.hashbang = None
+        # Internal indices remain scalar; public clients select diagnostic units.
+        self.positionEncoding = 'scalar'
+        self.ecmaVersion = 2026
+
+    def requireFeature(self, edition, name):
+        if self.ecmaVersion < edition:
+            self.tolerateUnexpectedToken('%s requires ECMAScript %s' % (name, edition))
 
     def utf16Offset(self, index):
         """Convert a Python scalar source index to the ESTree UTF-16 unit index."""
@@ -134,24 +143,32 @@ class Scanner(object):
         return ScannerState(
             index=self.index,
             lineNumber=self.lineNumber,
-            lineStart=self.lineStart
+            lineStart=self.lineStart,
+            curlyStack=self.curlyStack[:]
         )
 
     def restoreState(self, state):
         self.index = state.index
         self.lineNumber = state.lineNumber
         self.lineStart = state.lineStart
+        if state.curlyStack is not None:
+            self.curlyStack = state.curlyStack[:]
 
     def eof(self):
         return self.index >= self.length
 
     def throwUnexpectedToken(self, message=Messages.UnexpectedTokenIllegal):
-        return self.errorHandler.throwError(self.index, self.lineNumber,
-            self.index - self.lineStart + 1, message)
+        index, column = self.errorPosition()
+        return self.errorHandler.throwError(index, self.lineNumber, column, message)
 
     def tolerateUnexpectedToken(self, message=Messages.UnexpectedTokenIllegal):
-        self.errorHandler.tolerateError(self.index, self.lineNumber,
-            self.index - self.lineStart + 1, message)
+        index, column = self.errorPosition()
+        self.errorHandler.tolerateError(index, self.lineNumber, column, message)
+
+    def errorPosition(self):
+        if self.positionEncoding == 'utf16':
+            return self.utf16Offset(self.index), self.utf16Column(self.index, self.lineStart) + 1
+        return self.index, self.index - self.lineStart + 1
 
     # https://tc39.github.io/ecma262/#sec-comments
 
@@ -278,6 +295,7 @@ class Scanner(object):
             ch = self.source[self.index]
 
             if self.index == 0 and self.source[:2] == '#!':
+                self.requireFeature(2023, 'Hashbang comments')
                 end = 2
                 while end < self.length and not Character.isLineTerminator(self.source[end]):
                     end += 1
@@ -310,7 +328,12 @@ class Scanner(object):
                     start = True
                 elif ch == '*':  # U+002A is '*'
                     self.index += 2
+                    previousLine = self.lineNumber
                     comment = self.skipMultiLineComment()
+                    # Annex B HTMLCloseComment may follow a block comment
+                    # containing a line terminator, even after code on that line.
+                    if self.lineNumber != previousLine:
+                        start = True
                     if self.trackComment:
                         comments.extend(comment)
 
@@ -425,6 +448,7 @@ class Scanner(object):
         return uchr(code)
 
     def scanUnicodeCodePointEscape(self):
+        self.requireFeature(2015, 'Unicode code-point escapes')
         ch = self.source[self.index]
         code = 0
 
@@ -471,6 +495,8 @@ class Scanner(object):
                     if first:
                         self.throwUnexpectedToken()
                     break
+                if cp > 0xFFFF:
+                    self.requireFeature(2015, 'Astral identifiers')
                 self.index += 2 if cp > 0xFFFF and ord(self.source[self.index]) <= 0xFFFF else 1
             result.append(ch)
             first = False
@@ -515,15 +541,10 @@ class Scanner(object):
         else:
             type = Token.Identifier
 
-        if type is not Token.Identifier and start + len(id) != self.index:
-            restore = self.index
-            self.index = start
-            self.tolerateUnexpectedToken(Messages.InvalidEscapedReservedWord)
-            self.index = restore
-
         return RawToken(
             type=type,
             value=id,
+            escaped='\\' in self.source[start:self.index],
             lineNumber=self.lineNumber,
             lineStart=self.lineStart,
             start=start,
@@ -552,6 +573,14 @@ class Scanner(object):
             if value not in '(){};,[].:?~<>=!+-*%&|^/':
                 self.throwUnexpectedToken()
         self.index += len(value)
+        if value in ('...', '=>'):
+            self.requireFeature(2015, 'Modern punctuators')
+        elif value in ('**', '**='):
+            self.requireFeature(2016, 'Exponentiation')
+        elif value in ('?.', '??'):
+            self.requireFeature(2020, 'Optional chaining/nullish coalescing')
+        elif value in ('&&=', '||=', '??='):
+            self.requireFeature(2021, 'Logical assignment')
         if value == '{':
             self.curlyStack.append('{')
         elif value == '}' and self.curlyStack:
@@ -670,6 +699,7 @@ class Scanner(object):
                 self.index += 1
                 previousDigit = True
             elif ch == '_':
+                self.requireFeature(2021, 'Numeric separators')
                 if not previousDigit or self.source[self.index + 1] not in allowed:
                     self.throwUnexpectedToken()
                 previousDigit = False
@@ -690,6 +720,8 @@ class Scanner(object):
         first = self.source[self.index]
         if first == '0' and self.source[self.index + 1] in 'xXbBoO':
             prefix = self.source[self.index + 1].lower()
+            if prefix in ('b', 'o'):
+                self.requireFeature(2015, 'Binary/octal numeric literals')
             base, allowed = {'x': (16, '0123456789abcdefABCDEF'), 'b': (2, '01'), 'o': (8, '01234567')}[prefix]
             self.index += 2
             digits = self._scanDigits(allowed)
@@ -717,6 +749,7 @@ class Scanner(object):
                 digits += self._scanDigits('0123456789')
         bigint = None
         if self.source[self.index] == 'n':
+            self.requireFeature(2020, 'BigInt literals')
             if fraction or exponent or legacy:
                 self.throwUnexpectedToken()
             self.index += 1
@@ -822,6 +855,7 @@ class Scanner(object):
             else:
                 # ES2019's JSON superset permits literal U+2028 and U+2029 in strings.
                 if ch in ('\u2028', '\u2029'):
+                    self.requireFeature(2019, 'JSON-superset string literals')
                     self.lineNumber += 1
                     self.lineStart = self.index
                 str += ch
@@ -843,6 +877,7 @@ class Scanner(object):
     # https://tc39.github.io/ecma262/#sec-template-literal-lexical-components
 
     def scanTemplate(self):
+        self.requireFeature(2015, 'Template literals')
         start = self.index
         head = self.source[start] == '`'
         tail = False
@@ -914,6 +949,10 @@ class Scanner(object):
         else:
             self.throwUnexpectedToken()
         raw = self.source[start + 1:rawEnd].replace('\r\n', '\n').replace('\r', '\n')
+        if invalid and self.ecmaVersion < 2018:
+            # Tagging belongs to the parser's grammar context. Before ES2018
+            # an invalid escape is a lexical error in either template context.
+            self.tolerateUnexpectedToken('Invalid escape sequence in template literal')
         return RawToken(type=Token.Template, value=raw, cooked=None if invalid else ''.join(cooked),
                         invalidEscape=invalid, head=head, tail=tail, lineNumber=self.lineNumber,
                         lineStart=self.lineStart, start=start, end=self.index)
@@ -922,7 +961,9 @@ class Scanner(object):
 
     def testRegExp(self, pattern, flags):
         try:
-            validate_regexp(pattern, flags)
+            validate_regexp(pattern, flags, self.ecmaVersion)
+        except RegExpEditionError as error:
+            self.tolerateUnexpectedToken(str(error))
         except RegExpSyntaxError:
             self.tolerateUnexpectedToken(Messages.InvalidRegExp)
         # A JavaScript regex has no Python runtime equivalent. Preserve its descriptor.
@@ -1039,12 +1080,14 @@ class Scanner(object):
         ch = self.source[self.index]
 
         if ch == '#':
+            self.requireFeature(2022, 'Private identifiers')
             start = self.index
             self.index += 1
             if not Character.isIdentifierStart(self.source[self.index]):
                 self.throwUnexpectedToken()
             value = self.getComplexIdentifier()
             token = RawToken(type=Token.Identifier, value='#' + value, private=True,
+                             escaped='\\' in self.source[start:self.index],
                              start=start, end=self.index, lineNumber=self.lineNumber, lineStart=self.lineStart)
             return token
 

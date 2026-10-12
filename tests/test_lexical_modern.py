@@ -38,6 +38,29 @@ class LexicalModernTests(unittest.TestCase):
             with self.subTest(source=source), self.assertRaises(Error):
                 scan(source)
 
+    def test_escaped_identifier_names_defer_context_restrictions(self):
+        for source, value in ((r'\u0069f', 'if'), (r'tr\u0075e', 'true'), (r'n\u0075ll', 'null'), (r'l\u0065t', 'let')):
+            with self.subTest(source=source):
+                token = scan(source)
+                self.assertEqual(token.value, value)
+                self.assertTrue(token.escaped)
+                self.assertEqual(len(esprima.tokenize(source)), 1)
+
+    def test_scanner_restore_preserves_template_brace_state(self):
+        scanner = Scanner('`a${{x:1}.x}b`', ErrorHandler())
+        self.assertTrue(scanner.lex().head)
+        self.assertEqual(scanner.curlyStack, ['${'])
+        state = scanner.saveState()
+        scanner.lex()
+        self.assertEqual(scanner.curlyStack, ['${', '{'])
+        scanner.restoreState(state)
+        self.assertEqual(scanner.curlyStack, ['${'])
+        tokens = []
+        while not scanner.eof():
+            tokens.append(scanner.lex())
+        self.assertTrue(tokens[-1].tail)
+        self.assertEqual(tokens[-1].cooked, 'b')
+
     def test_numeric_separators_and_binary64(self):
         cases = {
             '1_000': 1000, '.1_2': .12, '1.2_3e4_5': 1.23e45,
@@ -124,6 +147,24 @@ class LexicalModernTests(unittest.TestCase):
             scanner.scanComments()
             with self.subTest(source=source), self.assertRaises(Error):
                 scanner.lex()
+
+    def test_tokenizer_position_policy_includes_diagnostics(self):
+        source = '"\U0001F600"; #1'
+        tokens = esprima.tokenize(source, {'tolerant': True, 'range': True})
+        self.assertEqual(tokens[0].range, [0, 4])
+        self.assertEqual((tokens.errors[0]['index'], tokens.errors[0]['column']), (7, 8))
+        tokens = esprima.tokenize(source, {'tolerant': True, 'range': True, 'positionEncoding': 'scalar'})
+        self.assertEqual(tokens[0].range, [0, 3])
+        self.assertEqual((tokens.errors[0]['index'], tokens.errors[0]['column']), (6, 7))
+        with self.assertRaises(ValueError):
+            esprima.tokenize('x', {'positionEncoding': 'bytes'})
+
+    def test_annex_b_html_close_after_multiline_comment(self):
+        for source in ('0/*\n*/-->comment\n1;', '0/*\n*/ /**/ /*more*/-->comment\n1;'):
+            with self.subTest(source=source):
+                self.assertEqual(len(esprima.parseScript(source).body), 2)
+                with self.assertRaises(Error):
+                    esprima.parseModule(source)
 
 
 class RegExpModernTests(unittest.TestCase):

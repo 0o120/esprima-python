@@ -34,16 +34,21 @@ from .tokenizer import Tokenizer
 from .visitor import NodeVisitor
 from . import nodes
 from . import jsx_nodes
+from collections.abc import Mapping
+from typing import Any, Callable
 
 
 __all__ = ['Syntax', 'JSXSyntax', 'Error', 'NodeVisitor', 'nodes', 'jsx_nodes',
            'parse', 'parseModule', 'parseScript', 'tokenize', 'toDict']
 
 
-def parse(code, options=None, delegate=None, **kwargs):
+def parse(code: str, options: Mapping[str, Any] | None = None,
+          delegate: Callable | None = None, **kwargs) -> nodes.Node:
     if not isinstance(code, str):
         raise TypeError('JavaScript source must be a string')
-    options = {} if options is None else options.copy()
+    if options is not None and not isinstance(options, Mapping):
+        raise TypeError('options must be a mapping')
+    options = {} if options is None else dict(options)
     options.update(kwargs)
     if options.get('sourceType', 'script') not in ('script', 'module'):
         raise ValueError('sourceType must be script or module')
@@ -80,7 +85,33 @@ def parse(code, options=None, delegate=None, **kwargs):
     else:
         parser = Parser(code, options=options, delegate=parserDelegate)
 
-    ast = parser.parseModule() if isModule else parser.parseScript()
+    try:
+        ast = parser.parseModule() if isModule else parser.parseScript()
+    except RecursionError:
+        parser.throwError('JavaScript nesting exceeds the parser resource limit')
+    from .validation import validate_program
+
+    def report(message, node):
+        error_start = getattr(node, '_protoErrorStart', None)
+        index = parser.externalOffset(error_start if error_start is not None else (getattr(node, '_start', None) or 0))
+        # Parsing already diagnoses a few violations that the complete scope
+        # pass also sees. Preserve the first diagnostic in tolerant mode.
+        if any(error.get('index') == index for error in parser.errorHandler.errors):
+            return
+        line = getattr(node, '_protoErrorLine', None) or getattr(node, '_line', None) or 1
+        column = getattr(node, '_protoErrorColumn', None)
+        if column is None:
+            column = getattr(node, '_column', None) or 0
+        error = parser.errorHandler.createError(index, line, column + 1, message)
+        parser.errorHandler.tolerate(error)
+
+    # A tree produced by syntax recovery is already known to be invalid.
+    # Avoid a second pass inventing cascading scope diagnostics on that tree.
+    if not parser.errorHandler.errors:
+        try:
+            validate_program(ast, report, parser.config.ecmaVersion)
+        except RecursionError:
+            parser.throwError('JavaScript nesting exceeds the validator resource limit')
     if parser.scanner.hashbang is not None:
         ast.hashbang = parser.scanner.hashbang
 
@@ -96,19 +127,28 @@ def parse(code, options=None, delegate=None, **kwargs):
     return ast
 
 
-def parseModule(code, options=None, delegate=None, **kwargs):
+def parseModule(code: str, options: Mapping[str, Any] | None = None,
+                delegate: Callable | None = None, **kwargs) -> nodes.Module:
     kwargs['sourceType'] = 'module'
     return parse(code, options, delegate, **kwargs)
 
 
-def parseScript(code, options=None, delegate=None, **kwargs):
+def parseScript(code: str, options: Mapping[str, Any] | None = None,
+                delegate: Callable | None = None, **kwargs) -> nodes.Script:
     kwargs['sourceType'] = 'script'
     return parse(code, options, delegate, **kwargs)
 
 
-def tokenize(code, options=None, delegate=None, **kwargs):
-    options = {} if options is None else options.copy()
+def tokenize(code: str, options: Mapping[str, Any] | None = None,
+             delegate: Callable | None = None, **kwargs) -> Array:
+    if not isinstance(code, str):
+        raise TypeError('JavaScript source must be a string')
+    if options is not None and not isinstance(options, Mapping):
+        raise TypeError('options must be a mapping')
+    options = {} if options is None else dict(options)
     options.update(kwargs)
+    if options.get('sourceType', 'script') not in ('script', 'module'):
+        raise ValueError('sourceType must be script or module')
 
     tokenizer = Tokenizer(code, options)
 

@@ -28,6 +28,7 @@ from collections import deque
 from .objects import Object
 from .error_handler import ErrorHandler, Error
 from .messages import Messages
+from .regexp_validator import normalize_ecma_version
 from .scanner import Scanner, SourceLocation, Position, RegExp
 from .token import Token, TokenName
 
@@ -117,10 +118,15 @@ class Config(Object):
 class Tokenizer(object):
     def __init__(self, code, options):
         self.config = Config(**options)
+        self.positionEncoding = getattr(self.config, 'positionEncoding', None) or 'utf16'
+        if self.positionEncoding not in ('utf16', 'scalar'):
+            raise ValueError('positionEncoding must be utf16 or scalar')
 
         self.errorHandler = ErrorHandler()
         self.errorHandler.tolerant = self.config.tolerant
         self.scanner = Scanner(code, self.errorHandler)
+        self.scanner.ecmaVersion = normalize_ecma_version(options.get('ecmaVersion', 2026))
+        self.scanner.positionEncoding = self.positionEncoding
         self.scanner.trackComment = self.config.comment
         self.scanner.isModule = getattr(self.config, "sourceType", None) == "module"
 
@@ -131,6 +137,12 @@ class Tokenizer(object):
 
     def errors(self):
         return self.errorHandler.errors
+
+    def externalOffset(self, index):
+        return index if self.positionEncoding == 'scalar' else self.scanner.utf16Offset(index)
+
+    def externalColumn(self, index, lineStart):
+        return index - lineStart if self.positionEncoding == 'scalar' else self.scanner.utf16Column(index, lineStart)
 
     def getNextToken(self):
         if not self.buffer:
@@ -146,11 +158,11 @@ class Tokenizer(object):
                     if getattr(e, "hashbang", False):
                         comment.hashbang = True
                     if self.trackRange:
-                        comment.range = [self.scanner.utf16Offset(x) for x in e.range]
+                        comment.range = [self.externalOffset(x) for x in e.range]
                     if self.trackLoc:
                         # Comments carry scalar columns; convert at the public boundary.
                         for position, offset in ((e.loc.start, e.range[0]), (e.loc.end, e.range[1])):
-                            position.column = self.scanner.utf16Column(offset, offset - position.column)
+                            position.column = self.externalColumn(offset, offset - position.column)
                         comment.loc = e.loc
                     self.buffer.append(comment)
 
@@ -159,7 +171,7 @@ class Tokenizer(object):
                     loc = SourceLocation(
                         start=Position(
                             line=self.scanner.lineNumber,
-                            column=self.scanner.utf16Column(self.scanner.index, self.scanner.lineStart)
+                            column=self.externalColumn(self.scanner.index, self.scanner.lineStart)
                         ),
                         end=Position(),
                     )
@@ -184,11 +196,11 @@ class Tokenizer(object):
                     value=self.scanner.source[token.start:token.end]
                 )
                 if self.trackRange:
-                    entry.range = [self.scanner.utf16Offset(token.start), self.scanner.utf16Offset(token.end)]
+                    entry.range = [self.externalOffset(token.start), self.externalOffset(token.end)]
                 if self.trackLoc:
                     loc.end = Position(
                         line=self.scanner.lineNumber,
-                        column=self.scanner.utf16Column(self.scanner.index, self.scanner.lineStart)
+                        column=self.externalColumn(self.scanner.index, self.scanner.lineStart)
                     )
                     entry.loc = loc
                 if token.type is Token.RegularExpression:

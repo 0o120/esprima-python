@@ -1,0 +1,18 @@
+{
+  "message": "Error: Line 1: Unexpected identifier",
+  "index": 6,
+  "lineNumber": 1,
+  "column": 7,
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "script",
+    "ecmaVersion": 2017
+  }
+}
