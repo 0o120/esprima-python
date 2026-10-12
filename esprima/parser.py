@@ -549,6 +549,11 @@ class Parser(object):
         previousIsAssignmentTarget = self.context.isAssignmentTarget
         previousFirstCoverInitializedNameError = self.context.firstCoverInitializedNameError
 
+        # These initial flags make propagation the identity operation. The
+        # child already starts in the required state and its flags/error survive.
+        if previousIsBindingElement is True and previousIsAssignmentTarget is True and previousFirstCoverInitializedNameError is None:
+            return parseFunction()
+
         self.context.isBindingElement = True
         self.context.isAssignmentTarget = True
         self.context.firstCoverInitializedNameError = None
@@ -1204,6 +1209,12 @@ class Parser(object):
         else:
             expr = self.parseNewExpression() if self.matchKeyword('new') else self.parsePrimaryExpression()
         while True:
+            token = self.lookahead
+            if token.type is Token.Punctuator:
+                if token.value not in ('.', '(', '[', '?.'):
+                    break
+            elif token.type is not Token.Template or not token.head:
+                break
             optional = self.match('?.')
             if optional:
                 if (expr.type == Syntax.Super or (expr.type == Syntax.NewExpression and not expr._hasArguments)) and not expr._parenthesized:
@@ -1273,6 +1284,12 @@ class Parser(object):
             expr = self.inheritCoverGrammar(self.parseNewExpression if self.matchKeyword('new') else self.parsePrimaryExpression)
 
         while True:
+            token = self.lookahead
+            if token.type is Token.Punctuator:
+                if token.value not in ('[', '.'):
+                    break
+            elif token.type is not Token.Template or not token.head:
+                break
             if self.match('['):
                 self.context.isBindingElement = False
                 self.context.isAssignmentTarget = True
