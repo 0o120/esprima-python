@@ -46,7 +46,7 @@ classifiers = [
 esprima = "esprima.__main__:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3", "hypothesis>=6.120", "build>=1.2", "twine>=6", "ruff>=0.9"]
+dev = ["hatchling>=1.27", "pytest>=8.3", "hypothesis>=6.120", "build>=1.2", "twine>=6", "ruff>=0.9"]
 
 [tool.hatch.version]
 path = "esprima/_version.py"
