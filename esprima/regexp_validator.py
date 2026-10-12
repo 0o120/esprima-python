@@ -6,6 +6,8 @@ The recursive-descent grammar includes the Annex B non-Unicode productions,
 Unicode property escapes, Unicode set notation, and regexp modifiers.
 """
 
+from functools import lru_cache
+
 from .character import Character
 from ._regexp_properties import BINARY_PROPERTIES, GENERAL_CATEGORIES, SCRIPTS
 
@@ -523,14 +525,28 @@ class _Validator:
             strings = strings or more_strings
 
 
-def validate_regexp(pattern, flags='', ecma_version=2026):
-    """Validate a JS regexp descriptor, returning None or raising RegExpSyntaxError."""
+def _validated_features(pattern, flags, ecma_version):
     validator = _Validator(pattern, flags, ecma_version)
     validator.validate()
+    return tuple(validator.features.items())
+
+
+_cached_features = lru_cache(maxsize=128)(_validated_features)
+
+
+def _features(pattern, flags, ecma_version):
+    # Exact immutable inputs avoid custom string/hash coercion and preserve
+    # uncached exceptions. Bound both entry count and retained pattern size.
+    if type(pattern) is str and type(flags) is str and type(ecma_version) is int and len(pattern) <= 512 and len(flags) <= 8:
+        return _cached_features(pattern, flags, ecma_version)
+    return _validated_features(pattern, flags, ecma_version)
+
+
+def validate_regexp(pattern, flags='', ecma_version=2026):
+    """Validate a JS regexp descriptor, returning None or raising RegExpSyntaxError."""
+    _features(pattern, flags, ecma_version)
 
 
 def regexp_features(pattern, flags=''):
     """Return feature/minimum-edition pairs from parsed grammar, not raw text."""
-    validator = _Validator(pattern, flags)
-    validator.validate()
-    return dict(validator.features)
+    return dict(_features(pattern, flags, 2026))
