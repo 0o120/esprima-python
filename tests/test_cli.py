@@ -15,6 +15,13 @@ class CLITests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout)['type'], 'Program')
         self.assertEqual(result.stderr, '')
 
+    def test_utf8_pipe_is_not_decoded_as_windows_ansi(self):
+        result = subprocess.run([sys.executable, '-B', '-m', 'esprima'],
+                                input="const text='😀，';", encoding='utf-8', capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        literal = json.loads(result.stdout)['body'][0]['declarations'][0]['init']
+        self.assertEqual(literal['value'], '😀，')
+
     def test_error_is_nonzero_and_on_stderr(self):
         result = self.run_cli('const =;')
         self.assertNotEqual(result.returncode, 0)

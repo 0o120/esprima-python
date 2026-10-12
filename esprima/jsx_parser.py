@@ -135,10 +135,11 @@ class JSXParser(Parser):
                 digits = name[2:] if base == 16 else name[1:] if name.startswith('#') else ''
                 allowed = '0123456789abcdefABCDEF' if base == 16 else '0123456789'
                 if digits and all(char in allowed for char in digits):
-                    code = int(digits, base)
-                    if code > 0x10FFFF or 0xD800 <= code <= 0xDFFF:
-                        self.scanner.throwUnexpectedToken('Invalid JSX character reference')
-                    return chr(code)
+                    significant = digits.lstrip('0') or '0'
+                    if len(significant) > (6 if base == 16 else 7):
+                        return raw
+                    code = int(significant, base)
+                    return chr(code) if code <= 0x10FFFF else raw
                 return raw
             if ch in ('<', '{', '&', '"', "'", ' ', '\t', '\r', '\n', '\u2028', '\u2029') or ch == quote:
                 break
@@ -175,10 +176,11 @@ class JSXParser(Parser):
                 elif ch == '&':
                     str += self.scanXHTMLEntity(quote)
                 else:
-                    str += '\n' if ch == '\r' else ch
+                    str += ch
                     if Character.isLineTerminator(ch):
                         self.scanner.lineNumber += 1
                         if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':
+                            str += '\n'
                             self.scanner.index += 1
                         self.scanner.lineStart = self.scanner.index
 
@@ -276,11 +278,13 @@ class JSXParser(Parser):
             if ch in ('{', '<'):
                 break
 
+            if ch in ('>', '}'):
+                self.scanner.throwUnexpectedToken('Escape > or } in JSX text')
             self.scanner.index += 1
             if ch == '&':
                 text += self.scanXHTMLEntity()
             else:
-                text += '\n' if ch == '\r' else ch
+                text += '\n' if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n' else ch
             if Character.isLineTerminator(ch):
                 self.scanner.lineNumber += 1
                 if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':

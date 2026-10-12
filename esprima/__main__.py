@@ -51,7 +51,8 @@ def main(argv=None):
             parser.print_help()
             return 64
         else:
-            code = sys.stdin.read()
+            binary = getattr(sys.stdin, 'buffer', None)
+            code = binary.read().decode('utf-8') if binary is not None else sys.stdin.read()
     except (OSError, UnicodeError) as error:
         print(str(error), file=sys.stderr)
         return 1
