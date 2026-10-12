@@ -196,5 +196,11 @@
     "kind": ".failure",
     "reason": "Reject yield as a generator parameter binding at its own token instead of the later closing brace.",
     "independent_acceptance": false
+  },
+  "fixtures/JSX/multiline-crlf-text.js": {
+    "snapshot": "modern-expectations/JSX/multiline-crlf-text.json",
+    "kind": ".tree",
+    "reason": "Normalize CRLF JSXText.value to LF while preserving source raw/ranges, matching Babel JSX text semantics.",
+    "independent_acceptance": true
   }
 }

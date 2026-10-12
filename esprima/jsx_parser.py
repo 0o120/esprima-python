@@ -118,50 +118,32 @@ class JSXParser(Parser):
             column=self.scanner.index - self.scanner.lineStart
         )
 
-    def scanXHTMLEntity(self, quote):
-        result = '&'
-
-        valid = True
-        terminated = False
-        numeric = False
-        hex = False
-
-        while not self.scanner.eof() and valid and not terminated:
-            ch = self.scanner.source[self.scanner.index]
-            if ch == quote:
+    def scanXHTMLEntity(self, quote=None):
+        # The caller consumed '&'. Never swallow a JSX or quote boundary when
+        # an unknown/incomplete reference has no semicolon.
+        start = self.scanner.index - 1
+        cursor = self.scanner.index
+        while cursor < self.scanner.length:
+            ch = self.scanner.source[cursor]
+            if ch == ';':
+                raw = self.scanner.source[start:cursor + 1]
+                name = self.scanner.source[start + 1:cursor]
+                self.scanner.index = cursor + 1
+                if name in XHTMLEntities:
+                    return XHTMLEntities[name]
+                base = 16 if name.startswith('#x') else 10
+                digits = name[2:] if base == 16 else name[1:] if name.startswith('#') else ''
+                allowed = '0123456789abcdefABCDEF' if base == 16 else '0123456789'
+                if digits and all(char in allowed for char in digits):
+                    code = int(digits, base)
+                    if code > 0x10FFFF or 0xD800 <= code <= 0xDFFF:
+                        self.scanner.throwUnexpectedToken('Invalid JSX character reference')
+                    return chr(code)
+                return raw
+            if ch in ('<', '{', '&', '"', "'", ' ', '\t', '\r', '\n', '\u2028', '\u2029') or ch == quote:
                 break
-
-            terminated = (ch == ';')
-            result += ch
-            self.scanner.index += 1
-            if not terminated:
-                length = len(result)
-                if length == 2:
-                    # e.g. '&#123;'
-                    numeric = (ch == '#')
-                elif length == 3:
-                    if numeric:
-                        # e.g. '&#x41;'
-                        hex = ch == 'x'
-                        valid = hex or Character.isDecimalDigit(ch)
-                        numeric = numeric and not hex
-                else:
-                    valid = valid and not (numeric and not Character.isDecimalDigit(ch))
-                    valid = valid and not (hex and not Character.isHexDigit(ch))
-
-        if valid and terminated and len(result) > 2:
-            # e.g. '&#x41;' becomes just '#x41'
-            st = result[1:-1]
-            if numeric and len(st) > 1:
-                result = uchr(int(st[1:], 10))
-            elif hex and len(st) > 2:
-                result = uchr(int(st[2:], 16))
-            elif not numeric and not hex and st in XHTMLEntities:
-                result = XHTMLEntities[st]
-
-        return result
-
-    # Scan the next JSX token. This replaces Scanner#lex when in JSX mode.
+            cursor += 1
+        return '&'
 
     def lexJSX(self):
         ch = self.scanner.source[self.scanner.index]
@@ -193,7 +175,12 @@ class JSXParser(Parser):
                 elif ch == '&':
                     str += self.scanXHTMLEntity(quote)
                 else:
-                    str += ch
+                    str += '\n' if ch == '\r' else ch
+                    if Character.isLineTerminator(ch):
+                        self.scanner.lineNumber += 1
+                        if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':
+                            self.scanner.index += 1
+                        self.scanner.lineStart = self.scanner.index
 
             return RawJSXToken(
                 type=Token.StringLiteral,
@@ -290,10 +277,13 @@ class JSXParser(Parser):
                 break
 
             self.scanner.index += 1
-            text += ch
+            if ch == '&':
+                text += self.scanXHTMLEntity()
+            else:
+                text += '\n' if ch == '\r' else ch
             if Character.isLineTerminator(ch):
                 self.scanner.lineNumber += 1
-                if ch == '\r' and self.scanner.source[self.scanner.index] == '\n':
+                if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':
                     self.scanner.index += 1
 
                 self.scanner.lineStart = self.scanner.index
@@ -522,7 +512,7 @@ class JSXParser(Parser):
                 child = self.finalize(node, JSXNode.JSXText(token.value, raw))
                 children.append(child)
 
-            if self.scanner.source[self.scanner.index] == '{':
+            if not self.scanner.eof() and self.scanner.source[self.scanner.index] == '{':
                 container = self.parseJSXExpressionContainer()
                 children.append(container)
             else:

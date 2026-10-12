@@ -5,7 +5,7 @@ now assigns every source a unique relative-path test ID and checks the inventory
 ES6 and ES2017 fixture groups explicitly use their edition, so a newer default
 cannot turn an older-edition negative into an unnoticed passing case.
 
-`test/fixture-migrations.json` lists thirty-three intentional expectation changes,
+`test/fixture-migrations.json` lists thirty-four intentional expectation changes,
 each with a reason, a replacement snapshot and independent Acorn 8.19.0 syntax
 acceptance. These cover current dynamic-import AST/options, Annex B string
 escapes, the corrected computed-method flag and improved malformed-template,
@@ -19,6 +19,8 @@ uses and reject generator parameter initializers and escaped reserved words with
 precise grammar diagnostics. These changes are independently syntax-checked too.
 The final binding diagnostic rejects a reserved generator parameter at its own
 token instead of the later closing brace.
+One JSX text snapshot now normalizes CRLF to LF in the decoded value while
+preserving raw source and positions, matching the JSX reference implementation.
 
 `esprima.schema.migrate_legacy_fixture` performs only documented schema changes:
 required nullable fields, false optional/await flags, empty module attributes,
