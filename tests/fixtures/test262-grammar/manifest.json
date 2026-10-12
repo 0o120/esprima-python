@@ -1,0 +1,2534 @@
+{
+  "upstream": "https://github.com/tc39/test262",
+  "revision": "2e0a56762801e275a9fdf96dc49d90ba0cddcf63",
+  "languageTarget": "ECMAScript 2026",
+  "scope": "Reviewed positive grammar regressions; original programs are never executed.",
+  "caseCount": 283,
+  "cases": [
+    {
+      "path": "test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js",
+      "sha256": "1bb757400c3d13f85d8bf8a2600908008aff7d65cbe96acad517958be4ecc586",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 19: Duplicate __proto__ fields are not allowed in object literals"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-break-escaped.js",
+      "sha256": "2b86058cb94805ea73d1aa8b3e4468ced5a8eeb1a3c7affae3b504c477b45d4b",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-case-escaped.js",
+      "sha256": "c46e03a959d9883c0eb7c0b4c2b2fc5154a09e9896e82e050d99744ea640fd9d",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-catch-escaped.js",
+      "sha256": "c0e26806e8c4bf2e1fb45d7c0d1b129db76880a01a65e482281611d4bdf2364e",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-class-escaped.js",
+      "sha256": "7a5889ace78cd8b94e151bf101e5fb6c1617cb5f0109e900e2e4ba71a246fb82",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-const-escaped.js",
+      "sha256": "1a5dd551e4ad0375aab0ed283377bf19af519233bd69ce989ffb7bbcb2d77c28",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-continue-escaped.js",
+      "sha256": "64815a2af71350daa8080c8f17eab6bd0ba2bbee55de477aca7767d9c5fa4ed0",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-debugger-escaped.js",
+      "sha256": "faac33999dca88bc0b6724b55d888aaefe428bdfae84a65df25d9fc76520fa33",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-default-escaped-ext.js",
+      "sha256": "aa1e4117b3e9f20a47e071d2be9eefee888e4a63f01515ce27c4c2c2797c4741",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-default-escaped.js",
+      "sha256": "b3e5a357b553d2538678bbeae699a6daef807adfb282da41e0daf35ad968a269",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-delete-escaped.js",
+      "sha256": "a9ed7060a6651a43e200511f0215e830b4d377853d01617c14a5045c4547bc1c",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-do-escaped.js",
+      "sha256": "52713d4bda7037243ae4e0f84cd85e5adf5f7c19a59f10725105e6265708d413",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-else-escaped.js",
+      "sha256": "d40174fd8353bf5627a738d12c43ee69285de4b3dd2c42b02db390804f61efc4",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-enum-escaped.js",
+      "sha256": "2e7772193229e330c9ee60a9f35ceae5ee9aff04358df15d72f904c486935907",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-export-escaped.js",
+      "sha256": "4f3040879b34fb04d6fb420fc3e0a08c72d099d2e82b97b53c388b1ae3ebb9f1",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-extends-escaped-ext.js",
+      "sha256": "34c8e9ca21cd204dee8cae90dc6aa363e8f8c30972bc6197371f14b2f2991f7d",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-extends-escaped.js",
+      "sha256": "472de4bb70df9d244e88556263317327aa79b4b39dc9eb2f863326da5e104176",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-finally-escaped.js",
+      "sha256": "7170cda66cd32a44427270c2679f4a0baf65f7582a56dceac7be1c55248bef75",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-for-escaped.js",
+      "sha256": "c1bc64d59adbdd1722b5f006a5f764d4c7cb50948f5f47b1ef6a91793301724a",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-function-escaped.js",
+      "sha256": "f0f93d96f89b81590905b408f96b85c5afa0cee0cc89648b9b49543c6191352e",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-if-escaped.js",
+      "sha256": "bdebaff5d0b6a512a62d7a8aafdab0a887ac30afb36897185979177675fbc5fa",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-import-escaped.js",
+      "sha256": "844f76e9ffb29cb42a72ac06c8829c109056bb9d32129ce8c76ec7d464d0b024",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-in-escaped.js",
+      "sha256": "a7be11bfa819135246a303f88a789b611fd176d57679dc0cc784c37addcc567f",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-instanceof-escaped.js",
+      "sha256": "129b0397349dc3e20a0b534854c0f68aacbb863e6b24babef9190d3ffda9b829",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-let-escaped.js",
+      "sha256": "e4c32ea8fa52c4f27cd93a24a26fb8ba0df148aa384cf8f6f7b297d1c789f95b",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-new-escaped.js",
+      "sha256": "915ff1edb12170c7528577382d0c956b173fcadde06c89c787c69198a3c57782",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-return-escaped.js",
+      "sha256": "d11ce2a7a53bea4c34c63d32774cd921ee520f1c145a35b0b35ad38a5b48c167",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-super-escaped.js",
+      "sha256": "089a3122d7f3806d239a6746b9fe35b85af12c6de0536c2122de52ffc37f3c96",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-switch-escaped.js",
+      "sha256": "c465066f3709de25cee051c01771dd50c21901668b30e76e59d3a8b9188006b1",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-this-escaped.js",
+      "sha256": "0f0e6bafa2a38eb71eb811efb9b8fc3a71b52d06cae180eeb534814f04e2c26b",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-throw-escaped.js",
+      "sha256": "cdf4d020498e3303d5cdfa9a1fe614bcfa3df50b9545999eb4f834d80a435d21",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-try-escaped.js",
+      "sha256": "7eaaef07a39dfc8f67128cba2addeaf26b11def688982a4107cb67c9d32189ec",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-typeof-escaped.js",
+      "sha256": "5f9c3858e530779f2a49dd6ad3d476001a8c2dcd88f47a9a9e9622ef45aee85e",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-var-escaped.js",
+      "sha256": "f0011dc679611836fd3c6e00ce23012b145ebfd12c21e70cad8c8f8fd4deb955",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-void-escaped.js",
+      "sha256": "5feb6793dc2db6ab517ed21b8b7f7cfd983020b6f398d910cddf934cce515a78",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-while-escaped.js",
+      "sha256": "0a0f82915b8b480f02757e839f1890f926410e8fbd7ea3b72f77dc4f1a4abac3",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-with-escaped.js",
+      "sha256": "35f5ce884999f8fcaebc8d7cf6e793642b279b68507c1f9a30de6d32bb4c6b32",
+      "mode": "script",
+      "features": [
+        "destructuring-assignment"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/dstr/obj-id-identifier-yield-ident-valid.js",
+      "sha256": "1e26abe5035b2bfa93fc712303f179bc5576b9ca78a33b50b7dbf56891ec9719",
+      "mode": "script",
+      "features": [
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 23: Unexpected token }"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-break-escaped.js",
+      "sha256": "0d988d24fe08a0aa1edd39335d865678ae046fcf295a229e3602285ea4beb276",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-case-escaped.js",
+      "sha256": "59ce7d564f67b864f5e28cc70ea91c73e6835459a24762b2b1710cff48beca9d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-catch-escaped.js",
+      "sha256": "c134ed53845adfa9ad6aed4b375784a915a14708c77042717a306935fc329b34",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-class-escaped.js",
+      "sha256": "b43cd99d7a64e40c58b9cee9a150fd864a4187ff7366f876fa909c2ba9f6c3d5",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-const-escaped.js",
+      "sha256": "fb525236984915470da36957581acf0a9d27de2a12686c0ce88affa3895bbc2f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-continue-escaped.js",
+      "sha256": "07623d7fc12726974c29a7a9242f29790384b4e879372ff5d3752d7fe0f26452",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-debugger-escaped.js",
+      "sha256": "222b685210a89c5fe7530fe6e7a1c0eb01cda7aec6d68812cc5f8b61056c2451",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-default-escaped-ext.js",
+      "sha256": "b556b85ea7c8b185919373ad7f1b62e6de31724321440555a047d980960c6cc3",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-default-escaped.js",
+      "sha256": "2dc3c7db55bb3436ceab18d67531a185e7a3daf8009a796a6fa775a825d79436",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-delete-escaped.js",
+      "sha256": "3e06c49898c42d6d04b98afec0e599a9e97b1cf66f157dec45ce352d00a4f013",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-do-escaped.js",
+      "sha256": "d228a2554cf2ab329ae9e8c671c1aa63f84f7c4c0f75699d40d4dce9c2b7e2e2",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-else-escaped.js",
+      "sha256": "7038c11cd4b84d0431f937865f22ad626a1f8b7a999eb101108b6ad19e4b49a0",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-enum-escaped.js",
+      "sha256": "40aace83517742d61ba64a98b2ec926ca7adf73cb88212059300ab4923487e3c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-export-escaped.js",
+      "sha256": "eee08a3b8cf2c49bf7430a56eb3bfd09f94d7dd6c6ca71e94544cc1769a1efd7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-extends-escaped-ext.js",
+      "sha256": "075bd88bc2816d4e8f10a303f7998343edc276de9f1c2d86418db18f0a7d86b1",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-extends-escaped.js",
+      "sha256": "89922faafe254485241bb1259bc65bd0b48e9aead4558e0ea22ac5a1508818af",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-finally-escaped.js",
+      "sha256": "938aad2137824c272a71e94df278b405c1b4eafc40ee09492e70e1f9dbe37cc9",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-for-escaped.js",
+      "sha256": "fc3a68a0a4a1a5ab88fee5c7361e7b6dc1893555895e07b8271716039171a191",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-function-escaped.js",
+      "sha256": "86f2bc2179dc402de5c02c25f8c962fccfa11771c3ae25e92cc690b2dfc03df7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-if-escaped.js",
+      "sha256": "32bf5a5cce552b472798e43fdecd1f7267eb916d334b38e189d5463c99f87ae7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-import-escaped.js",
+      "sha256": "665eeca1db384c2e17ea1905a23ab17f626c1ed1f78650349bb1a1ac62a3c773",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-in-escaped.js",
+      "sha256": "3aeeb1040d04de1bace68765dc73da599eb5f16e9a4021f204ed3f670f3b1718",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-instanceof-escaped.js",
+      "sha256": "29b9e8645f48c59dd3c58c70968a68c988ae680bf5ed6e2a81ddaebc3473c2d4",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-let-escaped.js",
+      "sha256": "cfce284383e381e5f8b4aea01029db1b79f8a8faeca6e8d62a363e6f737faece",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-new-escaped.js",
+      "sha256": "b2f64d3b13dc49461da0e3af7e69522921f0e1917494b5d337b15196aa92a521",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-return-escaped.js",
+      "sha256": "0b6a74bfe26996a676dec4287f76832331c4a153368e61ef798661192b7877e2",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-super-escaped.js",
+      "sha256": "c3587c0b9ab108aa3fd9f0a62a3f141d4f8ff66207ed80aec09fc7deeb5361be",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-switch-escaped.js",
+      "sha256": "3096fe3a558ea66ba3f1f7d04c0de179c15640ac24c68fa4e2aa3568c9bd6705",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-this-escaped.js",
+      "sha256": "3612677f018eb5d1abd76a6e23575c500f2fefff0e69838fab187a814bc51270",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-throw-escaped.js",
+      "sha256": "a3f781e25322558d561eefea62d5e37091e0e2e5d33b6060d7a66b212e6e4e7d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-try-escaped.js",
+      "sha256": "ff786e1ba27e315c578e50f04440e6433fe8db25aab5c84f5aaeb0aa1e7e7804",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-typeof-escaped.js",
+      "sha256": "48756f662cfcd67c04e78ada12464a9b9ee405814a641cdc17852f856fa0db7e",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-var-escaped.js",
+      "sha256": "08c5f6fd80f7ee3f46a541542fbd818572e3e6c95e895da960255fb45ee250d7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-void-escaped.js",
+      "sha256": "4541a298369a17c5c29d3a311d37eddb511db622938db53041f4398becfa3aa0",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-while-escaped.js",
+      "sha256": "264543b92b301eed46b866a27946cc193acf30738a6fce5d67cc56184aa5c744",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/assignment/member-expr-ident-name-with-escaped.js",
+      "sha256": "ee4001ed234cba2d3454eed94dbe17e90d8ee9cbd0efc149b757282806cbb6f1",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-break-escaped.js",
+      "sha256": "dc604ebf1412bc841508b15ffa98e2b90293badfaf2c12aa3e8309c5ab0f206b",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-case-escaped.js",
+      "sha256": "78505694b96a6ce9966f27137ca99d6f7ea8da4bb4997cbf9a1c202327c3358b",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-catch-escaped.js",
+      "sha256": "4c6d571a7a3416a3334d3c6080a2c9551c61b325b50e05a9f24cf1545eb46a85",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-class-escaped.js",
+      "sha256": "9797cd6fefdf82b2b705d253f89c4a62373adf8b52b21a89b3a7a35fabe838ea",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-const-escaped.js",
+      "sha256": "23d324fe2f5f9c75a3be955250bd75c9feaf5cdbeca862bbe0efdf56b1c55eaa",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-continue-escaped.js",
+      "sha256": "e4215aff9d26ce299a611970e337058c6823d9eed877271411f1be74682b2cc1",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-debugger-escaped.js",
+      "sha256": "454e884b16a768e509e4c450d5887aeeb7cf86599a6a7952da455512c927c9a6",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-default-escaped-ext.js",
+      "sha256": "370f2f9b04da3127d745fca62705452502a8ac459fd307f0a502938bc99d6aee",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-default-escaped.js",
+      "sha256": "a8b277179161c5a0f8616be81e61a6bf07a8a3a9319c5f15186df0b55d8a62f4",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-delete-escaped.js",
+      "sha256": "7209e7a502f22ed1e0208894ac09d3e9a6b24b7a096bd236e13ffa95ae6ed22e",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-do-escaped.js",
+      "sha256": "010b1b449a63b4f37edb6ac532ea813fa5e0cbaf5570b0b5bc9dba965297324c",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-else-escaped.js",
+      "sha256": "aa487a3d396f373ecf0fcc004f1b77d4a966002ab265d69097fb39919567db5d",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-enum-escaped.js",
+      "sha256": "fc0a13a39a5b83266dab263a8cc4f7dd63fdea9a8ef1eed744c845e8bb555940",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-export-escaped.js",
+      "sha256": "b24b2afd38af4c1e6949813bfb76461fbdbaa6f42948f6fdd3ade8a637aea9e8",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-extends-escaped-ext.js",
+      "sha256": "0884091ba368bc5c21a44ffc6b9c804596b3725998ad32790c7e6eb1b05e4931",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-extends-escaped.js",
+      "sha256": "fe19089d17465c876b0cae988d0f210f9874afa3d5b3071c5d055752960f52e6",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-finally-escaped.js",
+      "sha256": "4e1f7431745c206a3aa94b0d4d34603098e4d538c5ff49e7d3af0f7409e52213",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-for-escaped.js",
+      "sha256": "cbaabb548f8d99f08777b1545a72bc5b547266c15032e2416a4fd6c56bc80aba",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-function-escaped.js",
+      "sha256": "38c296676e5c8860d983ad8b72d44b0a7fb27923148b71e3a420375759695377",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-if-escaped.js",
+      "sha256": "eb2ef6eec48000cc37e2b005e26ba6704edc97e874d0b2fc51ba1a82746d4f27",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-import-escaped.js",
+      "sha256": "6ceefbcdfa153d1f788c4475c132850f2f10b17ea4fecbf882db37b098fe06e3",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-in-escaped.js",
+      "sha256": "64a92ea643904f66d07e0444cceb8e1dde09d6a157324bf5f084abeb0c3904cb",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-instanceof-escaped.js",
+      "sha256": "569d43c69d5f4c2d95602223207ae2099d7cedc2cdac95ffc40a05ba081b797e",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-let-escaped.js",
+      "sha256": "8a589bdcdb6560651d156ce0e538c355671d4de6cff0856fbd2ddd5e61b70030",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-new-escaped.js",
+      "sha256": "a41095f6b81f5c4945fbb49811c33d3fc9bf0c972704bddf1a112c174f091f5c",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-return-escaped.js",
+      "sha256": "156bed3f4483f2e4438f20a23a82b6f6aed064f26a719716ffe52765a3c5e621",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-super-escaped.js",
+      "sha256": "bcd7637401882a6cd6092da3b82ebcf17df3839919b602c8c7b1217ebcf0092a",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-switch-escaped.js",
+      "sha256": "e0a441294c9d85c0e5673c9176ab60cec3e7c5140b146637ae6eb8e8376b32a4",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-this-escaped.js",
+      "sha256": "525e44c5fe3b3a19b249bc920675742938b080c6412f6f5a4418929ad42a357f",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-throw-escaped.js",
+      "sha256": "21d011693bfe157c85f744762e6a1f48c46cb63c1ec91b4324039357704adb67",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-try-escaped.js",
+      "sha256": "48841891014b0db6b0b020e54f09ad05933354c5cc24e67422ae91ee5ceeaa95",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-typeof-escaped.js",
+      "sha256": "9f93c1eacc72a4ad245060fe6fe340d88dfe0b57615c374d8b356bbf2257f139",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-var-escaped.js",
+      "sha256": "104e0c231823ed56e677412de0679c1eb543ddd3599e2129b182b910f77fca2f",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-void-escaped.js",
+      "sha256": "65b9ef9da8b050af541ff1b7a87a5b86b2d1c1ab899f0de34d36f681399f5199",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-while-escaped.js",
+      "sha256": "d90ee24a36a6eae31fe281b389b4f6c3ff6fe7fd6f7a7eae57a9ff37340430d3",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/class/ident-name-method-def-with-escaped.js",
+      "sha256": "174caea8aeb3bc9ef40c61df11a1f0716f479588c46c3be9aa3947dd0d7c753b",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js",
+      "sha256": "9e140925a6546ca361449a1f9a035814bc388dc894c6fb63b77fef2f1a55bf15",
+      "mode": "script",
+      "features": [
+        "dynamic-import",
+        "async-iteration"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 23: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/expressions/exponentiation/bigint-negative-exponent-throws.js",
+      "sha256": "3967f99c6c667cf61532416e38e1ec9d9a31bce613e01de00621ac7ac2fbbce2",
+      "mode": "script",
+      "features": [
+        "BigInt",
+        "exponentiation"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 27: Unexpected token **"
+    },
+    {
+      "path": "test/language/expressions/import.meta/import-meta-is-an-ordinary-object.js",
+      "sha256": "5a8e3d8ea43bc5bb8afd0f83a840342970bf9f8c946dd880eec29bace81bef91",
+      "mode": "module",
+      "features": [
+        "import.meta"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-break-escaped.js",
+      "sha256": "0d035a256be54367417e8563b4fd601c890b33f328027bb964b7aaa0c5dfc161",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-case-escaped.js",
+      "sha256": "a6fa7b2ab406b602da20478702cbc5c2c6e38f6b3e6f4fb76b8d04f43ff89bb7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-catch-escaped.js",
+      "sha256": "5d801aaaf95484eba1af1f9e9307308add47001fe55d3a811689d482ba850d97",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-class-escaped.js",
+      "sha256": "a73d69b5646cce30af45aeb5f864de87ed1e7177975bfb9a5859a1fd52d46d8b",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-const-escaped.js",
+      "sha256": "6667ae479958b6da1c42701af773f13c9bdff748cba8bf24a1c1b928e6f0968f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-continue-escaped.js",
+      "sha256": "93e12b17db1b9860cd5f01e745a13231142f63d6216c70cabcba8238c2e10689",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-debugger-escaped.js",
+      "sha256": "a6cf3ff105605ba59e6be6948eeb3dd22a2bb5112d30e91882501584412e2f25",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-default-escaped-ext.js",
+      "sha256": "df0c1bb98658a2d453b5a7979ac55b43503367cd6aadb0bcb87cd24b62001f67",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-default-escaped.js",
+      "sha256": "81169e6515b01e729f44e759d747584a8deb26a5c3deea5fe40c4dd806c392ef",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-delete-escaped.js",
+      "sha256": "6785709592535e348189fedfac36b67384084b8342ac67a84ba80483986f3cbe",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-do-escaped.js",
+      "sha256": "0abdec3377347da8d7ef2f99315944db0566b6fe7802ffecba2d1a72275f3450",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-else-escaped.js",
+      "sha256": "67de247bdfb872ba811d4acafac0a0ebe7fde4a12039246f87c05effa8006a2c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-enum-escaped.js",
+      "sha256": "3825b9190240a191566ec007d854d747c1f2e2ef90b2ec20406355582a3bc316",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-export-escaped.js",
+      "sha256": "e12876dc675002771d90c3d35e8f7039a09890e38be60a0a79081ab58f4a59d6",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-extends-escaped-ext.js",
+      "sha256": "443b6037bfab3fed61b8988342f74cc8fce8b15c484671acafd7b07ebcfd1b09",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-extends-escaped.js",
+      "sha256": "312bdea8128afa6243b0af66db60e10301d6bf15e690cfcffdce29deb1c73a17",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-finally-escaped.js",
+      "sha256": "fac1c7c27ce1cb64c01714ac0564b6e39aa9380e9ac3f0acc8b91abdfce496b6",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-for-escaped.js",
+      "sha256": "204d7323091850b1aaa5d87f88d9f9ea2f2d58da66db925106da02426f93c180",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-function-escaped.js",
+      "sha256": "9ee3b93bff40403e1560ad371d4d6896acdc199285b46d9409f5eb38c83e2e13",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-if-escaped.js",
+      "sha256": "c452ec45d7ca8950cd25334f318628f4da1ec02bd737bfb15235a1a5102d87b6",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-import-escaped.js",
+      "sha256": "9ad938a6f25c1275d3bffdf6e9496ace5b6420552d9a7f79d1dff77c8d58e3e5",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-in-escaped.js",
+      "sha256": "8542ec595cbe69223fca5846201b4013e19a5ba2bda59b14048dc02d59458b2d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-instanceof-escaped.js",
+      "sha256": "72780456f7cc96681f0da9e0cd240116abb1e80284ad3437368b7413f509508e",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-let-escaped.js",
+      "sha256": "a80e22e3537a86f602fb93b0ca0741fc4fab5f612712c29e977edf405be0538f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-new-escaped.js",
+      "sha256": "d9b25c12bdc38b771a3abdd15c551529c8f6ee63e600621a239246374c7c56f2",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-return-escaped.js",
+      "sha256": "2f6f74130141533634b1c6597e7d1b981116d969ff160be92bf6da69e8ddb90c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-super-escaped.js",
+      "sha256": "0a5ee44795f4d6718de3f8b69e75f0e628425e8e629ec3474043102be8a3f7dc",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-switch-escaped.js",
+      "sha256": "130c3899e0c3544cae883307ba9bb2ecd3a200959abf1817e16075ba6cce5711",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-this-escaped.js",
+      "sha256": "3765e5649861bfce2513d2b1098b227d84346e3634e11c89a783e82109fb331d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-throw-escaped.js",
+      "sha256": "a6da9289fd159114d9b6136b50296167467a3cbdab5b56466ec7e38e045158a9",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-try-escaped.js",
+      "sha256": "5a36fd7547dfe85ceea711014dfe9b83ef536a71074b939ee709532af293dadf",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-typeof-escaped.js",
+      "sha256": "125c5dbe8b2be2c503f21dc77cbe1c096c8b6fdf9d711e4e64c1aa68b0ad1f3c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-var-escaped.js",
+      "sha256": "56dd192002bd1686df738ac73561aca281de02f9019147f554fc0459feff032c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-void-escaped.js",
+      "sha256": "0eeafbd99eb36ed672eff8f0c061f9ee6fcaaab37cf57afbfb5985d6388e0314",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-while-escaped.js",
+      "sha256": "8abe7926ee572fe3914e77294c8776de9209c9a81f24d7657b0815d19b15c497",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/covered-ident-name-prop-name-literal-with-escaped.js",
+      "sha256": "0923fdb24ee26ffc334365e5ae469401de5752c5994a4fb955625efceab7ff32",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 37: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-break-escaped.js",
+      "sha256": "72b955762762776c4d7db78238baca7132c50c439292ed8d4b9bef6180d29d7c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-case-escaped.js",
+      "sha256": "6b87778b116099fa7cee3291e744c06c9ac66dee56c535ba4dddf447114dca1f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-catch-escaped.js",
+      "sha256": "9c473f7c60d516851fe25914edf12e5123b677b272e97fa12fd5235a060d923a",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-class-escaped.js",
+      "sha256": "dbcdef5037374ac65eca102c5b781aeb10d434a6381a2bc57772f13583d2c3b9",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-const-escaped.js",
+      "sha256": "88c793fb051d211cab67182644539750aaac5f915eb31da18b9529a06af40832",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-continue-escaped.js",
+      "sha256": "dd74431c403ffb2d844b35a5090d303f9e91ea0ee1a4deb15a2eb882e1c4277f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-debugger-escaped.js",
+      "sha256": "6cf3a90c0d9ef5af4d3ce7d562ecc6bd30699d20c135bad2fe60873dc87850b7",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-default-escaped-ext.js",
+      "sha256": "363bfdff229a4979d541106e088a5487336f593d941c0df1acabb32b2b338e42",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-default-escaped.js",
+      "sha256": "9132afc677da0cc956b1c3f5d87ab0ad47af1638ffc897b29424fa20acfcbf00",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-delete-escaped.js",
+      "sha256": "d794834cdf1a98240db018c6bfb44d58b7abb939f40780410453cf8437286c5d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-do-escaped.js",
+      "sha256": "095b134a861133ac23979985f50659076cf5dd1bbda93cac095bdef7715c0523",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-else-escaped.js",
+      "sha256": "94631f39b1c3bd0cc8211073f3bc694fc945ab9aada8f3b62058172a3a8edb64",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-enum-escaped.js",
+      "sha256": "5fe7d762ce723600da9ade57074fd8da4c4be5c47a2c869ca8e4ae33e34e6abc",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-export-escaped.js",
+      "sha256": "d779197fda3352b497565b6bf642b350c9dd8d00d82bc07aabacbc51dca25711",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-extends-escaped-ext.js",
+      "sha256": "7f77b56dfa3461da95427e1e62306cbfe37bf94500e875e0d4dde33bc9616fa8",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-extends-escaped.js",
+      "sha256": "5b93b19abdf2c7e6909fee1cdea248e92cb88c5b514a1f4b5cf36527cf9d687b",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-finally-escaped.js",
+      "sha256": "7a56f9d4a7a59a7b81d391448fdf1227407c5fb7fc937d91bf82d2e7ba93d1d8",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-for-escaped.js",
+      "sha256": "0bd31226e44f86393a1c7851af0f5714588701d5eeb06acc810608f5610f03ca",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-function-escaped.js",
+      "sha256": "83a2d05ea6628fac4ba5b57b3815afc402ae78419f7f132c690afdc05e7da7ea",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-if-escaped.js",
+      "sha256": "bfc801d95dc5395e86354cdde672d6236357a153ff3b88aac102abbd76274703",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-import-escaped.js",
+      "sha256": "9e63f26575279930f0c23b29f8dafc86bc7be8888bc93c4c477a29d2e60d786d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-in-escaped.js",
+      "sha256": "92f13f9d767e04f46a2b48c140a00c73a8bc7050a3984ee375d6ae43fcef6aa0",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-instanceof-escaped.js",
+      "sha256": "585e0a9c2e9138b07f24be0128eb7e091e718eb73caf4c030edd635d68c97f57",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-let-escaped.js",
+      "sha256": "412b15e280ced9c79538152f06d09a3cb374dc700518dfc62b030131850eee44",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-new-escaped.js",
+      "sha256": "42da9ad7d89aef5d9c7757674c1601de208b8aac8babdbfd75b3c0574ec6b2f3",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-return-escaped.js",
+      "sha256": "a6f4d556736ace52100768e3ebc20136ade30c3e35a9b4b1e90aab5115057d69",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-super-escaped.js",
+      "sha256": "6e68f1408286ecc11e746f681d69ade336836226775af2a474b9cf7045b78e0f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-switch-escaped.js",
+      "sha256": "ee3127fa25a9064c35de9ff34c03803f3663563bafbd0f7a493934231583b59c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-this-escaped.js",
+      "sha256": "4b69616c3d5fbc21bb6ed48aeaeb0789038bd5fa2fbce5ee8aa5a62e67473ba3",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-throw-escaped.js",
+      "sha256": "9496dc4a4d4278598447ba2f3eddfc96bf75ed0826e8d2d957720054e0ff8302",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-try-escaped.js",
+      "sha256": "09bfbf2289fe910a1f8654167573f6190df06063e331b46162e17b579b312e23",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-typeof-escaped.js",
+      "sha256": "ec95d9ddb37d6c686c9f760bb4cb16a501a466e8e8ca63575fa4d8bf00a079e4",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-var-escaped.js",
+      "sha256": "3f8e643b24254e82ea00badf6943c033693232d8c9bc4bcc4d3768ce2f4533c0",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-void-escaped.js",
+      "sha256": "374931b0d927c2db095224dbe64186a026d96182a6dfa017fb49498e42f216c1",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-while-escaped.js",
+      "sha256": "f7e550a0d087301becaa4e0586e657ab55ae160fd5bb363aba18950121b5e8c4",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-method-def-with-escaped.js",
+      "sha256": "0410423280706b5e861f620c48e228314ce4e8fd26e6bc57be1d788e0e6a2893",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 39: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-break-escaped.js",
+      "sha256": "97e0212bc511490001a9173b03d18f2896019c9457380032291ca66b7c181760",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-case-escaped.js",
+      "sha256": "8851957fd03f9784960ffcba2bf2d187b8eba817ddce345853d5cf15ed756af5",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-catch-escaped.js",
+      "sha256": "9377c37de1e12d2d830d928926ee5f02f759b6d0649ca551b54a0dfc3e9a661a",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-class-escaped.js",
+      "sha256": "7570807f5c75ad9b29a67916228e95aa13b884b7a950e48d05d5284ee01f13e5",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-const-escaped.js",
+      "sha256": "c21e00257eeeac5de3fcd70d669c31f6781f7555756bd190f3b9e98224291901",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-continue-escaped.js",
+      "sha256": "aeaf9b6cb0a4b610a8f5a9c2c45d3abd697a94868771cf715573ba8bc73a550b",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-debugger-escaped.js",
+      "sha256": "62b19afbf1a081032b15564c5c4468dbc59935b2762f89ed291f48877d630206",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-default-escaped-ext.js",
+      "sha256": "21a2d5b10871a4e47bc37567332701e6b8650b706391aed0001f4ffe4c08ba33",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-default-escaped.js",
+      "sha256": "98adcca45d9dfc7c29558801a91da007296ffd091f8d621cf18183f8e1354817",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-delete-escaped.js",
+      "sha256": "a5bf20c0b6f94e909d7ca34da4f6610ca3781304c561ed91e569ee104c98fc17",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-do-escaped.js",
+      "sha256": "71a453d5d5ab93468103cfa61b6a309ac5ef6ad1eb474d000e64b85d90e44509",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-else-escaped.js",
+      "sha256": "936dab19f999cd3e29ad3eb03b9f412ce6b077dbd0bd5eb7c44d66b2e1b68d4b",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-enum-escaped.js",
+      "sha256": "91366be07e461637bf4fc4107f065d05f6235b59c979a4ee4c4e9337bccd2245",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-export-escaped.js",
+      "sha256": "677d09cf1a35064a66d3bd51b87baaa2346e7b07544a74f25c30f83fd94336fc",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-extends-escaped-ext.js",
+      "sha256": "d2a09e41217afbd6c3a681a9d93b4869ba73e6d16dc7b67f0f7dd2290c6dc791",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-extends-escaped.js",
+      "sha256": "397bb6f7b059bc951cd05e016ab5b699c9247cd7c7fe32585b2727c0c992159b",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-finally-escaped.js",
+      "sha256": "e790679461804bb22579a93016be8aa6836f52522ea7c6885ac15068c29ddcf6",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-for-escaped.js",
+      "sha256": "fcfed730aa709b628a244c3090c7d5713a519a70a8fe982064aeac209cdd3765",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-function-escaped.js",
+      "sha256": "aa014169a3292ab39a5c281e385fa2e6615706dd00f772151b81eb1492657a50",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-if-escaped.js",
+      "sha256": "c3c441808624debbe3764a6b2e1826173e5078d603c838d060490691c7feb519",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-import-escaped.js",
+      "sha256": "a0d95e8d33bbb7e4e60b9ff619a855678efb57cfe300faa852f35b4d21aded0c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-in-escaped.js",
+      "sha256": "23fb2547ffd54b66d0bbaa51b165c9f8135417d082fe03a2a109df277f412bc5",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-instanceof-escaped.js",
+      "sha256": "898738f012c2c40a7e0751bf4a682a3b874f37d0e4996a688068208ff9a2d70d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-let-escaped.js",
+      "sha256": "058c85fdf9f5a2be9073b9073b6971bb14568efe2d0de86c3491c0945ee9c0fc",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-new-escaped.js",
+      "sha256": "a43ca72e96f3538a0b7f8e8a0671b80afd1245f6ec2256e80b3ea2604eba27cc",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-return-escaped.js",
+      "sha256": "17586dbace705ddbc00212124dbde4fae20389b06f96d347f555be3740d695f8",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-super-escaped.js",
+      "sha256": "321c4685c451b2bf0a30697d5572d77411e847eba22b5a584b09c062569c28e0",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-switch-escaped.js",
+      "sha256": "374dbab190f4e299f0ebd0d18b6e0c2f812e0a9b23de2755f3d2f9a96b26bd30",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-this-escaped.js",
+      "sha256": "a5e2aeb78c0064bb6eb6c295e8d2d92d64483f0b5b82779e3715d6a18f808b35",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-throw-escaped.js",
+      "sha256": "4aee33082d98de5cf853927824782bed25c9b015e685776350bc7b79a195d35e",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-try-escaped.js",
+      "sha256": "2a416754f5eee7f550c8eff16072c9c028abe3fb26a87a90ee83f1558a50a005",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-typeof-escaped.js",
+      "sha256": "fde7f65df96ef7f72dfa390e201bbf5e110b5e3a992a0a3924ce61555e44963e",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-var-escaped.js",
+      "sha256": "4f4aea71dcfe2e3644f45c0bcab30b9503231e21deaa5e4e0f87f0f5cb32f603",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-void-escaped.js",
+      "sha256": "c52dcaa8f96f9d53efa5b5846bde95a070b22749f948f85e5baa53786e2fc94d",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-while-escaped.js",
+      "sha256": "af233d9743bb213e3f765d7e093b32ba3bbd579fd2b33101be882f5da92bede9",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/ident-name-prop-name-literal-with-escaped.js",
+      "sha256": "fd8878bfe252a28a54080eabfdcd82af78e8591e6114da161834f8af52b6cf67",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 38: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/expressions/object/let-non-strict-access.js",
+      "sha256": "8048604dd33950ae9156fc5a12149de7d9f6ec0755df28a8cd21527f060f78a8",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 10: Unexpected token }"
+    },
+    {
+      "path": "test/language/expressions/object/let-non-strict-syntax.js",
+      "sha256": "bd4f1e1ea5ff194da98a3b96764b97221374cf2adc8f28fe8cf1b0245e66377f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 10: Unexpected token }"
+    },
+    {
+      "path": "test/language/expressions/object/method-definition/async-super-call-param.js",
+      "sha256": "fb17bc68a8ef23627d2d76a8bef832260505c58d31e59cdc6a4d9eec84fd8319",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 19: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/expressions/object/method-definition/generator-super-prop-param.js",
+      "sha256": "d1f2016bb1e351174963df483a25ded2b7279245d087855dc286ed18d7109cb5",
+      "mode": "script",
+      "features": [
+        "default-parameters",
+        "generators",
+        "super"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 14: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/expressions/object/method-definition/name-super-prop-param.js",
+      "sha256": "490c6491daa1e66d66fffe5b0a6da45f88af025849ab75198f890e77d42383e1",
+      "mode": "script",
+      "features": [
+        "super"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 12: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/expressions/object/yield-non-strict-access.js",
+      "sha256": "b3cd9a45bf610907cb8f1c8c2cd27882bc7dc3ac75e7084baf8f21ecfe335175",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 10: Unexpected token }"
+    },
+    {
+      "path": "test/language/expressions/object/yield-non-strict-syntax.js",
+      "sha256": "e61e69829fd093d715141cc6b5da1d6a72794489adbd2b5101e32e4e42ed1ea1",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 10: Unexpected token }"
+    },
+    {
+      "path": "test/language/expressions/optional-chaining/member-expression.js",
+      "sha256": "01d84d40740bc737edca904689ea6b48ce7b6b8c292cb01b3f96d4d817b9f70f",
+      "mode": "script",
+      "features": [
+        "optional-chaining"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 104: Unexpected token ?."
+    },
+    {
+      "path": "test/language/expressions/yield/rhs-template-middle.js",
+      "sha256": "1c16d014aa383a4ede837c065ba60b65aa6d39723ca69f9f6d03fc5130bf509d",
+      "mode": "script",
+      "features": [
+        "generators"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Template literal must start with a template head"
+    },
+    {
+      "path": "test/language/statements/class/definition/methods-async-super-call-param.js",
+      "sha256": "1d29043c378086894003edd2be129ac3e4f85af5732576353ca6589fd0e45eaa",
+      "mode": "script",
+      "features": [
+        "async-functions"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 20: Unexpected reserved word"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-break-escaped.js",
+      "sha256": "2649d3f77648d022b13fe789ffb3ae44b30a3d7d8c8bc633fc96f4d4b7a6aed8",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-case-escaped.js",
+      "sha256": "db70343be8547ee057958636d270b6a93070483d119cdd536c504e1591d249f2",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-catch-escaped.js",
+      "sha256": "164d448d3cdb819449924c16e6a88bfad9b53f7f724b3e58eded52dbbc47eb67",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-class-escaped.js",
+      "sha256": "49ad57bb53a483a2ecd7b9fc83e365af4f940a7feb944556b08d41ebd7493a46",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-const-escaped.js",
+      "sha256": "f4ca871c1ecbc99d99ef1135b700a8b86dfff0ea108bf53ab2956f90a35bfea1",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-continue-escaped.js",
+      "sha256": "d3e595358503ebcfade7183f55a3ce8a2101bea9ae87117b9804ca7cc55d5405",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-debugger-escaped.js",
+      "sha256": "1e3a6240bf6b31dde4ee269a1294bdb89e21d8621244926dc9894df055f26b50",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-default-escaped-ext.js",
+      "sha256": "ff6b00cfe5a8c1eb193aca62f2b75e0c925482494ba99899f6f16b8dfb1641e4",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-default-escaped.js",
+      "sha256": "53af161cdf68d34b1fd7cbe0846d7df257e1e2cbecf15cbc85634e3564d74121",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-delete-escaped.js",
+      "sha256": "47e8fcbc7c7e5eb2d03c6f34761a825f338e1e9f49eb70cb9553999dc6da574a",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-do-escaped.js",
+      "sha256": "41568c6e68741dea2ebbfbe2f09f9dea41097682388bb399b575337f6cbecfb7",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-else-escaped.js",
+      "sha256": "d8259ffa9cb36729da5d26158c1c407dcb22ea353460159c4ab24afd16433310",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-enum-escaped.js",
+      "sha256": "b313720a7b1a0d8276a8df6dfb22d8b25b717138ed441a6ae27b45cefe061135",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-export-escaped.js",
+      "sha256": "fad2a8227c582d8563cf0b353330baac3f6287aee7119df9b9c810b3fe79a72e",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-extends-escaped-ext.js",
+      "sha256": "14dac02fce6e0c31e126c13b1f33ebc8671dc5d0690cb9ba186707d18e9ae984",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-extends-escaped.js",
+      "sha256": "102c2cfe528889ed56f7a68d61e88b0d7dd3d824d4340ce489df12fdf7f14925",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-finally-escaped.js",
+      "sha256": "aecafc1ca018cbeb57a492891044c561b84452bfd62d93db87fd91ea0f997989",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-for-escaped.js",
+      "sha256": "3b8c2b402940be1cacfe4eca24d7c9f2c2dd628b2cc796613ac33ac12953313b",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-function-escaped.js",
+      "sha256": "c6435eebdc59670e3a3a0704f012aea0a4d254213024af09ffd6c3535f1ee763",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-if-escaped.js",
+      "sha256": "2f8fcf9f68cf58016346252961455dd921cf498a16d51159c23de9b819501991",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-import-escaped.js",
+      "sha256": "9f5566d36d80901acb5170844fdcf429409bb8326e0ea64d9e5348b70fb8668d",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-in-escaped.js",
+      "sha256": "32e14ec6f7568af875f50bc318d14e560c960029e33df623ef677604894711ef",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-instanceof-escaped.js",
+      "sha256": "197b4db40a45045265d9f5bf32b744eebf52daf51c65dcd781f0069e626ef9f0",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-let-escaped.js",
+      "sha256": "9410f2d91d41b3e551a9248c195a31f965f56b7d47814555156178b462ac4225",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-new-escaped.js",
+      "sha256": "04c1568252a1a088d7ba868d2a3880073a0706b2b4ef6a2e871aa2a2ebcf876e",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-return-escaped.js",
+      "sha256": "78ea917daf8d46fdd8c37b469f5eb01d0ee5273c692e0585f18074fb49edb72e",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-super-escaped.js",
+      "sha256": "44afeddecdf3bc9a76f429cb5f7d86c7a16533c4c10d34e271e9d4fddcc7faf5",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-switch-escaped.js",
+      "sha256": "f0d19bcf782603031591882108c4eb5eda239b88f6b08e25447398127b703b44",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-this-escaped.js",
+      "sha256": "921c31c87e0b3e466d60dd2908ea2a15a956a576e265de1967b7576bc33d68bf",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-throw-escaped.js",
+      "sha256": "249bea40cec70f3f9c8e252193e01119b53ef142e2d49329300b502ba64ac3be",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-try-escaped.js",
+      "sha256": "548bf64465146813556fb44081f3be03f21d46847d412baf8fb2ae92672a2baa",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-typeof-escaped.js",
+      "sha256": "7ea63861b6322cb8448eb886e0fbc20e589d1e3f99aee083efe8c56226af3457",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-var-escaped.js",
+      "sha256": "7dd28130df668d9026973276a199f0fe175220f7a8262560c752f094b64b5732",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-void-escaped.js",
+      "sha256": "80af9aa8bbd7f2bd1a06c0be0de5c4e7acdc171139f3e6e00916591ba8efbb53",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-while-escaped.js",
+      "sha256": "56d25c7f7bcff10109aede8722dccf97b4dd45f8b8b1aae1f2791cda050269bf",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/ident-name-method-def-with-escaped.js",
+      "sha256": "0ae1be98ce827b88e28a652f2552c036306a7f411060a664a8e3f998c5a24a85",
+      "mode": "script",
+      "features": [
+        "class"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 41: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/class/static-init-arguments-functions.js",
+      "sha256": "e3f3a1828e61a0dae4853603eee327a76e2441f38db3522c835fd37d624b806f",
+      "mode": "script",
+      "features": [
+        "class-static-block"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 21: Invalid left-hand side in assignment"
+    },
+    {
+      "path": "test/language/statements/class/static-init-arguments-methods.js",
+      "sha256": "be40d08cf79c929e2aec1d5af64ef007dc5ade064062bb14ed2d0cfab2116e73",
+      "mode": "script",
+      "features": [
+        "class-static-block"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 25: Invalid left-hand side in assignment"
+    },
+    {
+      "path": "test/language/statements/for/head-lhs-let.js",
+      "sha256": "8b86eddac198ea57fff2829f34d2ded2a772fb81aa1210794fd4e73f85e8e5cf",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 26: Unexpected token ;"
+    },
+    {
+      "path": "test/language/statements/for-await-of/head-lhs-async.js",
+      "sha256": "304595cbacf23b8902b1dd527c604551fc9cf6cd7273060a9467a2b01020f841",
+      "mode": "script",
+      "features": [
+        "async-iteration"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 18: Unexpected token ["
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/array-elem-nested-obj-yield-expr.js",
+      "sha256": "6dd921bfec9356f1ac60d1cdad6a08b73088622a0069b3c925897c9f83d0d6c8",
+      "mode": "script",
+      "features": [
+        "generators",
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 33: Unexpected token ="
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/array-rest-nested-obj-yield-expr.js",
+      "sha256": "bf0e9c976cc099cb8781550174c9c10cc16a69b32ad720d371b5e0a9a7ee105c",
+      "mode": "script",
+      "features": [
+        "generators",
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 33: Unexpected token ="
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/obj-id-identifier-yield-ident-valid.js",
+      "sha256": "5bbf5bfe136933ac955c42580319a4e8070d51e65725e53f3e982d5bfa0b6115",
+      "mode": "script",
+      "features": [
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 31: Unexpected token }"
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/obj-id-init-let.js",
+      "sha256": "ad9d5abf5be4b6c15aad2f834978bf37109d00ffe24e42626394767387b7cb79",
+      "mode": "script",
+      "features": [
+        "let",
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 32: Unexpected token ="
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/obj-id-init-yield-expr.js",
+      "sha256": "f4370c2ea58d9e62aeb42f1186584fb60f2b6cb6e61f0ad2b6a203bda4ecabcc",
+      "mode": "script",
+      "features": [
+        "generators",
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 33: Unexpected token ="
+    },
+    {
+      "path": "test/language/statements/for-of/dstr/obj-prop-nested-obj-yield-expr.js",
+      "sha256": "8ce231cefc2216b7cbcb8547bdd45ebb1e04891ff628a66ea380580e91404c8f",
+      "mode": "script",
+      "features": [
+        "generators",
+        "destructuring-binding"
+      ],
+      "parseNegative": false,
+      "originalFinding": "Line 33: Unexpected token ="
+    },
+    {
+      "path": "test/language/statements/for-of/head-lhs-async-dot.js",
+      "sha256": "eefef01429ec5f07ff30a9c20d5017e61cd83d477bd56a7a0dfa048274772b91",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 13: Unexpected token ["
+    },
+    {
+      "path": "test/language/statements/for-of/head-lhs-async-escaped.js",
+      "sha256": "5c92345095440db013ab21d65be3bea9b6e2335a6e29f63b772936b4ed7aff41",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 16: Unexpected token ["
+    },
+    {
+      "path": "test/language/statements/function/S13.2.1_A1_T1.js",
+      "sha256": "92538a981853d536d0a90d3db608f7a8f0ff8a0b526a6b354504076d49c3b447",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "maximum recursion depth exceeded"
+    },
+    {
+      "path": "test/language/statements/labeled/value-yield-non-strict-escaped.js",
+      "sha256": "07063e8578f13038d581aa97a6d8e94b48298fa4b289f0bb5782e0b862ab2f04",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 11: Keyword must not contain escaped characters"
+    },
+    {
+      "path": "test/language/statements/labeled/value-yield-non-strict.js",
+      "sha256": "be8ae0d296fd6d1c2f359e238c256bcefc89f05067d187ac7975f914ad16105c",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 12: Unexpected token :"
+    },
+    {
+      "path": "test/language/statements/let/syntax/escaped-let.js",
+      "sha256": "2a474ef629cb8a7910f1ae24e3784c86713fc46d706d888ec79ec5f32727347f",
+      "mode": "script",
+      "features": [],
+      "parseNegative": false,
+      "originalFinding": "Line 22: Keyword must not contain escaped characters"
+    }
+  ]
+}

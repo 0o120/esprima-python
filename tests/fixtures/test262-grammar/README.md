@@ -1,0 +1,5 @@
+This frozen corpus contains 283 positive grammar regressions identified by the complete published-scope Test262 language audit. Sources come from [TC39 Test262 revision 2e0a56762801e275a9fdf96dc49d90ba0cddcf63](https://github.com/tc39/test262/tree/2e0a56762801e275a9fdf96dc49d90ba0cddcf63). Original copyright notices and the upstream BSD license are preserved.
+
+The original audit excluded draft proposals and explicit resource management according to the dated ECMAScript 2026 project contract. Acorn independently accepted every selected source. `manifest.json` records exact source hashes, parsing modes and the original finding. `tools/freeze_grammar_corpus.py` reproduces this selection from the original audit report and pinned checkout.
+
+Run `python -m unittest discover -s tests -p test_grammar_test262.py`. Inventory and SHA-256 checks prevent silent fixture loss. Tests honor the recorded strict/module/script modes and parse source only; fixture assertions and runtime programs are never executed.
