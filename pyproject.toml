@@ -1,17 +1,17 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "esprima-fork"
-version = "4.0.4"
+dynamic = ["version"]
 authors = [
 	{ name="German M. Bravo (Kronuz)", email="german.mb@gmail.com" }
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 description = "ECMAScript parsing infrastructure for multipurpose analysis in Python"
 license = "BSD-2-Clause"
-license_files = "LICENSE.BSD"
+license-files = ["LICENSE.BSD", "LICENSE"]
 readme = "README.md"
 keywords = [
 	"esprima",
@@ -23,21 +23,39 @@ keywords = [
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
 	"Intended Audience :: Developers",
-	"License :: OSI Approved :: BSD License",
 	"Operating System :: OS Independent",
 	"Topic :: Software Development :: Code Generators",
 	"Topic :: Software Development :: Compilers",
 	"Topic :: Software Development :: Libraries :: Python Modules",
 	"Topic :: Text Processing :: General",
 	"Programming Language :: Python",
-	"Programming Language :: Python :: 3.6"
+	"Programming Language :: Python :: 3 :: Only",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3.13",
+	"Programming Language :: Python :: 3.14",
+	"Programming Language :: Python :: 3.15"
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/Kronuz/esprima-python"
+"Homepage" = "https://github.com/0o120/esprima-python"
+"Issues" = "https://github.com/0o120/esprima-python/issues"
+"Upstream" = "https://github.com/Kronuz/esprima-python"
 
-[options]
-packages = "esprima"
+[project.scripts]
+esprima = "esprima.__main__:main"
 
-[options.entry_points]
-console_scripts = "esprima = esprima.__main__:main"
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "hypothesis>=6.120", "build>=1.2", "twine>=6", "ruff>=0.9"]
+
+[tool.hatch.version]
+path = "esprima/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["esprima"]
+
+[tool.pytest.ini_options]
+testpaths = ["test", "tests"]
+
+[tool.ruff]
+target-version = "py311"
