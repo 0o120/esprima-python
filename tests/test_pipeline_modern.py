@@ -65,6 +65,24 @@ class ModernPipelineTests(unittest.TestCase):
                         self.assertEqual(code.count('prefix'), 1)
                     esprima.parseScript(code)
 
+    def test_jsx_cooked_text_entities_and_line_endings_are_transformable(self):
+        tree = esprima.parseScript('<A>&amp;\r\n&#x1f600;</A>;', {'jsx': True})
+        text = tree.body[0].expression.children[0]
+        self.assertEqual(text.value, '&\n\U0001f600')
+        self.assertEqual(text.raw, '&amp;\r\n&#x1f600;')
+        text.value = 'new & text'
+        code = escodegen.generate(tree)
+        reparsed = esprima.parseScript(code, {'jsx': True})
+        self.assertEqual(reparsed.body[0].expression.children[0].value, 'new & text')
+
+    def test_jsx_unknown_and_out_of_range_references_have_safe_literal_fallback(self):
+        for reference in ['&unknown;', '&#x110000;', '&#999999999999999999;']:
+            with self.subTest(reference=reference):
+                tree = esprima.parseScript('<A value="' + reference + '">' + reference + '</A>;', {'jsx': True})
+                element = tree.body[0].expression
+                self.assertEqual(element.openingElement.attributes[0].value.value, reference)
+                self.assertEqual(element.children[0].value, reference)
+
     @unittest.skipUnless(shutil.which('node') and (REFERENCE / 'acorn').exists(), 'pinned AST oracle required')
     def test_modern_native_and_mapping_semantics_match_independent_parser(self):
         jobs = [

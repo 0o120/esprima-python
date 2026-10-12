@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import unittest
 
 import esprima
@@ -99,6 +100,25 @@ class ToolchainIntegrationTests(unittest.TestCase):
             if os.environ.get("TOOLCHAIN_EXPECT_INSTALLED"):
                 self.assertIn("site-packages", str(Path(module.__file__).resolve()), module.__name__)
         self.assertEqual(esutils.code.UNICODE_VERSION, "17.0.0")
+
+    def test_cli_utf8_stdin_preserves_unicode_values(self):
+        source = "const text='\U0001f600\uff0c';"
+        process = subprocess.run([sys.executable, "-m", "esprima"], input=source,
+            capture_output=True, text=True, encoding="utf-8", check=True)
+        result = json.loads(process.stdout)
+        self.assertEqual(result["body"][0]["declarations"][0]["init"]["value"], "\U0001f600\uff0c")
+
+    def test_json_safe_infinity_descriptors_and_cli(self):
+        source = "const positive=1e400; const negative=-1e400;"
+        tree = parse(source)
+        mapping = json.loads(json.dumps(tree.toDict(), allow_nan=False))
+        positive = mapping["body"][0]["declarations"][0]["init"]
+        self.assertIsNone(positive["value"])
+        self.assertEqual(positive["number"], "Infinity")
+        self.assertEqual(escodegen.generate(tree), escodegen.generate(mapping))
+        process = subprocess.run([sys.executable, "-m", "esprima"], input=source,
+            capture_output=True, text=True, encoding="utf-8", check=True)
+        self.assertEqual(normalized(json.loads(process.stdout)), normalized(mapping))
 
     def test_native_mapping_walk_search_generation_and_reparse(self):
         jobs = []

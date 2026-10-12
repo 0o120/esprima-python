@@ -1393,7 +1393,9 @@ class Parser(object):
 
     def parseBinaryExpression(self, minimum=0):
         start = self.lookahead
-        left = self.inheritCoverGrammar(self.parseExponentiationExpression)
+        # The surrounding conditional-expression cover frame already handles
+        # the incoming state; binary operands cannot become binding patterns.
+        left = self.parseExponentiationExpression()
         while True:
             precedence = self.binaryPrecedence(self.lookahead)
             if precedence <= minimum:
