@@ -33,7 +33,7 @@ from .regexp_validator import validate_regexp, RegExpSyntaxError, RegExpEditionE
 
 from .objects import Object
 from .compat import xrange, unicode, uchr, uord
-from .character import Character, HEX_CONV, OCTAL_CONV, ASCII_IDENTIFIER_START, ASCII_IDENTIFIER_PART
+from .character import Character, HEX_CONV, OCTAL_CONV, ASCII_IDENTIFIER_START, ASCII_IDENTIFIER_PART, WHITE_SPACE, LINE_TERMINATOR
 from .messages import Messages
 from .token import Token
 
@@ -41,6 +41,10 @@ from .token import Token
 # Literal ASCII identifier characters do not include escape introducers.
 _ASCII_IDENTIFIER_PART = ASCII_IDENTIFIER_PART - {'\\'}
 _ASCII_IDENTIFIER_START = ASCII_IDENTIFIER_START - {'\\'}
+_ASCII_IDENTIFIER_RE = re.compile(r'[$A-Za-z_][$A-Za-z_0-9]*')
+_TRIVIA_STARTS = frozenset(WHITE_SPACE | LINE_TERMINATOR | {'/', '<', '-', '#'})
+_ASCII_HORIZONTAL_SPACE = frozenset(' \t\v\f')
+_ASCII_HORIZONTAL_RE = re.compile(r'[ \t\v\f]+')
 # Longest first, indexed by the first character; single-character punctuation
 # never needs to scan the multi-character vocabulary.
 _PUNCTUATOR_PREFIXES = {
@@ -60,6 +64,7 @@ _PUNCTUATOR_PREFIXES = {
     '.': ('...',),
 }
 _SINGLE_PUNCTUATORS = frozenset('(){};,[].:?~<>=!+-*%&|^/')
+_PLAIN_PUNCTUATORS = _SINGLE_PUNCTUATORS - _PUNCTUATOR_PREFIXES.keys()
 
 
 def hexValue(ch):
@@ -147,6 +152,7 @@ class Scanner(object):
         self.lineStart = 0
         self.curlyStack = []
         self._utf16Astral = None
+        self._identifierEscaped = False
         self.hashbang = None
         # Internal indices remain scalar; public clients select diagnostic units.
         self.positionEncoding = 'scalar'
@@ -322,10 +328,15 @@ class Scanner(object):
 
     def scanComments(self):
         comments = []
+        source = self.source
+        if self.index >= self.length or source[self.index] not in _TRIVIA_STARTS:
+            return comments
 
         start = self.index == 0
-        while not self.eof():
-            ch = self.source[self.index]
+        while self.index < self.length:
+            ch = source[self.index]
+            if ch not in _TRIVIA_STARTS:
+                break
 
             if self.index == 0 and self.source[:2] == '#!':
                 self.requireFeature(2023, 'Hashbang comments')
@@ -340,13 +351,15 @@ class Scanner(object):
                     self.hashbang = self.source[entry.slice[0]:entry.slice[1]]
                 comments.extend(entries)
                 start = True
-            elif Character.isWhiteSpace(ch):
+            elif ch in _ASCII_HORIZONTAL_SPACE:
+                end = self.index + 1
+                self.index = _ASCII_HORIZONTAL_RE.match(source, self.index).end() if source[end] in _ASCII_HORIZONTAL_SPACE else end
+            elif ch in WHITE_SPACE:
                 self.index += 1
-            elif Character.isLineTerminator(ch):
+            elif ch in LINE_TERMINATOR:
                 self.index += 1
-                if ch == '\r' and self.source[self.index] == '\n':
+                if ch == '\r' and source[self.index] == '\n':
                     self.index += 1
-
                 self.lineNumber += 1
                 self.lineStart = self.index
                 start = True
@@ -507,28 +520,27 @@ class Scanner(object):
         source = self.source
         if source[start] not in _ASCII_IDENTIFIER_START:
             return self.getComplexIdentifier()
-        index = start + 1
-        length = self.length
-        while index < length:
-            ch = source[index]
-            if ch in _ASCII_IDENTIFIER_PART:
-                index += 1
-            elif ch == '\\' or ch >= '\x80':
-                # Decode and validate the complete identifier with its first-
-                # character rules, preserving escapes, Unicode and surrogates.
-                return self.getComplexIdentifier()
-            else:
-                break
-        self.index = index
-        return source[start:index]
+        end = start + 1
+        if source[end] in _ASCII_IDENTIFIER_PART:
+            match = _ASCII_IDENTIFIER_RE.match(source, start)
+            end = match.end()
+        else:
+            match = None
+        if source[end] == '\\' or source[end] >= '\x80':
+            return self.getComplexIdentifier()
+        self._identifierEscaped = False
+        self.index = end
+        return source[start] if match is None else match.group()
 
     def getComplexIdentifier(self):
+        self._identifierEscaped = False
         result = []
         first = True
         while not self.eof():
             cp = self.codePointAt(self.index)
             ch = chr(cp)
             if ch == '\\':
+                self._identifierEscaped = True
                 self.index += 1
                 if self.source[self.index] != 'u':
                     self.throwUnexpectedToken()
@@ -594,7 +606,7 @@ class Scanner(object):
         return RawToken(
             type=type,
             value=id,
-            escaped='\\' in self.source[start:self.index],
+            escaped=self._identifierEscaped,
             lineNumber=self.lineNumber,
             lineStart=self.lineStart,
             start=start,
@@ -608,22 +620,26 @@ class Scanner(object):
         value = self.source[start]
         if value not in _SINGLE_PUNCTUATORS:
             self.throwUnexpectedToken()
-        for candidate in _PUNCTUATOR_PREFIXES.get(value, ()):
-            if self.source.startswith(candidate, self.index):
-                # The optional-chain punctuator is excluded before a decimal digit.
-                if candidate == '?.' and Character.isDecimalDigit(self.source[self.index + 2]):
-                    continue
-                value = candidate
-                break
-        self.index += len(value)
-        if value in ('...', '=>'):
-            self.requireFeature(2015, 'Modern punctuators')
-        elif value in ('**', '**='):
-            self.requireFeature(2016, 'Exponentiation')
-        elif value in ('?.', '??'):
-            self.requireFeature(2020, 'Optional chaining/nullish coalescing')
-        elif value in ('&&=', '||=', '??='):
-            self.requireFeature(2021, 'Logical assignment')
+        if value in _PLAIN_PUNCTUATORS:
+            self.index = start + 1
+        else:
+            for candidate in _PUNCTUATOR_PREFIXES.get(value, ()):
+                if self.source.startswith(candidate, start):
+                    # Optional chaining excludes a following decimal digit.
+                    if candidate == '?.' and self.source[start + 2] in '0123456789':
+                        continue
+                    value = candidate
+                    break
+            self.index = start + len(value)
+            if len(value) > 1:
+                if value in ('...', '=>'):
+                    self.requireFeature(2015, 'Modern punctuators')
+                elif value in ('**', '**='):
+                    self.requireFeature(2016, 'Exponentiation')
+                elif value in ('?.', '??'):
+                    self.requireFeature(2020, 'Optional chaining/nullish coalescing')
+                elif value in ('&&=', '||=', '??='):
+                    self.requireFeature(2021, 'Logical assignment')
         if value == '{':
             self.curlyStack.append('{')
         elif value == '}' and self.curlyStack:
@@ -1130,11 +1146,11 @@ class Scanner(object):
                 self.throwUnexpectedToken()
             value = self.getComplexIdentifier()
             token = RawToken(type=Token.Identifier, value='#' + value, private=True,
-                             escaped='\\' in self.source[start:self.index],
+                             escaped=self._identifierEscaped,
                              start=start, end=self.index, lineNumber=self.lineNumber, lineStart=self.lineStart)
             return token
 
-        if Character.isIdentifierStart(ch):
+        if ch in ASCII_IDENTIFIER_START or (ch >= '\x80' and Character.isIdentifierStart(ch)):
             return self.scanIdentifier()
 
         # Very common: ( and ) and ;

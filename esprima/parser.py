@@ -82,6 +82,8 @@ class Context(object):
 
 
 class Marker(object):
+    __slots__ = ('index', 'line', 'column')
+
     def __init__(self, index=None, line=None, column=None):
         self.index = index
         self.line = line
@@ -373,11 +375,7 @@ class Parser(object):
         return token
 
     def createNode(self):
-        return Marker(
-            index=self.startMarker.index,
-            line=self.startMarker.line,
-            column=self.startMarker.column,
-        )
+        return Marker(self.startMarker.index, self.startMarker.line, self.startMarker.column)
 
     def startNode(self, token, lastLineStart=0):
         # Raw tokens can finish on a later line than they start (strings and
