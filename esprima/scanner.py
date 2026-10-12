@@ -28,6 +28,12 @@ import re
 from bisect import bisect_left
 
 _ASTRAL_SOURCE = re.compile(r"[\U00010000-\U0010ffff]")
+_LINE_END = re.compile(r"[\r\n\u2028\u2029]")
+_LINE_BREAKS = re.compile(r"\r\n|[\r\n\u2028\u2029]")
+_STRING_STOPS = {
+    "'": re.compile(r"['\\\r\n\u2028\u2029]"),
+    '"': re.compile(r'["\\\r\n\u2028\u2029]'),
+}
 
 from .regexp_validator import validate_regexp, RegExpSyntaxError, RegExpEditionError
 
@@ -212,119 +218,49 @@ class Scanner(object):
     # https://tc39.github.io/ecma262/#sec-comments
 
     def skipSingleLineComment(self, offset):
+        source = self.source
+        match = _LINE_END.search(source, self.index)
+        end = match.start() if match is not None else self.length
         comments = []
-
         if self.trackComment:
             start = self.index - offset
-            loc = SourceLocation(
-                start=Position(
-                    line=self.lineNumber,
-                    column=self.index - self.lineStart - offset
-                ),
-                end=Position()
-            )
-
-        while not self.eof():
-            ch = self.source[self.index]
-            self.index += 1
-            if Character.isLineTerminator(ch):
-                if self.trackComment:
-                    loc.end = Position(
-                        line=self.lineNumber,
-                        column=self.index - self.lineStart - 1
-                    )
-                    entry = Comment(
-                        multiLine=False,
-                        slice=[start + offset, self.index - 1],
-                        range=[start, self.index - 1],
-                        loc=loc
-                    )
-                    comments.append(entry)
-
-                if ch == '\r' and self.source[self.index] == '\n':
-                    self.index += 1
-
-                self.lineNumber += 1
-                self.lineStart = self.index
-                return comments
-
-        if self.trackComment:
-            loc.end = Position(
-                line=self.lineNumber,
-                column=self.index - self.lineStart
-            )
-            entry = Comment(
+            comments.append(Comment(
                 multiLine=False,
-                slice=[start + offset, self.index],
-                range=[start, self.index],
-                loc=loc
-            )
-            comments.append(entry)
-
+                slice=[start + offset, end], range=[start, end],
+                loc=SourceLocation(
+                    start=Position(line=self.lineNumber, column=start-self.lineStart),
+                    end=Position(line=self.lineNumber, column=end-self.lineStart))))
+        self.index = end
+        if match is not None:
+            self.index += 2 if source[end] == '\r' and source[end+1] == '\n' else 1
+            self.lineNumber += 1
+            self.lineStart = self.index
         return comments
 
     def skipMultiLineComment(self):
+        source = self.source
+        start = self.index - 2
+        startLine, startColumn = self.lineNumber, start-self.lineStart
+        end = source.find('*/', self.index)
+        closed = end != -1
+        bodyEnd = end if closed else self.length
+        for terminator in _LINE_BREAKS.finditer(source, self.index, bodyEnd):
+            self.lineNumber += 1
+            self.lineStart = terminator.end()
+        self.index = end + 2 if closed else self.length
         comments = []
-
         if self.trackComment:
-            comments = []
-            start = self.index - 2
-            loc = SourceLocation(
-                start=Position(
-                    line=self.lineNumber,
-                    column=self.index - self.lineStart - 2
-                ),
-                end=Position()
-            )
-
-        while not self.eof():
-            ch = self.source[self.index]
-            if Character.isLineTerminator(ch):
-                if ch == '\r' and self.source[self.index + 1] == '\n':
-                    self.index += 1
-
-                self.lineNumber += 1
-                self.index += 1
-                self.lineStart = self.index
-            elif ch == '*':
-                # Block comment ends with '*/'.
-                if self.source[self.index + 1] == '/':
-                    self.index += 2
-                    if self.trackComment:
-                        loc.end = Position(
-                            line=self.lineNumber,
-                            column=self.index - self.lineStart
-                        )
-                        entry = Comment(
-                            multiLine=True,
-                            slice=[start + 2, self.index - 2],
-                            range=[start, self.index],
-                            loc=loc
-                        )
-                        comments.append(entry)
-
-                    return comments
-
-                self.index += 1
-            else:
-                self.index += 1
-
-        # Ran off the end of the file - the whole thing is a comment
-        if self.trackComment:
-            loc.end = Position(
-                line=self.lineNumber,
-                column=self.index - self.lineStart
-            )
-            entry = Comment(
+            comments.append(Comment(
                 multiLine=True,
-                slice=[start + 2, self.index],
-                range=[start, self.index],
-                loc=loc
-            )
-            comments.append(entry)
-
-        self.tolerateUnexpectedToken()
+                slice=[start+2, bodyEnd], range=[start, self.index],
+                loc=SourceLocation(
+                    start=Position(line=startLine, column=startColumn),
+                    end=Position(line=self.lineNumber, column=self.index-self.lineStart))))
+        if not closed:
+            self.tolerateUnexpectedToken()
         return comments
+
+    # https://tc39.github.io/ecma262/#sec-comments
 
     def scanComments(self):
         comments = []
@@ -846,6 +782,12 @@ class Scanner(object):
         assert quote in ('\'', '"'), 'String literal must starts with a quote'
 
         self.index += 1
+        stop = _STRING_STOPS[quote].search(self.source, self.index)
+        if stop is not None and self.source[stop.start()] == quote:
+            value = self.source[self.index:stop.start()]
+            self.index = stop.end()
+            return RawToken(type=Token.StringLiteral, value=value, octal=False,
+                            lineNumber=self.lineNumber, lineStart=self.lineStart, start=start, end=self.index)
         octal = False
         str = ''
 

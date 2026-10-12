@@ -47,6 +47,33 @@ class ScanningBoundaryTests(unittest.TestCase):
         for source in ('', '    ', '\t\v\f'):
             self.assertEqual(esprima.parseScript(source).body, [])
 
+    def test_comment_end_locations_and_unterminated_recovery(self):
+        for line in ('\n', '\r', '\r\n', '\u2028', '\u2029'):
+            source = '/*\U0001f600' + line + ' end*/ "plain"; // tail'
+            tree = esprima.parseScript(source, comment=True, range=True, loc=True)
+            self.assertEqual([comment.value for comment in tree.comments], ['\U0001f600' + line + ' end', ' tail'])
+            self.assertEqual(tree.comments[0].loc.end.line, 2)
+            self.assertEqual(tree.comments[0].loc.end.column, 6)
+            self.assertEqual(tree.body[0].expression.value, 'plain')
+            self.assertEqual(tree.body[0].expression.loc.start.line, 2)
+            recovered = esprima.parseScript('/* text' + line + ' unfinished', comment=True, tolerant=True, loc=True)
+            self.assertEqual(len(recovered.errors), 1)
+            self.assertEqual(recovered.comments[0].loc.end.line, 2)
+            self.assertEqual(recovered.errors[0]['lineNumber'], 2)
+        for source in ('/**/x;', '/* **/x;', '// tail', '/* / */x;'):
+            esprima.parseScript(source, comment=True, range=True, loc=True)
+
+    def test_plain_and_escaped_string_paths_have_same_values(self):
+        for quote in ("'", '"'):
+            for value in ('', 'plain text', '\u03b1', '\U0001f600', '\ud800', 'nul\x00value'):
+                source = quote + value + quote + ';'
+                tree = esprima.parseScript(source, range=True, loc=True)
+                self.assertEqual(tree.body[0].expression.value, value)
+                self.assertEqual(tree.body[0].expression.range, [0, len(source.encode('utf-16-le', errors='surrogatepass'))//2 - 1])
+        for source in ('"unterminated', "'line\nnext'", '"line\rnext"'):
+            with self.subTest(source=source), self.assertRaises(esprima.Error):
+                esprima.parseScript(source)
+
 
 if __name__ == '__main__':
     unittest.main()
