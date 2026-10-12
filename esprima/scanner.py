@@ -29,9 +29,33 @@ from .regexp_validator import validate_regexp, RegExpSyntaxError, RegExpEditionE
 
 from .objects import Object
 from .compat import xrange, unicode, uchr, uord
-from .character import Character, HEX_CONV, OCTAL_CONV
+from .character import Character, HEX_CONV, OCTAL_CONV, ASCII_IDENTIFIER_START, ASCII_IDENTIFIER_PART
 from .messages import Messages
 from .token import Token
+
+
+# Literal ASCII identifier characters do not include escape introducers.
+_ASCII_IDENTIFIER_PART = ASCII_IDENTIFIER_PART - {'\\'}
+_ASCII_IDENTIFIER_START = ASCII_IDENTIFIER_START - {'\\'}
+# Longest first, indexed by the first character; single-character punctuation
+# never needs to scan the multi-character vocabulary.
+_PUNCTUATOR_PREFIXES = {
+    '>': ('>>>=', '>>>', '>>=', '>>', '>='),
+    '<': ('<<=', '<<', '<='),
+    '=': ('===', '==', '=>'),
+    '!': ('!==', '!='),
+    '&': ('&&=', '&&', '&='),
+    '|': ('||=', '||', '|='),
+    '?': ('??=', '??', '?.'),
+    '*': ('**=', '**', '*='),
+    '+': ('++', '+='),
+    '-': ('--', '-='),
+    '/': ('/=',),
+    '%': ('%=',),
+    '^': ('^=',),
+    '.': ('...',),
+}
+_SINGLE_PUNCTUATORS = frozenset('(){};,[].:?~<>=!+-*%&|^/')
 
 
 def hexValue(ch):
@@ -108,6 +132,7 @@ class Octal(object):
 class Scanner(object):
     def __init__(self, code, handler):
         self.source = unicode(code) + '\x00'
+        self._sourceIsAscii = self.source.isascii()
         self.errorHandler = handler
         self.trackComment = False
         self.isModule = False
@@ -129,6 +154,8 @@ class Scanner(object):
 
     def utf16Offset(self, index):
         """Convert a Python scalar source index to the ESTree UTF-16 unit index."""
+        if self._sourceIsAscii:
+            return index if 0 <= index <= self.length else min(max(index, 0), self.length)
         if self._utf16Offsets is None:
             offsets = [0]
             for ch in self.source[:-1]:
@@ -137,6 +164,8 @@ class Scanner(object):
         return self._utf16Offsets[min(max(index, 0), self.length)]
 
     def utf16Column(self, index, lineStart):
+        if self._sourceIsAscii and 0 <= lineStart <= index <= self.length:
+            return index - lineStart
         return self.utf16Offset(index) - self.utf16Offset(lineStart)
 
     def saveState(self):
@@ -470,7 +499,24 @@ class Scanner(object):
         return Character.fromCodePoint(code)
 
     def getIdentifier(self):
-        return self.getComplexIdentifier()
+        start = self.index
+        source = self.source
+        if source[start] not in _ASCII_IDENTIFIER_START:
+            return self.getComplexIdentifier()
+        index = start + 1
+        length = self.length
+        while index < length:
+            ch = source[index]
+            if ch in _ASCII_IDENTIFIER_PART:
+                index += 1
+            elif ch == '\\' or ch >= '\x80':
+                # Decode and validate the complete identifier with its first-
+                # character rules, preserving escapes, Unicode and surrogates.
+                return self.getComplexIdentifier()
+            else:
+                break
+        self.index = index
+        return source[start:index]
 
     def getComplexIdentifier(self):
         result = []
@@ -555,23 +601,16 @@ class Scanner(object):
 
     def scanPunctuator(self):
         start = self.index
-        punctuators = (
-            '>>>=', '===', '!==', '>>>', '<<=', '>>=', '**=', '&&=', '||=', '??=', '...',
-            '&&', '||', '??', '?.', '==', '!=', '+=', '-=', '*=', '/=', '++', '--',
-            '<<', '>>', '&=', '|=', '^=', '%=', '<=', '>=', '=>', '**',
-        )
-        value = None
-        for candidate in punctuators:
+        value = self.source[start]
+        if value not in _SINGLE_PUNCTUATORS:
+            self.throwUnexpectedToken()
+        for candidate in _PUNCTUATOR_PREFIXES.get(value, ()):
             if self.source.startswith(candidate, self.index):
                 # The optional-chain punctuator is excluded before a decimal digit.
                 if candidate == '?.' and Character.isDecimalDigit(self.source[self.index + 2]):
                     continue
                 value = candidate
                 break
-        if value is None:
-            value = self.source[self.index]
-            if value not in '(){};,[].:?~<>=!+-*%&|^/':
-                self.throwUnexpectedToken()
         self.index += len(value)
         if value in ('...', '=>'):
             self.requireFeature(2015, 'Modern punctuators')

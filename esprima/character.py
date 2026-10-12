@@ -27,6 +27,9 @@ from bisect import bisect_right
 from ._unicode_data import ID_START, ID_CONTINUE, UNICODE_VERSION
 from .compat import uchr
 
+ASCII_IDENTIFIER_START = frozenset('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_\\')
+ASCII_IDENTIFIER_PART = ASCII_IDENTIFIER_START | frozenset('0123456789')
+
 WHITE_SPACE = set((
     '\x09', '\x0B', '\x0C', '\x20', '\xA0',
     '\u1680', '\u2000', '\u2001', '\u2002',
@@ -66,11 +69,19 @@ class Character:
 
     @staticmethod
     def isIdentifierStart(ch):
-        return len(ch) == 1 and (ch == '\\' or bool(bisect_right(ID_START, ord(ch)) % 2))
+        if len(ch) != 1:
+            return False
+        if ch < '\x80':
+            return ch in ASCII_IDENTIFIER_START
+        return bool(bisect_right(ID_START, ord(ch)) % 2)
 
     @staticmethod
     def isIdentifierPart(ch):
-        return len(ch) == 1 and (ch == '\\' or bool(bisect_right(ID_CONTINUE, ord(ch)) % 2))
+        if len(ch) != 1:
+            return False
+        if ch < '\x80':
+            return ch in ASCII_IDENTIFIER_PART
+        return bool(bisect_right(ID_CONTINUE, ord(ch)) % 2)
 
     # https://tc39.github.io/ecma262/#sec-literals-numeric-literals
 

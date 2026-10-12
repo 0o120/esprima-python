@@ -7,6 +7,14 @@ References: dated ECMA-262 2026 clauses 14, 15, 16 and Annex B.3.2/B.3.3.
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 import re
+from . import nodes as _nodes, jsx_nodes as _jsx_nodes
+
+# Restrict direct field access to the parser's concrete classes. Custom Node
+# subclasses may expose properties or dynamic attributes and retain normal
+# attribute semantics; custom mappings retain their overridden get methods.
+_NATIVE_TYPES = frozenset(value for module in (_nodes, _jsx_nodes)
+    for value in vars(module).values() if isinstance(value, type) and issubclass(value, _nodes.Node))
+_SCALAR_TYPES = frozenset((str, int, float, bool, bytes, complex))
 
 _FUNCTIONS = {"FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"}
 _CLASSES = {"ClassDeclaration", "ClassExpression"}
@@ -21,6 +29,11 @@ _METADATA = {"loc", "range", "tokens", "comments", "leadingComments", "trailingC
 def _get(node, field, default=None):
     if node is None:
         return default
+    node_type = type(node)
+    if node_type is dict:
+        return node.get(field, default)
+    if node_type in _NATIVE_TYPES:
+        return node.__dict__.get(field, default)
     if isinstance(node, Mapping):
         return node.get(field, default)
     return getattr(node, field, default)
@@ -37,11 +50,22 @@ def _await(node):
 
 
 def _kind(node):
+    node_type = type(node)
+    if node_type in _NATIVE_TYPES:
+        return node.__dict__.get("type")
+    if node_type is dict:
+        return node.get("type")
+    if node is None or node_type in _SCALAR_TYPES:
+        return None
     return _get(node, "type")
 
 
 def _children(node):
-    fields = node.items() if isinstance(node, Mapping) else vars(node).items()
+    node_type = type(node)
+    if node_type in _NATIVE_TYPES:
+        fields = node.__dict__.items()
+    else:
+        fields = node.items() if isinstance(node, Mapping) else vars(node).items()
     for name, value in fields:
         if name.startswith("_") or name in _METADATA:
             continue
@@ -93,16 +117,54 @@ def _declaration_item(node):
     return node
 
 
-def _var_names(node):
+_VAR_CHILD_FIELDS = {
+    "Program": ("body",), "BlockStatement": ("body",), "StaticBlock": ("body",),
+    "IfStatement": ("consequent", "alternate"), "LabeledStatement": ("body",),
+    "WhileStatement": ("body",), "DoWhileStatement": ("body",), "WithStatement": ("body",),
+    "ForStatement": ("init", "body"), "ForInStatement": ("left", "body"), "ForOfStatement": ("left", "body"),
+    "SwitchStatement": ("cases",), "SwitchCase": ("consequent",),
+    "TryStatement": ("block", "handler", "finalizer"), "CatchClause": ("body",),
+    "ExportNamedDeclaration": ("declaration",), "ExportDefaultDeclaration": ("declaration",),
+}
+_VAR_LEAVES = frozenset({
+    "ExpressionStatement", "EmptyStatement", "ReturnStatement", "ThrowStatement", "BreakStatement",
+    "ContinueStatement", "DebuggerStatement", "ImportDeclaration", "ExportAllDeclaration",
+})
+
+
+def _var_names(node, cache=None):
+    """VarDeclaredNames, with context-free results cached only within one pass.
+
+    Expression children cannot declare vars outside nested functions/classes,
+    which are scope boundaries. Unknown extension containers still receive the
+    conservative structural traversal rather than silently losing declarations.
+    """
+    if node is None:
+        return ()
+    if cache is not None:
+        cached = cache.get(id(node))
+        if cached is not None:
+            return cached[1]
     kind = _kind(node)
     if kind in _FUNCTIONS | _CLASSES:
-        return
-    if kind == "VariableDeclaration":
-        if _get(node, "kind") == "var":
-            yield from _declaration_names(node)
-        return
-    for child in _children(node) if node is not None else ():
-        yield from _var_names(child)
+        result = ()
+    elif kind == "VariableDeclaration":
+        result = tuple(_declaration_names(node)) if _get(node, "kind") == "var" else ()
+    elif kind in _VAR_LEAVES:
+        result = ()
+    else:
+        fields = _VAR_CHILD_FIELDS.get(kind)
+        if fields is None:
+            children = _children(node)
+        else:
+            children = (child for field in fields for value in (_get(node, field),)
+                for child in (value if isinstance(value, (list, tuple)) else (value,)) if child is not None)
+        result = tuple(binding for child in children for binding in _var_names(child, cache))
+    if cache is not None:
+        # Keep the node alive along with the result so dynamic custom mappings
+        # cannot make id reuse confuse two different temporary node objects.
+        cache[id(node)] = (node, result)
+    return result
 
 
 def _strict_directive(body):
@@ -156,6 +218,7 @@ class _Validator:
     def __init__(self, report, edition):
         self.report = report
         self.edition = edition
+        self._var_cache = {}
 
     def error(self, message, node):
         self.report(message, node)
@@ -212,7 +275,7 @@ class _Validator:
                     lexical[name] = (binding, declaration)
             elif kind == "FunctionDeclaration" and scope_kind in {"script", "function", "static"}:
                 var_names.extend(_declaration_names(declaration))
-            var_names.extend(_var_names(declaration))
+            var_names.extend(_var_names(declaration, self._var_cache))
         for name, binding in var_names:
             if name in lexical:
                 self.duplicate(name, binding)
