@@ -243,10 +243,11 @@ def replace(context, **changes):
 
 
 class _Validator:
-    def __init__(self, report, edition, parser_tree=False):
+    def __init__(self, report, edition, parser_tree=False, no_var=False):
         self.report = report
         self.edition = edition
         self._parser_tree = parser_tree
+        self._no_var = parser_tree and no_var
         self._var_cache = {}
 
     def error(self, message, node):
@@ -315,7 +316,8 @@ class _Validator:
                     lexical[name] = (binding, declaration)
             elif kind == "FunctionDeclaration" and scope_kind in {"script", "function", "static"}:
                 var_names.extend(_declaration_names(declaration))
-            var_names.extend(_var_names(declaration, self._var_cache))
+            if not self._no_var:
+                var_names.extend(_var_names(declaration, self._var_cache))
         for name, binding in var_names:
             if name in lexical:
                 self.duplicate(name, binding)
@@ -913,11 +915,20 @@ def validate_program(program, report, ecma_version=2026):
     _Validator(report, ecma_version).program(program)
 
 
-def _validate_parsed_program(program, report, ecma_version):
+def _validate_parsed_program(program, report, ecma_version, source=None):
     """Private facade path for its own unexposed native parser tree.
 
     The facade attests an exact Parser, ECMAScript 2026 and no user delegate.
     No node flags or public options can enable canonical expression traversal.
     Historical editions keep all feature checks and structural traversal.
+
+    A VarDeclaration requires the unescaped reserved keyword ``var``. If the
+    exact source lacks that spelling, no var declaration can exist anywhere in
+    the owned tree. Function declaration names are still collected by scope;
+    only the separate VarDeclaredNames subtree scan becomes unnecessary.
+    Comments/string occurrences cause harmless false positives. String
+    subclasses can override containment, so they retain the complete scan.
     """
-    _Validator(report, ecma_version, parser_tree=ecma_version == 2026).program(program)
+    parser_tree = ecma_version == 2026
+    no_var = parser_tree and type(source) is str and "var" not in source
+    _Validator(report, ecma_version, parser_tree=parser_tree, no_var=no_var).program(program)

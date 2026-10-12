@@ -112,9 +112,10 @@ def parse(code: str, options: Mapping[str, Any] | None = None,
             # The tree has not escaped this call. User delegates can mutate or
             # replace any node, so their trees retain complete structural
             # validation, as do JSX, subclasses and historical editions.
-            validate = (_validate_parsed_program if delegate is None and type(parser) is Parser
-                and parser.config.ecmaVersion == 2026 else validate_program)
-            validate(ast, report, parser.config.ecmaVersion)
+            if delegate is None and type(parser) is Parser and parser.config.ecmaVersion == 2026:
+                _validate_parsed_program(ast, report, parser.config.ecmaVersion, code)
+            else:
+                validate_program(ast, report, parser.config.ecmaVersion)
         except RecursionError:
             parser.throwError('JavaScript nesting exceeds the validator resource limit')
     if parser.scanner.hashbang is not None:
