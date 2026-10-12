@@ -89,7 +89,7 @@ def parse(code: str, options: Mapping[str, Any] | None = None,
         ast = parser.parseModule() if isModule else parser.parseScript()
     except RecursionError:
         parser.throwError('JavaScript nesting exceeds the parser resource limit')
-    from .validation import validate_program
+    from .validation import validate_program, _validate_parsed_program
 
     def report(message, node):
         error_start = getattr(node, '_protoErrorStart', None)
@@ -109,7 +109,12 @@ def parse(code: str, options: Mapping[str, Any] | None = None,
     # Avoid a second pass inventing cascading scope diagnostics on that tree.
     if not parser.errorHandler.errors:
         try:
-            validate_program(ast, report, parser.config.ecmaVersion)
+            # The tree has not escaped this call. User delegates can mutate or
+            # replace any node, so their trees retain complete structural
+            # validation, as do JSX, subclasses and historical editions.
+            validate = (_validate_parsed_program if delegate is None and type(parser) is Parser
+                and parser.config.ecmaVersion == 2026 else validate_program)
+            validate(ast, report, parser.config.ecmaVersion)
         except RecursionError:
             parser.throwError('JavaScript nesting exceeds the validator resource limit')
     if parser.scanner.hashbang is not None:

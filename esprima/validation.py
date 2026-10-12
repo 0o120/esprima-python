@@ -27,6 +27,20 @@ _ES2015 = {"ArrowFunctionExpression", "ArrayPattern", "ObjectPattern", "Assignme
     "ImportDeclaration", "ExportNamedDeclaration", "ExportDefaultDeclaration", "ExportAllDeclaration"}
 _METADATA = {"loc", "range", "tokens", "comments", "leadingComments", "trailingComments", "innerComments", "errors"}
 
+# These fields are complete only for a synchronous, delegate-free parser tree.
+# Standalone/custom AST validation retains structural child discovery. Nodes
+# whose static rules depend on context still use the normal dispatch below.
+_PARSER_EXPR_FIELDS = {
+    "Literal": (), "ThisExpression": (), "TemplateElement": (),
+    "BinaryExpression": ("left", "right"), "LogicalExpression": ("left", "right"),
+    "ConditionalExpression": ("test", "consequent", "alternate"),
+    "SequenceExpression": ("expressions",), "ArrayExpression": ("elements",),
+    "UnaryExpression": ("argument",), "CallExpression": ("callee", "arguments"),
+    "NewExpression": ("callee", "arguments"), "ChainExpression": ("expression",),
+    "SpreadElement": ("argument",), "TemplateLiteral": ("quasis", "expressions"),
+    "TaggedTemplateExpression": ("tag", "quasi"),
+}
+
 
 def _get(node, field, default=None):
     if node is None:
@@ -229,9 +243,10 @@ def replace(context, **changes):
 
 
 class _Validator:
-    def __init__(self, report, edition):
+    def __init__(self, report, edition, parser_tree=False):
         self.report = report
         self.edition = edition
+        self._parser_tree = parser_tree
         self._var_cache = {}
 
     def error(self, message, node):
@@ -634,6 +649,19 @@ class _Validator:
             if name == "yield" and (context.strict or context.allow_yield or context.yield_reserved):
                 self.error("yield is a reserved word in this context", node)
             return
+        if self._parser_tree and node_type in _NATIVE_TYPES:
+            fields = _PARSER_EXPR_FIELDS.get(kind)
+            if (fields is not None and not (kind == "UnaryExpression" and get("operator") == "delete")
+                    and not (kind == "BinaryExpression" and _kind(get("left")) == "PrivateIdentifier")
+                    and not (kind in {"CallExpression", "NewExpression"} and _kind(get("callee")) == "Super")):
+                for field in fields:
+                    value = get(field)
+                    if type(value) is list:
+                        for child in value:
+                            self.visit(child, context, kind)
+                    else:
+                        self.visit(value, context, kind)
+                return
         if kind in _FUNCTIONS:
             self.function(node, context)
             return
@@ -883,3 +911,13 @@ def validate_program(program, report, ecma_version=2026):
     Grammar, token validity and unsupported proposal syntax remain parser work.
     """
     _Validator(report, ecma_version).program(program)
+
+
+def _validate_parsed_program(program, report, ecma_version):
+    """Private facade path for its own unexposed native parser tree.
+
+    The facade attests an exact Parser, ECMAScript 2026 and no user delegate.
+    No node flags or public options can enable canonical expression traversal.
+    Historical editions keep all feature checks and structural traversal.
+    """
+    _Validator(report, ecma_version, parser_tree=ecma_version == 2026).program(program)
