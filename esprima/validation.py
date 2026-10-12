@@ -5,7 +5,7 @@ semantics using original nodes so the caller can retain diagnostic locations.
 References: dated ECMA-262 2026 clauses 14, 15, 16 and Annex B.3.2/B.3.3.
 """
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
+from typing import NamedTuple
 import re
 from . import nodes as _nodes, jsx_nodes as _jsx_nodes
 
@@ -19,6 +19,8 @@ _SCALAR_TYPES = frozenset((str, int, float, bool, bytes, complex))
 _FUNCTIONS = {"FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"}
 _CLASSES = {"ClassDeclaration", "ClassExpression"}
 _STRICT_RESERVED = {"implements", "interface", "let", "package", "private", "protected", "public", "static", "yield"}
+_BINDING_SPECIAL = frozenset(_STRICT_RESERVED | {"eval", "arguments", "await", "yield"})
+_REFERENCE_SPECIAL = frozenset(("arguments", "await", "yield"))
 _ES2015 = {"ArrowFunctionExpression", "ArrayPattern", "ObjectPattern", "AssignmentPattern",
     "RestElement", "SpreadElement", "ClassDeclaration", "ClassExpression", "Super",
     "TemplateLiteral", "TaggedTemplateExpression", "ForOfStatement", "MetaProperty",
@@ -69,7 +71,14 @@ def _children(node):
     for name, value in fields:
         if name.startswith("_") or name in _METADATA:
             continue
-        if _kind(value):
+        value_type = type(value)
+        if value is None or value_type in _SCALAR_TYPES:
+            continue
+        if value_type is list or value_type is tuple:
+            for item in value:
+                if _kind(item):
+                    yield item
+        elif _kind(value):
             yield value
         elif isinstance(value, (list, tuple)):
             for item in value:
@@ -193,8 +202,7 @@ def _export_name(node):
     return _get(node, "name") if _kind(node) == "Identifier" else _get(node, "value")
 
 
-@dataclass(frozen=True)
-class _Context:
+class _Context(NamedTuple):
     strict: bool = False
     module: bool = False
     in_function: bool = False
@@ -212,6 +220,12 @@ class _Context:
     labels: tuple = ()
     private_scopes: tuple = ()
     uninitialized_const: bool = False
+
+
+def replace(context, **changes):
+    # The context is an immutable value; tuple construction avoids repeatedly
+    # copying seventeen dataclass fields through setattr during traversal.
+    return context._replace(**changes)
 
 
 class _Validator:
@@ -236,6 +250,8 @@ class _Validator:
             if unique and name in seen:
                 self.duplicate(name, node)
             seen.add(name)
+            if type(name) is str and name not in _BINDING_SPECIAL:
+                continue
             if context.strict and name in {"eval", "arguments"}:
                 self.error("Binding eval or arguments is forbidden in strict mode", node)
             if context.strict and name in _STRICT_RESERVED:
@@ -257,8 +273,17 @@ class _Validator:
                 self.duplicate(name, binding)
             lexical[name] = (binding, None)
         for statement in statements:
-            declaration = _declaration_item(statement)
-            kind = _kind(declaration)
+            statement_type = type(statement)
+            if statement_type is dict or statement_type in _NATIVE_TYPES:
+                kind = _kind(statement)
+                if kind not in {"ExportNamedDeclaration", "ExportDefaultDeclaration", "LabeledStatement"}:
+                    declaration = statement
+                else:
+                    declaration = _declaration_item(statement)
+                    kind = _kind(declaration)
+            else:
+                declaration = _declaration_item(statement)
+                kind = _kind(declaration)
             is_lexical = (kind == "VariableDeclaration" and _get(declaration, "kind") != "var"
                 or kind in {"ClassDeclaration", "ImportDeclaration"}
                 or kind == "FunctionDeclaration" and scope_kind not in {"script", "function", "static"})
@@ -284,8 +309,21 @@ class _Validator:
                 self.duplicate(name, lexical[name][0])
         return set(lexical) | {name for name, _ in var_names}
 
-    def editions(self, node, context, parent=None):
-        kind = _kind(node)
+    def editions(self, node, context, parent=None, kind=None):
+        node_type = type(node)
+        ordinary = node_type is dict or node_type in _NATIVE_TYPES
+        if kind is None or not ordinary:
+            kind = _kind(node)
+        # At the latest supported edition every version-only condition is a
+        # no-op. Keep descriptor access for custom nodes/mappings, and retain
+        # regexp grammar validation even at the modern default.
+        if self.edition >= 2026 and ordinary:
+            if kind == "Literal":
+                regex = _get(node, "regex")
+                if regex:
+                    from .regexp_validator import regexp_features
+                    regexp_features(_get(regex, "pattern", "") or "", _get(regex, "flags", "") or "")
+            return
         if kind in _ES2015:
             self.require(2015, kind, node)
         if kind == "VariableDeclaration" and _get(node, "kind") != "var":
@@ -376,7 +414,13 @@ class _Validator:
         kind = _kind(pattern)
         if pattern is None:
             return
-        self.editions(pattern, context)
+        pattern_type = type(pattern)
+        if self.edition < 2026 or pattern_type is not dict and pattern_type not in _NATIVE_TYPES or kind == "Literal":
+            self.editions(pattern, context, kind=kind)
+        if kind == "Identifier":
+            if not binding:
+                self.assignment_target(pattern, context, False)
+            return
         if kind == "AssignmentPattern":
             self.pattern(_get(pattern, "left"), context, binding)
             self.visit(_get(pattern, "right"), context)
@@ -416,9 +460,6 @@ class _Validator:
             if binding:
                 self.error("A binding pattern cannot contain a member expression", pattern)
             self.visit(pattern, context)
-        elif kind == "Identifier":
-            if not binding:
-                self.assignment_target(pattern, context, False)
         else:
             self.error("Invalid binding or assignment pattern", pattern)
 
@@ -570,8 +611,29 @@ class _Validator:
     def visit(self, node, context, parent=None):
         if node is None:
             return
-        kind = _kind(node)
-        self.editions(node, context, parent)
+        node_type = type(node)
+        ordinary = node_type is dict or node_type in _NATIVE_TYPES
+        if ordinary:
+            get = (node if node_type is dict else node.__dict__).get
+            kind = get("type")
+        else:
+            kind = _kind(node)
+            # Preserve overridden Mapping.get and inherited/dynamic descriptors.
+            def get(field, default=None):
+                return _get(node, field, default)
+        if self.edition < 2026 or not ordinary or kind == "Literal":
+            self.editions(node, context, parent, kind)
+        if kind == "Identifier":
+            name = get("name")
+            if type(name) is str and name not in _REFERENCE_SPECIAL:
+                return
+            if context.forbid_arguments and name == "arguments":
+                self.error("arguments is forbidden in class field initializers and static blocks", node)
+            if name == "await" and (context.module or context.allow_await or context.await_reserved):
+                self.error("await is a reserved word in this context", node)
+            if name == "yield" and (context.strict or context.allow_yield or context.yield_reserved):
+                self.error("yield is a reserved word in this context", node)
+            return
         if kind in _FUNCTIONS:
             self.function(node, context)
             return
@@ -579,30 +641,30 @@ class _Validator:
             self.class_definition(node, context)
             return
         if kind == "ExpressionStatement":
-            expression = _get(node, "expression")
+            expression = get("expression")
             if _kind(expression) == "ClassExpression" and not _get(expression, "_parenthesized", False):
                 self.error("A class expression statement requires parentheses", expression)
         if kind == "BlockStatement":
-            body = _get(node, "body", ()) or ()
+            body = get("body", ()) or ()
             self.scope(body, context, "block")
             for statement in body:
                 self.visit(statement, context, "BlockStatement")
             return
         if kind == "VariableDeclaration":
-            declaration_kind = _get(node, "kind")
+            declaration_kind = get("kind")
             if declaration_kind not in {"var", "let", "const"}:
                 self.error(f"Unsupported declaration kind '{declaration_kind}'", node)
             self.check_names(_declaration_names(node), context, lexical=declaration_kind != "var")
-            for declaration in _get(node, "declarations", ()) or ():
+            for declaration in get("declarations", ()) or ():
                 self.pattern(_get(declaration, "id"), context)
                 if declaration_kind == "const" and _get(declaration, "init") is None and not context.uninitialized_const:
                     self.error("Missing initializer in const declaration", declaration)
                 self.visit(_get(declaration, "init"), context)
             return
         if kind in {"ForStatement", "ForInStatement", "ForOfStatement"}:
-            initializer = _get(node, "init" if kind == "ForStatement" else "left")
+            initializer = get("init" if kind == "ForStatement" else "left")
             if _kind(initializer) == "VariableDeclaration" and _get(initializer, "kind") != "var":
-                self.scope([initializer, _get(node, "body")], context, "for")
+                self.scope([initializer, get("body")], context, "for")
             if kind != "ForStatement" and _kind(initializer) == "VariableDeclaration":
                 declarations = _get(initializer, "declarations", ()) or ()
                 if len(declarations) != 1:
@@ -618,12 +680,12 @@ class _Validator:
             if kind != "ForStatement" and _kind(initializer) != "VariableDeclaration":
                 self.assignment_target(initializer, context, True)
             for field in (("test", "update") if kind == "ForStatement" else ("right",)):
-                self.visit(_get(node, field), context)
-            self.statement(_get(node, "body"), replace(context, iteration=context.iteration + 1))
+                self.visit(get(field), context)
+            self.statement(get("body"), replace(context, iteration=context.iteration + 1))
             return
         if kind == "SwitchStatement":
-            self.visit(_get(node, "discriminant"), context)
-            cases = _get(node, "cases", ()) or ()
+            self.visit(get("discriminant"), context)
+            cases = get("cases", ()) or ()
             statements = [statement for case in cases for statement in _get(case, "consequent", ()) or ()]
             self.scope(statements, context, "switch")
             default_seen = False
@@ -637,11 +699,11 @@ class _Validator:
                     self.visit(statement, replace(context, switch=context.switch + 1), "SwitchCase")
             return
         if kind == "CatchClause":
-            parameter = _get(node, "param")
+            parameter = get("param")
             bindings = list(_bindings(parameter))
             self.check_names(bindings, context, unique=True)
             self.pattern(parameter, context)
-            body = _get(_get(node, "body"), "body", ()) or ()
+            body = _get(get("body"), "body", ()) or ()
             destructured = parameter is not None and _kind(parameter) != "Identifier"
             self.scope(body, context, "catch", parameters=() if destructured else bindings,
                 extra_lexical=bindings if destructured else ())
@@ -649,22 +711,22 @@ class _Validator:
                 self.visit(statement, context, "BlockStatement")
             return
         if kind == "IfStatement":
-            self.visit(_get(node, "test"), context)
-            self.statement(_get(node, "consequent"), context, annex_b=True)
-            if _get(node, "alternate") is not None:
-                self.statement(_get(node, "alternate"), context, annex_b=True)
+            self.visit(get("test"), context)
+            self.statement(get("consequent"), context, annex_b=True)
+            if get("alternate") is not None:
+                self.statement(get("alternate"), context, annex_b=True)
             return
         if kind in {"WhileStatement", "DoWhileStatement"}:
-            self.visit(_get(node, "test"), context)
-            self.statement(_get(node, "body"), replace(context, iteration=context.iteration + 1))
+            self.visit(get("test"), context)
+            self.statement(get("body"), replace(context, iteration=context.iteration + 1))
             return
         if kind == "LabeledStatement":
-            label = _get(_get(node, "label"), "name")
+            label = _get(get("label"), "name")
             if label == "await" and (context.module or context.await_reserved or context.allow_await):
-                self.error("await cannot be a label in this context", _get(node, "label"))
+                self.error("await cannot be a label in this context", get("label"))
             if any(name == label for name, iteration in context.labels):
-                self.error(f"Label '{label}' has already been declared", _get(node, "label"))
-            body = _get(node, "body")
+                self.error(f"Label '{label}' has already been declared", get("label"))
+            body = get("body")
             target = body
             while _kind(target) == "LabeledStatement":
                 target = _get(target, "body")
@@ -672,7 +734,7 @@ class _Validator:
             self.statement(body, replace(context, labels=context.labels + ((label, iteration),)), annex_b=True, labels_allowed=True)
             return
         if kind in {"BreakStatement", "ContinueStatement"}:
-            label = _get(_get(node, "label"), "name")
+            label = _get(get("label"), "name")
             if label is not None:
                 targets = [iteration for name, iteration in context.labels if name == label]
                 if not targets or kind == "ContinueStatement" and not targets[-1]:
@@ -685,12 +747,12 @@ class _Validator:
         if kind == "WithStatement":
             if context.strict:
                 self.error("Strict mode code may not contain a with statement", node)
-            self.visit(_get(node, "object"), context)
-            self.statement(_get(node, "body"), context)
+            self.visit(get("object"), context)
+            self.statement(get("body"), context)
             return
         if kind == "ObjectExpression":
             proto_seen = False
-            for prop in _get(node, "properties", ()) or ():
+            for prop in get("properties", ()) or ():
                 if (_kind(prop) == "Property" and _key(prop) == "__proto__" and _get(prop, "kind") == "init"
                         and not _get(prop, "method", False) and not _get(prop, "shorthand", False)):
                     if proto_seen:
@@ -699,14 +761,14 @@ class _Validator:
                 self.visit(prop, context, "ObjectExpression")
             return
         if kind == "Property":
-            key = _get(node, "key")
+            key = get("key")
             if (_kind(key) == "PrivateIdentifier" or _kind(key) == "Identifier"
                     and isinstance(_get(key, "name"), str) and _get(key, "name").startswith("#")):
-                self.error("Private methods and properties are only valid in class bodies", _get(node, "key"))
-            if _get(node, "computed", False):
-                self.visit(_get(node, "key"), context)
-            value = _get(node, "value")
-            method = _get(node, "method", False) or _get(node, "kind") in {"get", "set"}
+                self.error("Private methods and properties are only valid in class bodies", get("key"))
+            if get("computed", False):
+                self.visit(get("key"), context)
+            value = get("value")
+            method = get("method", False) or get("kind") in {"get", "set"}
             if method and _kind(value) in _FUNCTIONS:
                 self.accessor_arity(node)
                 self.editions(value, context)
@@ -719,16 +781,16 @@ class _Validator:
                 self.error("Import and export declarations are only valid at module top level", node)
             if kind == "ImportDeclaration":
                 self.check_names(_declaration_names(node), context, lexical=True)
-                for specifier in _get(node, "specifiers", ()) or ():
+                for specifier in get("specifiers", ()) or ():
                     if _kind(_get(specifier, "imported")) == "Literal":
                         self.require(2022, "String module names", specifier)
             else:
-                self.visit(_get(node, "declaration"), context, "Program")
-                for specifier in _get(node, "specifiers", ()) or ():
+                self.visit(get("declaration"), context, "Program")
+                for specifier in get("specifiers", ()) or ():
                     if _kind(_get(specifier, "exported")) == "Literal" or _kind(_get(specifier, "local")) == "Literal":
                         self.require(2022, "String module names", specifier)
             attribute_names = set()
-            for attribute in _get(node, "attributes", ()) or ():
+            for attribute in get("attributes", ()) or ():
                 name = _export_name(_get(attribute, "key"))
                 if name in attribute_names:
                     self.error(f"Duplicate import attribute '{name}'", attribute)
@@ -737,9 +799,9 @@ class _Validator:
                     self.error("Import attribute values must be strings", attribute)
             return
         if kind == "MemberExpression":
-            obj, prop = _get(node, "object"), _get(node, "property")
+            obj, prop = get("object"), get("property")
             if _kind(obj) == "Super":
-                if not context.super_property or _get(node, "optional", False):
+                if not context.super_property or get("optional", False):
                     self.error("super property access is not valid in this context", obj)
                 if _kind(prop) == "PrivateIdentifier":
                     self.error("Private names cannot be accessed through super", prop)
@@ -748,13 +810,13 @@ class _Validator:
             if _kind(prop) == "PrivateIdentifier":
                 self.editions(prop, context)
                 self.private_reference(prop, context)
-            elif _get(node, "computed", False):
+            elif get("computed", False):
                 self.visit(prop, context)
             return
-        if kind in {"CallExpression", "NewExpression"} and _kind(_get(node, "callee")) == "Super":
-            if kind != "CallExpression" or not context.super_call or _get(node, "optional", False):
-                self.error("super() is only valid in a derived class constructor", _get(node, "callee"))
-            for argument in _get(node, "arguments", ()) or ():
+        if kind in {"CallExpression", "NewExpression"} and _kind(get("callee")) == "Super":
+            if kind != "CallExpression" or not context.super_call or get("optional", False):
+                self.error("super() is only valid in a derived class constructor", get("callee"))
+            for argument in get("arguments", ()) or ():
                 self.visit(argument, context)
             return
         if kind == "Super":
@@ -765,15 +827,15 @@ class _Validator:
             if parent != "PrivateBrand":
                 self.error("Private names are only valid as class keys, member properties or an in operand", node)
             return
-        if kind == "BinaryExpression" and _kind(_get(node, "left")) == "PrivateIdentifier":
-            if _get(node, "operator") != "in":
+        if kind == "BinaryExpression" and _kind(get("left")) == "PrivateIdentifier":
+            if get("operator") != "in":
                 self.error("A private name expression requires the in operator", node)
-            self.visit(_get(node, "left"), context, "PrivateBrand")
-            self.visit(_get(node, "right"), context)
+            self.visit(get("left"), context, "PrivateBrand")
+            self.visit(get("right"), context)
             return
         if kind == "MetaProperty":
-            meta = _get(_get(node, "meta"), "name")
-            prop = _get(_get(node, "property"), "name")
+            meta = _get(get("meta"), "name")
+            prop = _get(get("property"), "name")
             if meta == "new" and prop == "target" and not context.new_target:
                 self.error("new.target is only valid in functions or class initialization", node)
             if meta == "import" and prop == "meta" and not context.module:
@@ -783,17 +845,8 @@ class _Validator:
             self.error("await is not valid in this context", node)
         if kind == "YieldExpression" and (not context.allow_yield or context.parameters):
             self.error("yield is not valid in this context", node)
-        if kind == "Identifier":
-            name = _get(node, "name")
-            if context.forbid_arguments and name == "arguments":
-                self.error("arguments is forbidden in class field initializers and static blocks", node)
-            if name == "await" and (context.module or context.allow_await or context.await_reserved):
-                self.error("await is a reserved word in this context", node)
-            if name == "yield" and (context.strict or context.allow_yield or context.yield_reserved):
-                self.error("yield is a reserved word in this context", node)
-            return
-        if kind == "UnaryExpression" and _get(node, "operator") == "delete":
-            argument = _get(node, "argument")
+        if kind == "UnaryExpression" and get("operator") == "delete":
+            argument = get("argument")
             if _kind(argument) == "ChainExpression":
                 argument = _get(argument, "expression")
             if context.strict and _kind(argument) == "Identifier":
@@ -801,10 +854,10 @@ class _Validator:
             if _kind(argument) == "MemberExpression" and _kind(_get(argument, "property")) == "PrivateIdentifier":
                 self.error("Private fields may not be deleted", argument)
         if kind in {"AssignmentExpression", "UpdateExpression"}:
-            target = _get(node, "left" if kind == "AssignmentExpression" else "argument")
-            self.assignment_target(target, context, kind == "AssignmentExpression" and _get(node, "operator") == "=")
+            target = get("left" if kind == "AssignmentExpression" else "argument")
+            self.assignment_target(target, context, kind == "AssignmentExpression" and get("operator") == "=")
             if kind == "AssignmentExpression":
-                self.visit(_get(node, "right"), context)
+                self.visit(get("right"), context)
             return
         for child in _children(node):
             self.visit(child, context, kind)
