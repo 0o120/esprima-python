@@ -35,11 +35,13 @@ from esprima.nodes import Script
 from esprima.schema import migrate_legacy_fixture
 
 BASE_DIR = os.path.dirname(__file__)
+MIGRATIONS_FILE = os.path.join(BASE_DIR, 'fixture-migrations.json')
+with open(MIGRATIONS_FILE, encoding='utf-8') as migration_file:
+    FIXTURE_MIGRATIONS = json.load(migration_file)
 
 SOURCE_RE = re.compile(br'''^var\s+source\s*=\s*(['"])(.*)\1;\s*$''', re.DOTALL)
 
 EXPECTED_FAULRES = (
-    ('TestExpression', u'u_flag_surrogate_pair'),  # Regex comes with no value
 )
 
 
@@ -58,6 +60,11 @@ def test_factory(path):
                 break
         else:
             return
+        relative_fixture = os.path.relpath(filename, BASE_DIR).replace(os.sep, '/')
+        if relative_fixture in FIXTURE_MIGRATIONS:
+            migration = FIXTURE_MIGRATIONS[relative_fixture]
+            result_file = os.path.join(BASE_DIR, migration['snapshot'])
+            result_type = migration['kind']
 
         def test(self):
             with open(result_file, 'rb') as f:
@@ -101,6 +108,12 @@ def test_factory(path):
                             'source': None,
                             'sourceType': expected.get('sourceType', sourceType),
                         }
+
+                    relative = os.path.relpath(filename, BASE_DIR).replace(os.sep, '/')
+                    if relative.startswith('fixtures/ES6/'):
+                        options.setdefault('ecmaVersion', 2015)
+                    elif relative.startswith('fixtures/es2017/'):
+                        options.setdefault('ecmaVersion', 2017)
 
                     if options.get('comment'):
                         def hasAttachedComment(expected):

@@ -5,6 +5,7 @@ NULLABLE_FIELDS = {
     'VariableDeclarator': ('init',),
     'FunctionDeclaration': ('id',),
     'FunctionExpression': ('id',),
+    'ArrowFunctionExpression': ('id',),
     'ClassDeclaration': ('id', 'superClass'),
     'ClassExpression': ('id', 'superClass'),
     'PropertyDefinition': ('value',),
@@ -19,7 +20,7 @@ NULLABLE_FIELDS = {
     'TryStatement': ('handler', 'finalizer'),
     'ExportNamedDeclaration': ('declaration', 'source'),
     'ExportAllDeclaration': ('exported',),
-    'ImportExpression': ('options',),
+    'ImportExpression': ('source', 'options'),
     'JSXElement': ('closingElement',),
     'JSXAttribute': ('value',),
 }
@@ -41,12 +42,11 @@ def migrate_legacy_fixture(value):
         result['type'] = kind = 'ImportExpression'
     if kind == 'CallExpression' and result.get('callee', {}).get('type') == 'ImportExpression':
         arguments = result.get('arguments', [])
-        if arguments:
-            result = {key: item for key, item in result.items()
-                      if key not in ('callee', 'arguments', 'optional')}
-            result.update(type='ImportExpression', source=arguments[0],
-                          options=arguments[1] if len(arguments) > 1 else None)
-            kind = 'ImportExpression'
+        result = {key: item for key, item in result.items()
+                  if key not in ('callee', 'arguments', 'optional')}
+        result.update(type='ImportExpression', source=arguments[0] if arguments else None,
+                      options=arguments[1] if len(arguments) > 1 else None)
+        kind = 'ImportExpression'
     if kind == 'FieldDefinition':
         result['type'] = kind = 'PropertyDefinition'
         result.pop('kind', None)

@@ -1,0 +1,86 @@
+{
+  "fixtures/ES6/template-literals/invalid-escape.js": {
+    "snapshot": "modern-expectations/ES6/template-literals/invalid-escape.json",
+    "kind": ".failure",
+    "reason": "Deferred tagged-template scanning changes the untagged error location and diagnostic; octal escape remains rejected.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/template-literals/invalid-hex-escape-sequence.js": {
+    "snapshot": "modern-expectations/ES6/template-literals/invalid-hex-escape-sequence.json",
+    "kind": ".failure",
+    "reason": "Malformed untagged template remains rejected with the unified invalid-escape diagnostic.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/template-literals/literal-escape-sequences.source.js": {
+    "snapshot": "modern-expectations/ES6/template-literals/literal-escape-sequences.source.json",
+    "kind": ".failure",
+    "reason": "The old snapshot accepted malformed untagged \\u0; the ECMAScript grammar requires rejection.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/template-literals/octal-literal.js": {
+    "snapshot": "modern-expectations/ES6/template-literals/octal-literal.json",
+    "kind": ".failure",
+    "reason": "Octal template escape remains rejected; error now points to the completed invalid template token.",
+    "independent_acceptance": false
+  },
+  "fixtures/ES6/template-literals/strict-octal-literal.js": {
+    "snapshot": "modern-expectations/ES6/template-literals/strict-octal-literal.json",
+    "kind": ".failure",
+    "reason": "Octal template escape remains rejected in strict mode with the unified diagnostic.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2017/async/methods/class-async-method-computed.js": {
+    "snapshot": "modern-expectations/es2017/async/methods/class-async-method-computed.json",
+    "kind": ".tree",
+    "reason": "Correct the old computed=false snapshot for an async computed method; Acorn confirms computed=true.",
+    "independent_acceptance": true
+  },
+  "fixtures/es2018/dynamic-import/invalid-import-call-many-arguments.js": {
+    "snapshot": "modern-expectations/es2018/dynamic-import/invalid-import-call-many-arguments.json",
+    "kind": ".tree",
+    "reason": "Two import arguments are valid modern syntax; preserve distinct source/options and remove the historical arity error.",
+    "independent_acceptance": true
+  },
+  "fixtures/es2018/dynamic-import/invalid-import-call-no-argument.js": {
+    "snapshot": "modern-expectations/es2018/dynamic-import/invalid-import-call-no-argument.json",
+    "kind": ".tree",
+    "reason": "Tolerant parsing reports the empty import at its own parentheses and retains an invalid ImportExpression with null source.",
+    "independent_acceptance": false
+  },
+  "fixtures/es2018/dynamic-import/invalid-non-callee.js": {
+    "snapshot": "modern-expectations/es2018/dynamic-import/invalid-non-callee.json",
+    "kind": ".failure",
+    "reason": "Invalid import.then remains rejected; the modern import-meta recognizer improves diagnostic text.",
+    "independent_acceptance": false
+  },
+  "fixtures/invalid-syntax/GH-1106-08.js": {
+    "snapshot": "modern-expectations/invalid-syntax/GH-1106-08.json",
+    "kind": ".tree",
+    "reason": "Annex B permits \\8 in sloppy string literals; strict variants remain covered by Test262.",
+    "independent_acceptance": true
+  },
+  "fixtures/invalid-syntax/GH-1106-09.js": {
+    "snapshot": "modern-expectations/invalid-syntax/GH-1106-09.json",
+    "kind": ".tree",
+    "reason": "Annex B permits \\9 in sloppy string literals; strict variants remain covered by Test262.",
+    "independent_acceptance": true
+  },
+  "fixtures/invalid-syntax/migrated_0065.js": {
+    "snapshot": "modern-expectations/invalid-syntax/migrated_0065.json",
+    "kind": ".failure",
+    "reason": "Invalid private-name punctuation is rejected at the following invalid character instead of the hash sign.",
+    "independent_acceptance": false
+  },
+  "fixtures/JSX/invalid-no-closing.js": {
+    "snapshot": "modern-expectations/JSX/invalid-no-closing.json",
+    "kind": ".failure",
+    "reason": "The JSX parser now explicitly diagnoses the missing closing tag instead of only EOF.",
+    "independent_acceptance": false
+  },
+  "fixtures/tolerant-parse/string_literal_escape_eight.js": {
+    "snapshot": "modern-expectations/tolerant-parse/string_literal_escape_eight.json",
+    "kind": ".tree",
+    "reason": "Annex B non-octal string escape is valid in sloppy mode, so the old tolerant error is removed.",
+    "independent_acceptance": true
+  }
+}

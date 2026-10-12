@@ -1,0 +1,18 @@
+{
+  "message": "Error: Line 1: Invalid escape sequence in template literal",
+  "index": 4,
+  "lineNumber": 1,
+  "column": 5,
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "script",
+    "ecmaVersion": 2015
+  }
+}

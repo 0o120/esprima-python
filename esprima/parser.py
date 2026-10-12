@@ -508,7 +508,7 @@ class Parser(object):
     #
     # The three productions have the relationship:
     #
-    #   BindingElements Ã¢Å â€  AssignmentTargets Ã¢Å â€  AssignmentExpression
+    #   BindingElements ÃƒÂ¢Ã…Â Ã¢â‚¬Â  AssignmentTargets ÃƒÂ¢Ã…Â Ã¢â‚¬Â  AssignmentExpression
     #
     # with a single exception that CoverInitializedName when used directly in an Expression, generates
     # an early error. Therefore, we need the third state, firstCoverInitializedNameError, to track the
@@ -714,30 +714,12 @@ class Parser(object):
         return body
 
     def parsePropertyMethodFunction(self):
-        isGenerator = False
-        node = self.createNode()
+        return self.parseModernMethod(False, False)
 
-        previousAllowYield = self.context.allowYield
-        self.context.allowYield = True
-        params = self.parseFormalParameters()
-        method = self.parsePropertyMethod(params)
-        self.context.allowYield = previousAllowYield
-
-        return self.finalize(node, Node.FunctionExpression(None, params.params, method, isGenerator))
 
     def parsePropertyMethodAsyncFunction(self):
-        node = self.createNode()
+        return self.parseModernMethod(True, False)
 
-        previousAllowYield = self.context.allowYield
-        previousAwait = self.context.allowAwait
-        self.context.allowYield = False
-        self.context.allowAwait = True
-        params = self.parseFormalParameters()
-        method = self.parsePropertyMethod(params)
-        self.context.allowYield = previousAllowYield
-        self.context.allowAwait = previousAwait
-
-        return self.finalize(node, Node.AsyncFunctionExpression(None, params.params, method))
 
     def parseObjectPropertyKey(self):
         node = self.createNode()
@@ -797,6 +779,8 @@ class Parser(object):
             id = token.value
             self.nextToken()
             if id == 'async' and not self.hasLineTerminator and self.match('*'):
+                if self.config.ecmaVersion < 2018:
+                    self.throwUnexpectedToken(self.lookahead)
                 self.nextToken()
                 computed = self.match('[')
                 key = self.parseObjectPropertyKey()
@@ -1132,10 +1116,12 @@ class Parser(object):
         self.expectKeyword('import')
         self.expect('(')
         if self.match(')'):
-            self.throwError(Messages.ImportMissingSpecifier)
-        if self.match('...'):
-            self.throwUnexpectedToken(self.lookahead)
-        source = self.isolateCoverGrammar(self.parseAssignmentExpression)
+            self.tolerateError(Messages.ImportMissingSpecifier)
+            source = None
+        else:
+            if self.match('...'):
+                self.throwUnexpectedToken(self.lookahead)
+            source = self.isolateCoverGrammar(self.parseAssignmentExpression)
         options = None
         if self.match(','):
             self.nextToken()
@@ -1168,7 +1154,7 @@ class Parser(object):
     def parseImportMeta(self):
         node = self.createNode()
         if not self.context.isModule:
-            self.throwError('import.meta is only valid in modules')
+            self.throwUnexpectedToken(self.lookahead, Messages.UnexpectedToken)
         meta = self.parseIdentifierName()
         self.expect('.')
         prop = self.parseIdentifierName()
@@ -2716,50 +2702,16 @@ class Parser(object):
         return False
 
     def parseGetterMethod(self):
-        node = self.createNode()
+        return self.parseModernMethod(False, False, 'get')
 
-        isGenerator = False
-        previousAllowYield = self.context.allowYield
-        self.context.allowYield = not isGenerator
-        formalParameters = self.parseFormalParameters()
-        if len(formalParameters.params) > 0:
-            self.tolerateError(Messages.BadGetterArity)
-        method = self.parsePropertyMethod(formalParameters)
-        self.context.allowYield = previousAllowYield
-
-        return self.finalize(node, Node.FunctionExpression(None, formalParameters.params, method, isGenerator))
 
     def parseSetterMethod(self):
-        node = self.createNode()
+        return self.parseModernMethod(False, False, 'set')
 
-        isGenerator = False
-        previousAllowYield = self.context.allowYield
-        self.context.allowYield = not isGenerator
-        formalParameters = self.parseFormalParameters()
-        if len(formalParameters.params) != 1:
-            self.tolerateError(Messages.BadSetterArity)
-        elif isinstance(formalParameters.params[0], Node.RestElement):
-            self.tolerateError(Messages.BadSetterRestParameter)
-        method = self.parsePropertyMethod(formalParameters)
-        self.context.allowYield = previousAllowYield
-
-        return self.finalize(node, Node.FunctionExpression(None, formalParameters.params, method, isGenerator))
 
     def parseGeneratorMethod(self):
-        node = self.createNode()
+        return self.parseModernMethod(False, True)
 
-        isGenerator = True
-        previousAllowYield = self.context.allowYield
-
-        self.context.allowYield = True
-        params = self.parseFormalParameters()
-        self.context.allowYield = False
-        method = self.parsePropertyMethod(params)
-        self.context.allowYield = previousAllowYield
-
-        return self.finalize(node, Node.FunctionExpression(None, params.params, method, isGenerator))
-
-    # https://tc39.github.io/ecma262/#sec-generator-function-definitions
 
     def isStartOfExpression(self):
         start = True
@@ -2823,9 +2775,12 @@ class Parser(object):
                 isAsync = True
                 self.nextToken()
         if self.match('*'):
+            if isAsync and self.config.ecmaVersion < 2018:
+                self.throwUnexpectedToken(self.lookahead)
             generator = True
             self.nextToken()
         computed = self.match('[')
+        keyToken = self.lookahead
         key = self.parsePropertyIdentifier() if self.lookahead.private else self.parseObjectPropertyKey()
         if not isAsync and not generator and not computed and key.type == Syntax.Identifier and key.name in ('get', 'set') and not self.match('(', '=', ';', '}') and not self.hasLineTerminator:
             kind = key.name
@@ -2834,7 +2789,7 @@ class Parser(object):
         if self.match('('):
             if not computed and self.isPropertyKey(key, 'constructor') and not isStatic:
                 if isAsync:
-                    self.throwUnexpectedToken(self.lookahead, Messages.ConstructorIsAsync)
+                    self.throwUnexpectedToken(keyToken, Messages.ConstructorIsAsync)
                 if kind != 'method' or generator:
                     self.throwUnexpectedToken(token, Messages.ConstructorSpecialMethod)
                 if hasConstructor.value:

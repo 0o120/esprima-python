@@ -58,6 +58,7 @@ class ArrowFunctionExpression(Node):
     def __init__(self, params, body, expression):
         self.type = Syntax.ArrowFunctionExpression
         self.generator = False
+        self.id = None
         self.isAsync = False
         self.params = params
         self.body = body
@@ -83,6 +84,7 @@ class AsyncArrowFunctionExpression(Node):
     def __init__(self, params, body, expression):
         self.type = Syntax.ArrowFunctionExpression
         self.generator = False
+        self.id = None
         self.isAsync = True
         self.params = params
         self.body = body

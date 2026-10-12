@@ -23,3 +23,11 @@ class FixtureInventoryTests(unittest.TestCase):
         fixture = pathlib.Path(legacy.BASE_DIR) / 'fixtures' / 'whitespace'
         expected = len(list(fixture.rglob('*.js')))
         self.assertEqual(len(list(legacy.test_factory(str(fixture)))), expected)
+
+    def test_schema_and_diagnostic_migrations_are_explicit(self):
+        self.assertEqual(len(legacy.FIXTURE_MIGRATIONS), 14)
+        for source, migration in legacy.FIXTURE_MIGRATIONS.items():
+            self.assertTrue((pathlib.Path(legacy.BASE_DIR) / source).is_file())
+            self.assertTrue((pathlib.Path(legacy.BASE_DIR) / migration['snapshot']).is_file())
+            self.assertTrue(migration['reason'])
+            self.assertIn(migration['kind'], ('.tree', '.failure'))
