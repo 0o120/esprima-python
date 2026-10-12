@@ -62,6 +62,8 @@ TokenName[JSXToken.Text] = "JSXText"
 
 # Fully qualified element name, e.g. <svg:path> returns "svg:path"
 def getQualifiedElementName(elementName):
+    if elementName is None:
+        return ''
     typ = elementName.type
     if typ is JSXSyntax.JSXIdentifier:
         id = elementName
@@ -441,6 +443,9 @@ class JSXParser(Parser):
         node = self.createJSXNode()
 
         self.expectJSX('<')
+        if self.matchJSX('>'):
+            self.expectJSX('>')
+            return self.finalize(node, JSXNode.JSXOpeningFragment())
         name = self.parseJSXElementName()
         attributes = self.parseJSXAttributes()
         selfClosing = self.matchJSX('/')
@@ -457,10 +462,16 @@ class JSXParser(Parser):
         self.expectJSX('<')
         if self.matchJSX('/'):
             self.expectJSX('/')
+            if self.matchJSX('>'):
+                self.expectJSX('>')
+                return self.finalize(node, JSXNode.JSXClosingFragment())
             elementName = self.parseJSXElementName()
             self.expectJSX('>')
             return self.finalize(node, JSXNode.JSXClosingElement(elementName))
 
+        if self.matchJSX('>'):
+            self.expectJSX('>')
+            return self.finalize(node, JSXNode.JSXOpeningFragment())
         name = self.parseJSXElementName()
         attributes = self.parseJSXAttributes()
         selfClosing = self.matchJSX('/')
@@ -482,6 +493,13 @@ class JSXParser(Parser):
     def parseJSXExpressionContainer(self):
         node = self.createJSXNode()
         self.expectJSX('{')
+
+        if self.matchJSX('...'):
+            self.expectJSX('...')
+            self.finishJSX()
+            expression = self.parseAssignmentExpression()
+            self.reenterJSX()
+            return self.finalize(node, JSXNode.JSXSpreadChild(expression))
 
         if self.matchJSX('}'):
             expression = self.parseJSXEmptyExpression()
@@ -512,62 +530,42 @@ class JSXParser(Parser):
 
         return children
 
-    def parseComplexJSXElement(self, el):
-        stack = []
+    def makeJSXElement(self, opening, children, closing):
+        if opening.type == JSXSyntax.JSXOpeningFragment:
+            return JSXNode.JSXFragment(opening, children, closing)
+        return JSXNode.JSXElement(opening, children, closing)
 
+    def parseComplexJSXElement(self, el):
         while not self.scanner.eof():
             el.children.extend(self.parseJSXChildren())
+            if self.scanner.eof():
+                break
             node = self.createJSXChildNode()
-            element = self.parseJSXBoundaryElement()
-            if element.type is JSXSyntax.JSXOpeningElement:
-                opening = element
-                if opening.selfClosing:
-                    child = self.finalize(node, JSXNode.JSXElement(opening, [], None))
-                    el.children.append(child)
-                else:
-                    stack.append(el)
-                    el = MetaJSXElement(
-                        node=node,
-                        opening=opening,
-                        closing=None,
-                        children=[],
-                    )
-
-            if element.type is JSXSyntax.JSXClosingElement:
-                el.closing = element
-                open = getQualifiedElementName(el.opening.name)
-                close = getQualifiedElementName(el.closing.name)
-                if open != close:
-                    self.tolerateError('Expected corresponding JSX closing tag for %0', open)
-
-                if stack:
-                    child = self.finalize(el.node, JSXNode.JSXElement(el.opening, el.children, el.closing))
-                    el = stack[-1]
-                    el.children.append(child)
-                    stack.pop()
-                else:
-                    break
-
+            boundary = self.parseJSXBoundaryElement()
+            if boundary.type in (JSXSyntax.JSXOpeningElement, JSXSyntax.JSXOpeningFragment):
+                nested = MetaJSXElement(node=node, opening=boundary, closing=None, children=[])
+                if not boundary.selfClosing:
+                    nested = self.parseComplexJSXElement(nested)
+                el.children.append(self.finalize(node, self.makeJSXElement(boundary, nested.children, nested.closing)))
+            else:
+                opening_fragment = el.opening.type == JSXSyntax.JSXOpeningFragment
+                closing_fragment = boundary.type == JSXSyntax.JSXClosingFragment
+                name = getQualifiedElementName(el.opening.name)
+                close = getQualifiedElementName(boundary.name)
+                if opening_fragment != closing_fragment or name != close:
+                    self.tolerateError('Expected corresponding JSX closing tag for %0', name or '<>')
+                el.closing = boundary
+                return el
+        self.tolerateError('Expected corresponding JSX closing tag for %0', getQualifiedElementName(el.opening.name) or '<>')
         return el
 
     def parseJSXElement(self):
         node = self.createJSXNode()
-
         opening = self.parseJSXOpeningElement()
-        children = []
-        closing = None
-
+        el = MetaJSXElement(node=node, opening=opening, children=[], closing=None)
         if not opening.selfClosing:
-            el = self.parseComplexJSXElement(MetaJSXElement(
-                node=node,
-                opening=opening,
-                closing=closing,
-                children=children
-            ))
-            children = el.children
-            closing = el.closing
-
-        return self.finalize(node, JSXNode.JSXElement(opening, children, closing))
+            el = self.parseComplexJSXElement(el)
+        return self.finalize(node, self.makeJSXElement(opening, el.children, el.closing))
 
     def parseJSXRoot(self):
         # Pop the opening '<' added from the lookahead.
