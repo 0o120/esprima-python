@@ -1,0 +1,271 @@
+{
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "executable": "C:\\Python312\\python.exe",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "baselineRevision": "e3b8965b0216c9a9f07b2d46a4c6c2a40256b89b",
+  "currentRevision": "7c654cf452cda0171b1320c21bc2aa95f7209413",
+  "method": {
+    "import": "Fresh isolated Python interpreters; source-only compilation; OS filesystem caches may be warm.",
+    "parse": "Identical ES2017 scripts and options; only parseScript is timed; no fixture is executed or serialized.",
+    "ordering": "Alternating baseline/current cold imports; two opposite-order rounds of warmed parse benchmarks.",
+    "garbageCollection": "Enabled normally; explicit collection before every timed batch.",
+    "interpretation": "Median timings; current parser includes Unicode 17, UTF-16 positions and static early-error validation."
+  },
+  "coldImport": {
+    "baseline": {
+      "medianSeconds": 0.08232919999863952,
+      "samplesSeconds": [
+        0.08232919999863952,
+        0.08165360009297729,
+        0.08151729998644441,
+        0.0789549999171868,
+        0.08501040004193783,
+        0.08564880001358688,
+        0.08301589998882264,
+        0.0844741000328213,
+        0.08196640003006905
+      ]
+    },
+    "current": {
+      "medianSeconds": 0.08952219993807375,
+      "samplesSeconds": [
+        0.08827200008090585,
+        0.09141580003779382,
+        0.08952219993807375,
+        0.08893630001693964,
+        0.09018010005820543,
+        0.09403429995290935,
+        0.09371030004695058,
+        0.08623830007854849,
+        0.08725059998687357
+      ]
+    },
+    "currentToBaselineRatio": 1.087368757859339
+  },
+  "parse": [
+    {
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "sha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "range": false,
+      "baseline": {
+        "medianSeconds": 0.0009008766675833613,
+        "batch": 30,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 6,
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.0009129199975480636,
+          0.0008888066668684284,
+          0.0008962999990520377,
+          0.0008997166684518257,
+          0.0009313399981086453,
+          0.0009005766672392687,
+          0.000901176667927454,
+          0.0009197499991084138,
+          0.0009101166661518316,
+          0.0009022700018249452,
+          0.000918880000244826,
+          0.000889053331532826,
+          0.0008776400005444885,
+          0.0008829133313459655
+        ]
+      },
+      "current": {
+        "medianSeconds": 0.0015565483326402804,
+        "batch": 30,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 6,
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.0015722233336418867,
+          0.0015624466662605603,
+          0.0015502566665721437,
+          0.0015348833325939874,
+          0.0015681666671298444,
+          0.0015506499990200003,
+          0.0015139733324758709,
+          0.0015847300024082263,
+          0.0015812700032256544,
+          0.0016116999982235332,
+          0.0015635266667231918,
+          0.0015148333312633136,
+          0.0015448666643351316,
+          0.0015216999997695287
+        ]
+      },
+      "currentToBaselineRatio": 1.727815125699487,
+      "changePercent": 72.78151256994869
+    },
+    {
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "sha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "range": true,
+      "baseline": {
+        "medianSeconds": 0.0009317250010402252,
+        "batch": 30,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 6,
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.0009092800008753936,
+          0.0009179966679463784,
+          0.0009166699989388386,
+          0.0009585699997842311,
+          0.0009494233333195249,
+          0.0009206100017763674,
+          0.000923833332490176,
+          0.0009384166682139039,
+          0.0009351033329342803,
+          0.0009455566643737257,
+          0.0009675266686826944,
+          0.0009299433324486018,
+          0.0009335066696318487,
+          0.0009035733334409694
+        ]
+      },
+      "current": {
+        "medianSeconds": 0.001599528332008049,
+        "batch": 30,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 6,
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.0016804733352425198,
+          0.0016309366677887739,
+          0.00162453999898086,
+          0.0016149266661765675,
+          0.0016192166677986583,
+          0.0015983599975394707,
+          0.0015981466664622228,
+          0.0016006966664766271,
+          0.0015982666673759619,
+          0.0015815833350643516,
+          0.0016222699972180028,
+          0.0015981266663099329,
+          0.0015803666668944062,
+          0.0015718833349334697
+        ]
+      },
+      "currentToBaselineRatio": 1.7167386623974392,
+      "changePercent": 71.67386623974392
+    },
+    {
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "sha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "range": false,
+      "baseline": {
+        "medianSeconds": 0.061288949994680784,
+        "batch": 3,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 100,
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.06047349997485677,
+          0.06106543335287521,
+          0.060466333331229784,
+          0.06104523335428288,
+          0.06054823333397508,
+          0.06157459997727225,
+          0.061488599982112646,
+          0.062466533350137375,
+          0.06133549998048693,
+          0.06132639998880526,
+          0.06134666665457189,
+          0.0611719999772807,
+          0.06125150000055631,
+          0.0636610333264495
+        ]
+      },
+      "current": {
+        "medianSeconds": 0.10019293334335089,
+        "batch": 3,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 100,
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.09928033334047844,
+          0.0998989666501681,
+          0.09924100001808256,
+          0.09898329999608298,
+          0.0997436000034213,
+          0.10011273335355024,
+          0.10190550001182903,
+          0.10031970000515382,
+          0.09984733331172417,
+          0.10085296665783972,
+          0.10041326668579131,
+          0.10107006664232661,
+          0.10027313333315153,
+          0.10037013333446036
+        ]
+      },
+      "currentToBaselineRatio": 1.634763417419397,
+      "changePercent": 63.4763417419397
+    },
+    {
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "sha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "range": true,
+      "baseline": {
+        "medianSeconds": 0.06498103332705796,
+        "batch": 3,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 100,
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.0637902000065272,
+          0.0634427333328252,
+          0.06372219999320805,
+          0.06365913331198196,
+          0.06540070000725488,
+          0.06408023333642632,
+          0.06486919999588281,
+          0.0654796000259618,
+          0.06569999999677141,
+          0.06748556667783608,
+          0.06771183332117896,
+          0.06394463335163891,
+          0.0668618999964868,
+          0.0650928666582331
+        ]
+      },
+      "current": {
+        "medianSeconds": 0.11109691664266089,
+        "batch": 3,
+        "sampleCount": 14,
+        "warmups": 5,
+        "topLevelStatements": 100,
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "samplesSeconds": [
+          0.1127634666627273,
+          0.10877220002779116,
+          0.10718466667458415,
+          0.1083327333132426,
+          0.11366213334258646,
+          0.11088006664067507,
+          0.1122924000180016,
+          0.1085185333310316,
+          0.11016233335249126,
+          0.11185246667203803,
+          0.11131376664464672,
+          0.11214056665388246,
+          0.11429136665537953,
+          0.10759376668526481
+        ]
+      },
+      "currentToBaselineRatio": 1.7096822096302426,
+      "changePercent": 70.96822096302427
+    }
+  ]
+}

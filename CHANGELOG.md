@@ -16,3 +16,7 @@
 - Add pinned Test262 corpora, reference tooling, coordinated CI and distribution
   checks. See the conformance and AST compatibility documents for migration and
   deliberately excluded browser/proposal behavior.
+- Optimize ASCII scanning, punctuator dispatch, UTF-16 identity paths and static
+  validation lookups/scope inventories while retaining all correctness checks.
+- Repair the initial module HTML-comment lexical goal; preserve reference bytes
+  on Windows checkout and lock dev/build dependencies across platforms and Python floors.

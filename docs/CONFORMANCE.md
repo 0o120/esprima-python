@@ -54,3 +54,8 @@ scope. Future syntax must use a separately documented extension gate. JSON
 serialization, transformation, native/mapping traversal, installed-package
 checks, independent reparse and selected runtime comparisons are additional
 cross-repository release gates.
+
+The [grammar clause index](SPEC_COVERAGE.md) and its machine-readable manifest
+map clauses 12–16, regex grammar and extension exclusions to checked-in tests
+and exact fixture inventories. The [performance report](PERFORMANCE.md) records
+latency and Python allocation measurements, including the parser budget exception.

@@ -1,0 +1,2125 @@
+{
+  "edition": 2026,
+  "reviewDate": "2026-10-12",
+  "test262Revision": "2e0a56762801e275a9fdf96dc49d90ba0cddcf63",
+  "interpretation": "Clause-to-fixture index, not exhaustive production/algorithm or branch coverage. Counts overlap. Grammar subjects select actual fixture paths and focused tests also contain inline cases. Runtime algorithms, built-ins and host loading are excluded.",
+  "clauses": [
+    {
+      "clause": "12.1",
+      "title": "Unicode Format-Control Characters",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-unicode-format-control-characters",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py"
+      ],
+      "selectionPathSegments": [
+        "identifiers",
+        "whitespace"
+      ],
+      "legacyFixtures": {
+        "count": 2,
+        "representatives": [
+          "test/fixtures/whitespace/migrated_0000.source.js",
+          "test/fixtures/whitespace/migrated_0001.source.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 116,
+          "representatives": [
+            "test/language/identifiers/start-zwj-escaped.js",
+            "test/language/identifiers/start-zwnj-escaped.js",
+            "test/language/identifiers/unicode-escape-nls-err.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.2",
+      "title": "White Space",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-white-space",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py"
+      ],
+      "selectionPathSegments": [
+        "whitespace"
+      ],
+      "legacyFixtures": {
+        "count": 2,
+        "representatives": [
+          "test/fixtures/whitespace/migrated_0000.source.js",
+          "test/fixtures/whitespace/migrated_0001.source.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "12.3",
+      "title": "Line Terminators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-line-terminators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_positions.py"
+      ],
+      "selectionPathSegments": [
+        "asi",
+        "automatic-semicolon-insertion",
+        "whitespace"
+      ],
+      "legacyFixtures": {
+        "count": 18,
+        "representatives": [
+          "test/fixtures/automatic-semicolon-insertion/migrated_0000.js",
+          "test/fixtures/automatic-semicolon-insertion/migrated_0001.js",
+          "test/fixtures/automatic-semicolon-insertion/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 35,
+          "representatives": [
+            "test/language/asi/S7.9.2_A1_T1.js",
+            "test/language/asi/S7.9.2_A1_T3.js",
+            "test/language/asi/S7.9.2_A1_T6.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.4",
+      "title": "Comments",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-comments",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_module_comment_goal.py"
+      ],
+      "selectionPathSegments": [
+        "comment",
+        "comments"
+      ],
+      "legacyFixtures": {
+        "count": 57,
+        "representatives": [
+          "test/fixtures/comment/html-comment.module.js",
+          "test/fixtures/comment/migrated_0000.js",
+          "test/fixtures/comment/migrated_0001.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 29,
+          "representatives": [
+            "test/language/comments/hashbang/escaped-bang-041.js",
+            "test/language/comments/hashbang/escaped-bang-u0021.js",
+            "test/language/comments/hashbang/escaped-bang-u21.js"
+          ]
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 25,
+          "representatives": [
+            "test/language/comments/hashbang/escaped-bang-041.js",
+            "test/language/comments/hashbang/escaped-bang-u0021.js",
+            "test/language/comments/hashbang/escaped-bang-u21.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.5",
+      "title": "Hashbang Comments",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-hashbang",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_positions.py"
+      ],
+      "selectionPathSegments": [
+        "hashbang"
+      ],
+      "legacyFixtures": {
+        "count": 0,
+        "representatives": []
+      },
+      "test262": {
+        "lexical": {
+          "count": 29,
+          "representatives": [
+            "test/language/comments/hashbang/escaped-bang-041.js",
+            "test/language/comments/hashbang/escaped-bang-u0021.js",
+            "test/language/comments/hashbang/escaped-bang-u21.js"
+          ]
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 19,
+          "representatives": [
+            "test/language/comments/hashbang/escaped-bang-041.js",
+            "test/language/comments/hashbang/escaped-bang-u0021.js",
+            "test/language/comments/hashbang/escaped-bang-u21.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.6",
+      "title": "Tokens",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-tokens",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py"
+      ],
+      "selectionPathSegments": [
+        "tokenize"
+      ],
+      "legacyFixtures": {
+        "count": 25,
+        "representatives": [
+          "test/fixtures/tokenize/after_if.js",
+          "test/fixtures/tokenize/empty.js",
+          "test/fixtures/tokenize/invalid_number.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "12.7",
+      "title": "Names and Keywords",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-names-and-keywords",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "identifier",
+        "identifiers"
+      ],
+      "legacyFixtures": {
+        "count": 26,
+        "representatives": [
+          "test/fixtures/ES2016/identifier/gujarati_zha.js",
+          "test/fixtures/ES6/identifier/dakuten_handakuten.js",
+          "test/fixtures/ES6/identifier/escaped_all.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 116,
+          "representatives": [
+            "test/language/identifiers/start-zwj-escaped.js",
+            "test/language/identifiers/start-zwnj-escaped.js",
+            "test/language/identifiers/unicode-escape-nls-err.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.8",
+      "title": "Punctuators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-punctuators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py"
+      ],
+      "selectionPathSegments": [
+        "expression"
+      ],
+      "legacyFixtures": {
+        "count": 242,
+        "representatives": [
+          "test/fixtures/expression/additive/migrated_0000.js",
+          "test/fixtures/expression/additive/migrated_0001.js",
+          "test/fixtures/expression/additive/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/expression/S12.4_A1.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.9",
+      "title": "Literals",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-ecmascript-language-lexical-grammar-literals",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_serialization.py"
+      ],
+      "selectionPathSegments": [
+        "literals",
+        "primary"
+      ],
+      "legacyFixtures": {
+        "count": 124,
+        "representatives": [
+          "test/fixtures/expression/primary/array/migrated_0000.js",
+          "test/fixtures/expression/primary/array/migrated_0001.js",
+          "test/fixtures/expression/primary/array/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 537,
+          "representatives": [
+            "test/annexB/language/literals/regexp/class-escape.js",
+            "test/annexB/language/literals/regexp/extended-pattern-char.js",
+            "test/annexB/language/literals/regexp/identity-escape.js"
+          ]
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 321,
+          "representatives": [
+            "test/language/literals/bigint/binary-invalid-digit.js",
+            "test/language/literals/bigint/exponent-part.js",
+            "test/language/literals/bigint/hexadecimal-invalid-digit.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "12.10",
+      "title": "Automatic Semicolon Insertion",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-lexical-grammar.html#sec-automatic-semicolon-insertion",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "asi",
+        "automatic-semicolon-insertion"
+      ],
+      "legacyFixtures": {
+        "count": 16,
+        "representatives": [
+          "test/fixtures/automatic-semicolon-insertion/migrated_0000.js",
+          "test/fixtures/automatic-semicolon-insertion/migrated_0001.js",
+          "test/fixtures/automatic-semicolon-insertion/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 35,
+          "representatives": [
+            "test/language/asi/S7.9.2_A1_T1.js",
+            "test/language/asi/S7.9.2_A1_T3.js",
+            "test/language/asi/S7.9.2_A1_T6.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.1",
+      "title": "Identifiers",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-identifiers",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "identifier",
+        "identifiers"
+      ],
+      "legacyFixtures": {
+        "count": 26,
+        "representatives": [
+          "test/fixtures/ES2016/identifier/gujarati_zha.js",
+          "test/fixtures/ES6/identifier/dakuten_handakuten.js",
+          "test/fixtures/ES6/identifier/escaped_all.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 116,
+          "representatives": [
+            "test/language/identifiers/start-zwj-escaped.js",
+            "test/language/identifiers/start-zwnj-escaped.js",
+            "test/language/identifiers/unicode-escape-nls-err.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.2",
+      "title": "Primary Expression",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-primary-expression",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_expressions_modern.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "object",
+        "primary",
+        "template-literal",
+        "template-literals"
+      ],
+      "legacyFixtures": {
+        "count": 141,
+        "representatives": [
+          "test/fixtures/ES6/template-literals/after-switch.js",
+          "test/fixtures/ES6/template-literals/dollar-sign.js",
+          "test/fixtures/ES6/template-literals/escape-sequences.source.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 57,
+          "representatives": [
+            "test/language/expressions/template-literal/evaluation-order.js",
+            "test/language/expressions/template-literal/invalid-hexidecimal-character-escape-sequence-truncated-1.js",
+            "test/language/expressions/template-literal/invalid-hexidecimal-character-escape-sequence-truncated-2.js"
+          ]
+        },
+        "grammar": {
+          "count": 115,
+          "representatives": [
+            "test/language/expressions/object/covered-ident-name-prop-name-literal-break-escaped.js",
+            "test/language/expressions/object/covered-ident-name-prop-name-literal-case-escaped.js",
+            "test/language/expressions/object/covered-ident-name-prop-name-literal-catch-escaped.js"
+          ]
+        },
+        "early-errors": {
+          "count": 179,
+          "representatives": [
+            "test/language/expressions/object/11.1.5-1gs.js",
+            "test/language/expressions/object/__proto__-duplicate.js",
+            "test/language/expressions/object/cover-initialized-name.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.3",
+      "title": "Left-Hand-Side Expressions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-left-hand-side-expressions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "dynamic-import",
+        "left-hand-side",
+        "new",
+        "optional-chaining"
+      ],
+      "legacyFixtures": {
+        "count": 34,
+        "representatives": [
+          "test/fixtures/es2018/dynamic-import/await-import.js",
+          "test/fixtures/es2018/dynamic-import/coexist-import-call-import-declaration.module.js",
+          "test/fixtures/es2018/dynamic-import/import-call-string.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 2,
+          "representatives": [
+            "test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js",
+            "test/language/expressions/optional-chaining/member-expression.js"
+          ]
+        },
+        "early-errors": {
+          "count": 157,
+          "representatives": [
+            "test/language/expressions/dynamic-import/escape-sequence-import.js",
+            "test/language/expressions/dynamic-import/import-attributes/2nd-param-yield-ident-invalid.js",
+            "test/language/expressions/dynamic-import/syntax/invalid/invalid-assignmenttargettype-syntax-error-1-update-expression.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.4",
+      "title": "Update Expressions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-update-expressions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "postfix",
+        "postfix-decrement",
+        "postfix-increment",
+        "prefix-decrement",
+        "prefix-increment"
+      ],
+      "legacyFixtures": {
+        "count": 6,
+        "representatives": [
+          "test/fixtures/expression/postfix/migrated_0000.js",
+          "test/fixtures/expression/postfix/migrated_0001.js",
+          "test/fixtures/expression/postfix/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 34,
+          "representatives": [
+            "test/language/expressions/postfix-decrement/arguments.js",
+            "test/language/expressions/postfix-decrement/eval.js",
+            "test/language/expressions/postfix-decrement/line-terminator-carriage-return.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.5",
+      "title": "Unary Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-unary-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "delete",
+        "typeof",
+        "unary",
+        "void"
+      ],
+      "legacyFixtures": {
+        "count": 13,
+        "representatives": [
+          "test/fixtures/expression/unary/migrated_0000.js",
+          "test/fixtures/expression/unary/migrated_0001.js",
+          "test/fixtures/expression/unary/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 194,
+          "representatives": [
+            "test/language/expressions/class/elements/syntax/early-errors/delete/field-delete-covered-err-delete-call-expression-private-method-accessor-get.js",
+            "test/language/expressions/class/elements/syntax/early-errors/delete/field-delete-covered-err-delete-call-expression-private-method-accessor-set.js",
+            "test/language/expressions/class/elements/syntax/early-errors/delete/field-delete-covered-err-delete-call-expression-private-method-async-gen.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.6",
+      "title": "Exponentiation Operator",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-exp-operator",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "ES2016",
+        "exponentiation"
+      ],
+      "legacyFixtures": {
+        "count": 44,
+        "representatives": [
+          "test/fixtures/ES2016/exponent/exp_assign.js",
+          "test/fixtures/ES2016/exponent/exp_bitnot.js",
+          "test/fixtures/ES2016/exponent/exp_delete.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 1,
+          "representatives": [
+            "test/language/expressions/exponentiation/bigint-negative-exponent-throws.js"
+          ]
+        },
+        "early-errors": {
+          "count": 7,
+          "representatives": [
+            "test/language/expressions/exponentiation/exp-operator-syntax-error-bitnot-unary-expression-base.js",
+            "test/language/expressions/exponentiation/exp-operator-syntax-error-delete-unary-expression-base.js",
+            "test/language/expressions/exponentiation/exp-operator-syntax-error-logical-not-unary-expression-base.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.7",
+      "title": "Multiplicative Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-multiplicative-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "multiplicative"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/expression/multiplicative/migrated_0000.js",
+          "test/fixtures/expression/multiplicative/migrated_0001.js",
+          "test/fixtures/expression/multiplicative/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "13.8",
+      "title": "Additive Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-additive-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "additive"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/expression/additive/migrated_0000.js",
+          "test/fixtures/expression/additive/migrated_0001.js",
+          "test/fixtures/expression/additive/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "13.9",
+      "title": "Bitwise Shift Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-bitwise-shift-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "bitwise-shift"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/expression/bitwise-shift/migrated_0000.js",
+          "test/fixtures/expression/bitwise-shift/migrated_0001.js",
+          "test/fixtures/expression/bitwise-shift/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "13.10",
+      "title": "Relational Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-relational-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_classes_modules.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "in",
+        "instanceof",
+        "relational"
+      ],
+      "legacyFixtures": {
+        "count": 7,
+        "representatives": [
+          "test/fixtures/expression/relational/migrated_0000.js",
+          "test/fixtures/expression/relational/migrated_0001.js",
+          "test/fixtures/expression/relational/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 9,
+          "representatives": [
+            "test/language/expressions/in/private-field-in-nested.js",
+            "test/language/expressions/in/private-field-in.js",
+            "test/language/expressions/in/private-field-invalid-assignment-reference.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.11",
+      "title": "Equality Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-equality-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "equality"
+      ],
+      "legacyFixtures": {
+        "count": 4,
+        "representatives": [
+          "test/fixtures/expression/equality/migrated_0000.js",
+          "test/fixtures/expression/equality/migrated_0001.js",
+          "test/fixtures/expression/equality/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "13.12",
+      "title": "Binary Bitwise Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-binary-bitwise-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "binary-bitwise"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/expression/binary-bitwise/migrated_0000.js",
+          "test/fixtures/expression/binary-bitwise/migrated_0001.js",
+          "test/fixtures/expression/binary-bitwise/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "13.13",
+      "title": "Binary Logical Operators",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-binary-logical-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py"
+      ],
+      "selectionPathSegments": [
+        "binary-logical",
+        "coalesce"
+      ],
+      "legacyFixtures": {
+        "count": 6,
+        "representatives": [
+          "test/fixtures/expression/binary-logical/migrated_0000.js",
+          "test/fixtures/expression/binary-logical/migrated_0001.js",
+          "test/fixtures/expression/binary-logical/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 4,
+          "representatives": [
+            "test/language/expressions/coalesce/cannot-chain-head-with-logical-and.js",
+            "test/language/expressions/coalesce/cannot-chain-head-with-logical-or.js",
+            "test/language/expressions/coalesce/cannot-chain-tail-with-logical-and.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.14",
+      "title": "Conditional Operator",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-conditional-operator",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "conditional"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/expression/conditional/migrated_0000.js",
+          "test/fixtures/expression/conditional/migrated_0001.js",
+          "test/fixtures/expression/conditional/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 2,
+          "representatives": [
+            "test/language/expressions/conditional/in-branch-2.js",
+            "test/language/expressions/conditional/in-condition.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.15",
+      "title": "Assignment Operators and Destructuring",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-assignment-operators",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "assignment",
+        "destructuring"
+      ],
+      "legacyFixtures": {
+        "count": 14,
+        "representatives": [
+          "test/fixtures/expression/assignment/migrated_0000.js",
+          "test/fixtures/expression/assignment/migrated_0001.js",
+          "test/fixtures/expression/assignment/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 74,
+          "representatives": [
+            "test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js",
+            "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-break-escaped.js",
+            "test/language/expressions/assignment/dstr/ident-name-prop-name-literal-case-escaped.js"
+          ]
+        },
+        "early-errors": {
+          "count": 90,
+          "representatives": [
+            "test/language/expressions/assignment/dstr/array-elem-init-yield-ident-invalid.js",
+            "test/language/expressions/assignment/dstr/array-elem-nested-array-invalid.js",
+            "test/language/expressions/assignment/dstr/array-elem-nested-array-yield-ident-invalid.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "13.16",
+      "title": "Comma Operator",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-comma-operator",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "comma",
+        "complex"
+      ],
+      "legacyFixtures": {
+        "count": 2,
+        "representatives": [
+          "test/fixtures/expression/complex/migrated_0000.js",
+          "test/fixtures/expression/complex/migrated_0001.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "14.1",
+      "title": "Statement Semantics",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-statement-semantics",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "statement",
+        "statements"
+      ],
+      "legacyFixtures": {
+        "count": 110,
+        "representatives": [
+          "test/fixtures/statement/block/migrated_0000.js",
+          "test/fixtures/statement/block/migrated_0001.js",
+          "test/fixtures/statement/block/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 53,
+          "representatives": [
+            "test/language/statements/class/definition/methods-async-super-call-param.js",
+            "test/language/statements/class/ident-name-method-def-break-escaped.js",
+            "test/language/statements/class/ident-name-method-def-case-escaped.js"
+          ]
+        },
+        "early-errors": {
+          "count": 1445,
+          "representatives": [
+            "test/language/statements/async-function/array-destructuring-param-strict-body.js",
+            "test/language/statements/async-function/await-as-binding-identifier-escaped.js",
+            "test/language/statements/async-function/await-as-binding-identifier.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.2",
+      "title": "Block",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-block",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "block"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/statement/block/migrated_0000.js",
+          "test/fixtures/statement/block/migrated_0001.js",
+          "test/fixtures/statement/block/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 14,
+          "representatives": [
+            "test/language/statements/block/12.1-1.js",
+            "test/language/statements/block/12.1-2.js",
+            "test/language/statements/block/12.1-3.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.3",
+      "title": "Declarations and the Variable Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-declarations-and-the-variable-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "const",
+        "declaration",
+        "let",
+        "variable"
+      ],
+      "legacyFixtures": {
+        "count": 39,
+        "representatives": [
+          "test/fixtures/declaration/const/migrated_0000.js",
+          "test/fixtures/declaration/const/migrated_0001.js",
+          "test/fixtures/declaration/const/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/let/syntax/escaped-let.js"
+          ]
+        },
+        "early-errors": {
+          "count": 101,
+          "representatives": [
+            "test/language/statements/const/dstr/ary-ptrn-rest-init-ary.js",
+            "test/language/statements/const/dstr/ary-ptrn-rest-init-id.js",
+            "test/language/statements/const/dstr/ary-ptrn-rest-init-obj.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.4",
+      "title": "Empty Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-empty-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "empty"
+      ],
+      "legacyFixtures": {
+        "count": 1,
+        "representatives": [
+          "test/fixtures/statement/empty/migrated_0000.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "14.5",
+      "title": "Expression Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-expression-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "expression"
+      ],
+      "legacyFixtures": {
+        "count": 242,
+        "representatives": [
+          "test/fixtures/expression/additive/migrated_0000.js",
+          "test/fixtures/expression/additive/migrated_0001.js",
+          "test/fixtures/expression/additive/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/expression/S12.4_A1.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.6",
+      "title": "The if Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-if-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "if"
+      ],
+      "legacyFixtures": {
+        "count": 11,
+        "representatives": [
+          "test/fixtures/statement/if/invalid-function-declaration1.js",
+          "test/fixtures/statement/if/invalid-function-declaration2.js",
+          "test/fixtures/statement/if/invalid-function-declaration3.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 40,
+          "representatives": [
+            "test/language/statements/if/if-async-fun-else-async-fun.js",
+            "test/language/statements/if/if-async-fun-else-stmt.js",
+            "test/language/statements/if/if-async-fun-no-else.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.7",
+      "title": "Iteration Statements",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-iteration-statements",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_grammar_regressions.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "do-while",
+        "for",
+        "for-await-of",
+        "for-in",
+        "for-of",
+        "iteration",
+        "while"
+      ],
+      "legacyFixtures": {
+        "count": 58,
+        "representatives": [
+          "test/fixtures/ES6/for-of/for-of-array-pattern-let.js",
+          "test/fixtures/ES6/for-of/for-of-array-pattern-var.js",
+          "test/fixtures/ES6/for-of/for-of-array-pattern.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 10,
+          "representatives": [
+            "test/language/statements/for/head-lhs-let.js",
+            "test/language/statements/for-await-of/head-lhs-async.js",
+            "test/language/statements/for-of/dstr/array-elem-nested-obj-yield-expr.js"
+          ]
+        },
+        "early-errors": {
+          "count": 327,
+          "representatives": [
+            "test/language/block-scope/syntax/for-in/disallow-initialization-assignment.js",
+            "test/language/block-scope/syntax/for-in/disallow-multiple-lexical-bindings-with-and-without-initializer.js",
+            "test/language/block-scope/syntax/for-in/disallow-multiple-lexical-bindings-with-initializer.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.8",
+      "title": "The continue Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-continue-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "continue"
+      ],
+      "legacyFixtures": {
+        "count": 5,
+        "representatives": [
+          "test/fixtures/statement/continue/migrated_0000.js",
+          "test/fixtures/statement/continue/migrated_0001.js",
+          "test/fixtures/statement/continue/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 12,
+          "representatives": [
+            "test/language/statements/continue/S12.7_A1_T1.js",
+            "test/language/statements/continue/S12.7_A1_T2.js",
+            "test/language/statements/continue/S12.7_A1_T3.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.9",
+      "title": "The break Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-break-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "break"
+      ],
+      "legacyFixtures": {
+        "count": 5,
+        "representatives": [
+          "test/fixtures/statement/break/migrated_0000.js",
+          "test/fixtures/statement/break/migrated_0001.js",
+          "test/fixtures/statement/break/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 11,
+          "representatives": [
+            "test/language/statements/break/S12.8_A1_T1.js",
+            "test/language/statements/break/S12.8_A1_T2.js",
+            "test/language/statements/break/S12.8_A1_T3.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.10",
+      "title": "The return Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-return-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "return"
+      ],
+      "legacyFixtures": {
+        "count": 6,
+        "representatives": [
+          "test/fixtures/statement/return/migrated_0000.js",
+          "test/fixtures/statement/return/migrated_0001.js",
+          "test/fixtures/statement/return/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 10,
+          "representatives": [
+            "test/language/statements/return/S12.9_A1_T1.js",
+            "test/language/statements/return/S12.9_A1_T10.js",
+            "test/language/statements/return/S12.9_A1_T2.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.11",
+      "title": "The with Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-with-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "with"
+      ],
+      "legacyFixtures": {
+        "count": 4,
+        "representatives": [
+          "test/fixtures/statement/with/migrated_0000.js",
+          "test/fixtures/statement/with/migrated_0001.js",
+          "test/fixtures/statement/with/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 16,
+          "representatives": [
+            "test/language/statements/with/12.10.1-11gs.js",
+            "test/language/statements/with/decl-async-fun.js",
+            "test/language/statements/with/decl-async-gen.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.12",
+      "title": "The switch Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-switch-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "switch"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/statement/switch/migrated_0000.js",
+          "test/fixtures/statement/switch/migrated_0001.js",
+          "test/fixtures/statement/switch/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 69,
+          "representatives": [
+            "test/language/statements/switch/S12.11_A2_T1.js",
+            "test/language/statements/switch/S12.11_A3_T1.js",
+            "test/language/statements/switch/S12.11_A3_T2.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.13",
+      "title": "Labelled Statements",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-labelled-statements",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "labeled",
+        "labelled"
+      ],
+      "legacyFixtures": {
+        "count": 4,
+        "representatives": [
+          "test/fixtures/statement/labelled/function-declaration.js",
+          "test/fixtures/statement/labelled/migrated_0000.js",
+          "test/fixtures/statement/labelled/migrated_0001.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 2,
+          "representatives": [
+            "test/language/statements/labeled/value-yield-non-strict-escaped.js",
+            "test/language/statements/labeled/value-yield-non-strict.js"
+          ]
+        },
+        "early-errors": {
+          "count": 14,
+          "representatives": [
+            "test/language/statements/labeled/continue.js",
+            "test/language/statements/labeled/decl-async-function.js",
+            "test/language/statements/labeled/decl-async-generator.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.14",
+      "title": "The throw Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-throw-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "throw"
+      ],
+      "legacyFixtures": {
+        "count": 3,
+        "representatives": [
+          "test/fixtures/statement/throw/migrated_0000.js",
+          "test/fixtures/statement/throw/migrated_0001.js",
+          "test/fixtures/statement/throw/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 0,
+          "representatives": []
+        }
+      }
+    },
+    {
+      "clause": "14.15",
+      "title": "The try Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-try-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "try"
+      ],
+      "legacyFixtures": {
+        "count": 8,
+        "representatives": [
+          "test/fixtures/statement/try/migrated_0000.js",
+          "test/fixtures/statement/try/migrated_0001.js",
+          "test/fixtures/statement/try/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 27,
+          "representatives": [
+            "test/language/statements/try/catch-parameter-boundnames-restriction-arguments-negative-early.js",
+            "test/language/statements/try/catch-parameter-boundnames-restriction-eval-negative-early.js",
+            "test/language/statements/try/dstr/ary-ptrn-rest-init-ary.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "14.16",
+      "title": "The debugger Statement",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-statements-and-declarations.html#sec-debugger-statement",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "debugger"
+      ],
+      "legacyFixtures": {
+        "count": 1,
+        "representatives": [
+          "test/fixtures/statement/debugger/migrated_0000.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/debugger/expression.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.1",
+      "title": "Parameter Lists",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-parameter-lists",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "arrow-function",
+        "default-parameters",
+        "function",
+        "parameters",
+        "rest-parameters"
+      ],
+      "legacyFixtures": {
+        "count": 65,
+        "representatives": [
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-01.js",
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-02.js",
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-03.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/function/S13.2.1_A1_T1.js"
+          ]
+        },
+        "early-errors": {
+          "count": 193,
+          "representatives": [
+            "test/language/expressions/arrow-function/array-destructuring-param-strict-body.js",
+            "test/language/expressions/arrow-function/dflt-params-duplicates.js",
+            "test/language/expressions/arrow-function/dflt-params-rest.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.2",
+      "title": "Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "function"
+      ],
+      "legacyFixtures": {
+        "count": 17,
+        "representatives": [
+          "test/fixtures/declaration/function/dupe-param.js",
+          "test/fixtures/declaration/function/invalid-strict-labelled-function-declaration.js",
+          "test/fixtures/declaration/function/migrated_0000.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 1,
+          "representatives": [
+            "test/language/statements/function/S13.2.1_A1_T1.js"
+          ]
+        },
+        "early-errors": {
+          "count": 99,
+          "representatives": [
+            "test/language/expressions/function/array-destructuring-param-strict-body.js",
+            "test/language/expressions/function/dflt-params-duplicates.js",
+            "test/language/expressions/function/dflt-params-rest.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.3",
+      "title": "Arrow Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-arrow-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "arrow-function",
+        "arrow-functions"
+      ],
+      "legacyFixtures": {
+        "count": 48,
+        "representatives": [
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-01.js",
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-02.js",
+          "test/fixtures/ES6/arrow-function/array-binding-pattern/array-binding-pattern-03.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 93,
+          "representatives": [
+            "test/language/expressions/arrow-function/array-destructuring-param-strict-body.js",
+            "test/language/expressions/arrow-function/dflt-params-duplicates.js",
+            "test/language/expressions/arrow-function/dflt-params-rest.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.4",
+      "title": "Method Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-method-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_grammar_regressions.py",
+        "tests/test_classes_modules.py"
+      ],
+      "selectionPathSegments": [
+        "method-definition",
+        "methods"
+      ],
+      "legacyFixtures": {
+        "count": 32,
+        "representatives": [
+          "test/fixtures/ES6/method-definition/migrated_0000.js",
+          "test/fixtures/ES6/method-definition/migrated_0001.js",
+          "test/fixtures/ES6/method-definition/migrated_0002.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 3,
+          "representatives": [
+            "test/language/expressions/object/method-definition/async-super-call-param.js",
+            "test/language/expressions/object/method-definition/generator-super-prop-param.js",
+            "test/language/expressions/object/method-definition/name-super-prop-param.js"
+          ]
+        },
+        "early-errors": {
+          "count": 101,
+          "representatives": [
+            "test/language/expressions/object/method-definition/async-await-as-binding-identifier-escaped.js",
+            "test/language/expressions/object/method-definition/async-await-as-binding-identifier.js",
+            "test/language/expressions/object/method-definition/async-await-as-identifier-reference-escaped.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.5",
+      "title": "Generator Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-generator-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_grammar_regressions.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "generator",
+        "generators"
+      ],
+      "legacyFixtures": {
+        "count": 30,
+        "representatives": [
+          "test/fixtures/ES6/generator/generator-declaration-with-params.js",
+          "test/fixtures/ES6/generator/generator-declaration-with-yield-delegate.js",
+          "test/fixtures/ES6/generator/generator-declaration-with-yield.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 73,
+          "representatives": [
+            "test/language/expressions/generators/array-destructuring-param-strict-body.js",
+            "test/language/expressions/generators/dflt-params-duplicates.js",
+            "test/language/expressions/generators/dflt-params-rest.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.6",
+      "title": "Async Generator Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-async-generator-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "async-generator",
+        "async-generators"
+      ],
+      "legacyFixtures": {
+        "count": 0,
+        "representatives": []
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 119,
+          "representatives": [
+            "test/language/expressions/async-generator/array-destructuring-param-strict-body.js",
+            "test/language/expressions/async-generator/await-as-binding-identifier-escaped.js",
+            "test/language/expressions/async-generator/await-as-binding-identifier.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.7",
+      "title": "Class Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-class-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_classes_modules.py",
+        "tests/test_early_errors.py",
+        "tests/test_grammar_regressions.py"
+      ],
+      "selectionPathSegments": [
+        "class",
+        "classes"
+      ],
+      "legacyFixtures": {
+        "count": 29,
+        "representatives": [
+          "test/fixtures/ES6/class/invalid-labelled-class-declaration.js",
+          "test/fixtures/ES6/class/invalid-setter-method-rest.js",
+          "test/fixtures/ES6/class/migrated_0000.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 75,
+          "representatives": [
+            "test/language/expressions/class/ident-name-method-def-break-escaped.js",
+            "test/language/expressions/class/ident-name-method-def-case-escaped.js",
+            "test/language/expressions/class/ident-name-method-def-catch-escaped.js"
+          ]
+        },
+        "early-errors": {
+          "count": 1266,
+          "representatives": [
+            "test/language/expressions/class/async-gen-method/array-destructuring-param-strict-body.js",
+            "test/language/expressions/class/async-gen-method/await-as-binding-identifier-escaped.js",
+            "test/language/expressions/class/async-gen-method/await-as-binding-identifier.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.8",
+      "title": "Async Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-async-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "async-function",
+        "async-functions",
+        "es2017"
+      ],
+      "legacyFixtures": {
+        "count": 144,
+        "representatives": [
+          "test/fixtures/es2017/async/arrows/assigned-async-arrow.js",
+          "test/fixtures/es2017/async/arrows/async-arrow-as-last-parameter.js",
+          "test/fixtures/es2017/async/arrows/async-arrow-as-parameter.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 62,
+          "representatives": [
+            "test/language/expressions/async-function/await-as-binding-identifier-escaped.js",
+            "test/language/expressions/async-function/await-as-binding-identifier.js",
+            "test/language/expressions/async-function/await-as-identifier-reference-escaped.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "15.9",
+      "title": "Async Arrow Function Definitions",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-async-arrow-function-definitions",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "async-arrow-function",
+        "es2017"
+      ],
+      "legacyFixtures": {
+        "count": 144,
+        "representatives": [
+          "test/fixtures/es2017/async/arrows/assigned-async-arrow.js",
+          "test/fixtures/es2017/async/arrows/async-arrow-as-last-parameter.js",
+          "test/fixtures/es2017/async/arrows/async-arrow-as-parameter.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 29,
+          "representatives": [
+            "test/language/expressions/async-arrow-function/array-destructuring-param-strict-body.js",
+            "test/language/expressions/async-arrow-function/await-as-binding-identifier-escaped.js",
+            "test/language/expressions/async-arrow-function/await-as-binding-identifier.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "16.1",
+      "title": "Scripts",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-scripts-and-modules.html#sec-scripts",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_early_errors.py",
+        "tests/test_module_comment_goal.py"
+      ],
+      "selectionPathSegments": [
+        "directive-prolog",
+        "directive-prologue"
+      ],
+      "legacyFixtures": {
+        "count": 2,
+        "representatives": [
+          "test/fixtures/directive-prolog/migrated_0000.js",
+          "test/fixtures/directive-prolog/migrated_0001.js"
+        ]
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 11,
+          "representatives": [
+            "test/language/directive-prologue/10.1.1-2gs.js",
+            "test/language/directive-prologue/10.1.1-5gs.js",
+            "test/language/directive-prologue/10.1.1-8gs.js"
+          ]
+        }
+      }
+    },
+    {
+      "clause": "16.2",
+      "title": "Modules",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-scripts-and-modules.html#sec-modules",
+      "status": "tested syntax and early-error scope",
+      "regressionTests": [
+        "tests/test_classes_modules.py",
+        "tests/test_expressions_modern.py",
+        "tests/test_early_errors.py"
+      ],
+      "selectionPathSegments": [
+        "export",
+        "import",
+        "module-code"
+      ],
+      "legacyFixtures": {
+        "count": 0,
+        "representatives": []
+      },
+      "test262": {
+        "lexical": {
+          "count": 0,
+          "representatives": []
+        },
+        "grammar": {
+          "count": 0,
+          "representatives": []
+        },
+        "early-errors": {
+          "count": 173,
+          "representatives": [
+            "test/language/export/escaped-as-export-specifier.js",
+            "test/language/export/escaped-default.js",
+            "test/language/export/escaped-from.js"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalScopes": [
+    {
+      "clause": "22.2.1",
+      "specification": "https://tc39.es/ecma262/2026/multipage/text-processing.html#sec-patterns",
+      "tests": [
+        "tests/test_lexical_modern.py",
+        "tests/test_lexical_editions.py",
+        "tests/test_lexical_test262.py"
+      ],
+      "status": "Regex syntax, flags, Unicode sets/properties and early errors; regex execution excluded"
+    },
+    {
+      "clause": "15.10",
+      "specification": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-functions-and-classes.html#sec-tail-position-calls",
+      "status": "Tail-call execution/analysis excluded; ordinary call syntax preserved"
+    },
+    {
+      "clause": "Annex B",
+      "specification": "https://tc39.es/ecma262/2026/multipage/additional-ecmascript-features-for-web-browsers.html",
+      "tests": [
+        "tests/test_early_errors.py",
+        "tests/test_lexical_modern.py",
+        "tests/test_module_comment_goal.py"
+      ],
+      "status": "Sloppy legacy syntax checked; B.3.9 call assignment/update/iteration targets deliberately rejected; strict/module restrictions retained"
+    },
+    {
+      "clause": "JSX extension",
+      "tests": [
+        "tests/test_jsx_modern.py",
+        "tests/test_toolchain_integration.py"
+      ],
+      "status": "Elements, fragments, attributes, text/entities and spread children; outside ECMAScript"
+    }
+  ]
+}

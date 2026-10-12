@@ -1,0 +1,796 @@
+{
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "executable": "C:\\Python312\\python.exe",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "baselineRevision": "e3b8965b0216c9a9f07b2d46a4c6c2a40256b89b",
+  "currentRevision": "ce98a6e8f2a18d1eb0c7a0ba3854a8510c5ab44c",
+  "method": {
+    "isolation": "Separate Python -I subprocesses import each exact source checkout; source-only compilation uses an empty pycache prefix and -B.",
+    "import": "Fresh-interpreter import timings; OS file caches can be warm. Instrumented import allocation is measured separately.",
+    "latency": "Tokenize only, with5warmups and14batchsamples perfixture/option; opposite-order subprocess rounds; garbage collection enabled.",
+    "allocation": "Five single-operation tracemalloc samples after5warmups/import, retaining the returned tokens/AST; medians of peak and retained Python bytes.",
+    "limits": "Tracemalloc is Python-managed allocation, not process RSS or native-library memory. No fixture is executed or serialized."
+  },
+  "sourceHashes": {
+    "baseline": {
+      "parser.py": "7f113562783755afb7544bd32b811c9208997e3af97bc6e06406ef57967d68de",
+      "scanner.py": "9667e5d0ff0697ee32846f195e95ed2ac4dbefd4fce358657b3642d385fedec8",
+      "character.py": "d861d4087fdf75d60f5b92a1372e1cd3e598e5f5142af9d30b897961197f2224",
+      "tokenizer.py": "50b9bff6f8a666fd8ef9f221c4a42069d775cd0f3e64c6f73f7a0aeefca954a9",
+      "esprima.py": "88f1beab41215d0a7de0b5424f1dc4556499e7cf9a37ad6bd6674d72d0d9baf3"
+    },
+    "current": {
+      "parser.py": "e920573187dfc29489c6e3cbd23c962827c8664930b3514c258ad88632f7f5f9",
+      "scanner.py": "15c50e6deb678e39ee99042aacafb1c976690259ca3e904e9ac4816a3ea6a03a",
+      "character.py": "720ee5dc1b9286023ceb63e2a96481291c3fa755a0246aed02f43aa418de7c9a",
+      "tokenizer.py": "f3246834a2419eda3d905e8b6ca6a40c31dd4bcda922b154931e422554ec81e8",
+      "esprima.py": "989abdbe3db200ec4a52d8645020fe0d57763b8e748a02276cdf41d64d3770d0"
+    }
+  },
+  "coldImport": {
+    "baseline": {
+      "medianSeconds": 0.0818471999373287,
+      "samplesSeconds": [
+        0.0818471999373287,
+        0.08186610008124262,
+        0.08190290001221001,
+        0.0803285000147298,
+        0.08722850005142391,
+        0.08072559989523143,
+        0.08214109996333718,
+        0.08102620008867234,
+        0.07946969999466091
+      ],
+      "medianPeakBytes": 15988099,
+      "medianRetainedBytes": 8268258,
+      "allocationSamples": [
+        {
+          "seconds": 0.36349549994338304,
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "retainedBytes": 8268258,
+          "peakBytes": 15988099
+        },
+        {
+          "seconds": 0.35529410000890493,
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "retainedBytes": 8268303,
+          "peakBytes": 15988099
+        },
+        {
+          "seconds": 0.35883339995052665,
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "retainedBytes": 8268258,
+          "peakBytes": 15988054
+        },
+        {
+          "seconds": 0.3577680999878794,
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "retainedBytes": 8268258,
+          "peakBytes": 15988099
+        },
+        {
+          "seconds": 0.3514400999993086,
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "retainedBytes": 8268303,
+          "peakBytes": 15988099
+        }
+      ]
+    },
+    "current": {
+      "medianSeconds": 0.0906358000356704,
+      "samplesSeconds": [
+        0.09412799996789545,
+        0.09035450010560453,
+        0.09833599999547005,
+        0.08857280004303902,
+        0.0909466000739485,
+        0.09052099997643381,
+        0.08680610009469092,
+        0.0906358000356704,
+        0.09153049997985363
+      ],
+      "medianPeakBytes": 9628059,
+      "medianRetainedBytes": 1909036,
+      "allocationSamples": [
+        {
+          "seconds": 0.31122050003614277,
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "retainedBytes": 1909036,
+          "peakBytes": 9628059
+        },
+        {
+          "seconds": 0.304547099978663,
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "retainedBytes": 1909288,
+          "peakBytes": 9628104
+        },
+        {
+          "seconds": 0.30824409995693713,
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "retainedBytes": 1909243,
+          "peakBytes": 9628059
+        },
+        {
+          "seconds": 0.30829289997927845,
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "retainedBytes": 1909018,
+          "peakBytes": 9628194
+        },
+        {
+          "seconds": 0.3102499999804422,
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "retainedBytes": 1909036,
+          "peakBytes": 9628059
+        }
+      ]
+    },
+    "medianSecondsCurrentToBaselineRatio": 1.1073781400594185,
+    "medianPeakBytesCurrentToBaselineRatio": 0.6022016125869624,
+    "medianRetainedBytesCurrentToBaselineRatio": 0.23088732838283468
+  },
+  "tokenizerLatency": [
+    {
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "sha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 40,
+        "resultCount": 131,
+        "medianSeconds": 0.0005214249991695397,
+        "samplesSeconds": [
+          0.000519150000764057,
+          0.0005146324983797967,
+          0.0005290649976814165,
+          0.0005136924999533221,
+          0.0005052824999438599,
+          0.000557197499438189,
+          0.0005559600016567856,
+          0.0005232575000263751,
+          0.0005139624990988523,
+          0.0005252925009699538,
+          0.000623309999355115,
+          0.0005195924983127043,
+          0.0005071350024081767,
+          0.00053308000206016
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 40,
+        "resultCount": 131,
+        "medianSeconds": 0.0005524025007616728,
+        "samplesSeconds": [
+          0.0005417849984951318,
+          0.0005416899977717549,
+          0.0005467699986184016,
+          0.0005527325003640727,
+          0.0005520725011592731,
+          0.0005602074990747497,
+          0.0005394650012021885,
+          0.0005582024983596057,
+          0.000565669999923557,
+          0.0005528025008970872,
+          0.0005412575002992526,
+          0.0005849625013070181,
+          0.0005620799987809732,
+          0.0005316675000358373
+        ]
+      },
+      "currentToBaselineRatio": 1.0594093141707248
+    },
+    {
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "sha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 40,
+        "resultCount": 131,
+        "medianSeconds": 0.0005460012500407175,
+        "samplesSeconds": [
+          0.0005568024993408471,
+          0.0005526574997929857,
+          0.0005473224999150261,
+          0.0005973225022898987,
+          0.0005284574988763779,
+          0.0005437325016828254,
+          0.0005589974985923618,
+          0.0005795800010673702,
+          0.0005446800001664087,
+          0.0005286950006848201,
+          0.0005379099980928004,
+          0.000552512498688884,
+          0.0005379500013077632,
+          0.0005438074993435293
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 40,
+        "resultCount": 131,
+        "medianSeconds": 0.0006305525006609969,
+        "samplesSeconds": [
+          0.0006437574978917837,
+          0.0006200625008204952,
+          0.000610205001430586,
+          0.0006020400003762915,
+          0.0006146650004666299,
+          0.00062038250034675,
+          0.0006200150004588067,
+          0.0007749000011244789,
+          0.0006477799994172529,
+          0.0006505650002509355,
+          0.0007107450015610084,
+          0.0006661849998636171,
+          0.0006181374978041276,
+          0.0006407225009752437
+        ]
+      },
+      "currentToBaselineRatio": 1.1548554158327917
+    },
+    {
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "sha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 4,
+        "resultCount": 9012,
+        "medianSeconds": 0.03643584999372251,
+        "samplesSeconds": [
+          0.03588592502637766,
+          0.03588362500886433,
+          0.036138374998699874,
+          0.03673332498874515,
+          0.03559720001067035,
+          0.03576447500381619,
+          0.03844837498036213,
+          0.035757274978095666,
+          0.03686637498321943,
+          0.03613459999905899,
+          0.037002725002821535,
+          0.03681515000062063,
+          0.036850975011475384,
+          0.03724212499218993
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 4,
+        "resultCount": 9012,
+        "medianSeconds": 0.03811073748511262,
+        "samplesSeconds": [
+          0.040015999984461814,
+          0.03806719998829067,
+          0.039019974996335804,
+          0.03773660000297241,
+          0.03740607498912141,
+          0.03803090000292286,
+          0.03992030001245439,
+          0.03782347499509342,
+          0.038206599972909316,
+          0.03850187500938773,
+          0.03928170001017861,
+          0.037632199993822724,
+          0.03815427498193458,
+          0.037948025012155995
+        ]
+      },
+      "currentToBaselineRatio": 1.0459681190826802
+    },
+    {
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "sha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 4,
+        "resultCount": 9012,
+        "medianSeconds": 0.037831787500181235,
+        "samplesSeconds": [
+          0.038297724997391924,
+          0.03763775000697933,
+          0.03765530002419837,
+          0.036924975021975115,
+          0.037230724992696196,
+          0.03717577501083724,
+          0.03688362499815412,
+          0.038272200006758794,
+          0.03834045000257902,
+          0.03841265002847649,
+          0.03822099999524653,
+          0.038505349977640435,
+          0.03773362500942312,
+          0.03792994999093935
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 14,
+        "batch": 4,
+        "resultCount": 9012,
+        "medianSeconds": 0.042147350002778694,
+        "samplesSeconds": [
+          0.04215920000569895,
+          0.04241260001435876,
+          0.04201425000792369,
+          0.04274405000614934,
+          0.04223404999356717,
+          0.042489774990826845,
+          0.04189232498174533,
+          0.042030574986711144,
+          0.04170314999646507,
+          0.042078200000105426,
+          0.042211500025587156,
+          0.041829175024759024,
+          0.04213549999985844,
+          0.04220039999927394
+        ]
+      },
+      "currentToBaselineRatio": 1.1140723922330338
+    }
+  ],
+  "allocation": [
+    {
+      "operation": "tokenize",
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 131,
+        "medianPeakBytes": 23635,
+        "samplesPeakBytes": [
+          23755,
+          23715,
+          23635,
+          23595,
+          23555
+        ],
+        "medianRetainedBytes": 18771,
+        "samplesRetainedBytes": [
+          18771,
+          18771,
+          18771,
+          18771,
+          18771
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 131,
+        "medianPeakBytes": 23858,
+        "samplesPeakBytes": [
+          23978,
+          23938,
+          23858,
+          23818,
+          23778
+        ],
+        "medianRetainedBytes": 19083,
+        "samplesRetainedBytes": [
+          19083,
+          19083,
+          19083,
+          19083,
+          19083
+        ]
+      },
+      "peakCurrentToBaselineRatio": 1.0094351597207532,
+      "retainedCurrentToBaselineRatio": 1.0166213840498641
+    },
+    {
+      "operation": "parseScript",
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 6,
+        "medianPeakBytes": 23737,
+        "samplesPeakBytes": [
+          25625,
+          24529,
+          23737,
+          23129,
+          22801
+        ],
+        "medianRetainedBytes": 19217,
+        "samplesRetainedBytes": [
+          21185,
+          20049,
+          19217,
+          18577,
+          18241
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 6,
+        "medianPeakBytes": 39900,
+        "samplesPeakBytes": [
+          41308,
+          40652,
+          39900,
+          39436,
+          39116
+        ],
+        "medianRetainedBytes": 32314,
+        "samplesRetainedBytes": [
+          33578,
+          32970,
+          32314,
+          31898,
+          31626
+        ]
+      },
+      "peakCurrentToBaselineRatio": 1.680920082571513,
+      "retainedCurrentToBaselineRatio": 1.681531976895457
+    },
+    {
+      "operation": "tokenize",
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 131,
+        "medianPeakBytes": 35779,
+        "samplesPeakBytes": [
+          35899,
+          35859,
+          35779,
+          35739,
+          35699
+        ],
+        "medianRetainedBytes": 31051,
+        "samplesRetainedBytes": [
+          31051,
+          31051,
+          31051,
+          31051,
+          31051
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 131,
+        "medianPeakBytes": 35946,
+        "samplesPeakBytes": [
+          36066,
+          36026,
+          35946,
+          35906,
+          35866
+        ],
+        "medianRetainedBytes": 31307,
+        "samplesRetainedBytes": [
+          31307,
+          31307,
+          31307,
+          31307,
+          31307
+        ]
+      },
+      "peakCurrentToBaselineRatio": 1.0046675424131475,
+      "retainedCurrentToBaselineRatio": 1.008244500982255
+    },
+    {
+      "operation": "parseScript",
+      "fixture": "small-es2017.js",
+      "bytes": 472,
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 6,
+        "medianPeakBytes": 32289,
+        "samplesPeakBytes": [
+          34095,
+          33033,
+          32289,
+          31721,
+          31417
+        ],
+        "medianRetainedBytes": 28905,
+        "samplesRetainedBytes": [
+          30713,
+          29689,
+          28905,
+          28313,
+          28001
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 6,
+        "medianPeakBytes": 47692,
+        "samplesPeakBytes": [
+          49004,
+          48388,
+          47692,
+          47244,
+          46948
+        ],
+        "medianRetainedBytes": 40106,
+        "samplesRetainedBytes": [
+          41274,
+          40706,
+          40106,
+          39706,
+          39458
+        ]
+      },
+      "peakCurrentToBaselineRatio": 1.4770355229335068,
+      "retainedCurrentToBaselineRatio": 1.3875108112783257
+    },
+    {
+      "operation": "tokenize",
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 9012,
+        "medianPeakBytes": 1370925,
+        "samplesPeakBytes": [
+          1371045,
+          1371005,
+          1370925,
+          1370885,
+          1370845
+        ],
+        "medianRetainedBytes": 1210355,
+        "samplesRetainedBytes": [
+          1210355,
+          1210355,
+          1210355,
+          1210355,
+          1210355
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 9012,
+        "medianPeakBytes": 1358893,
+        "samplesPeakBytes": [
+          1359013,
+          1358973,
+          1358893,
+          1358853,
+          1358813
+        ],
+        "medianRetainedBytes": 1210667,
+        "samplesRetainedBytes": [
+          1210667,
+          1210667,
+          1210667,
+          1210667,
+          1210667
+        ]
+      },
+      "peakCurrentToBaselineRatio": 0.9912234440250196,
+      "retainedCurrentToBaselineRatio": 1.0002577756112876
+    },
+    {
+      "operation": "parseScript",
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "range": false,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianPeakBytes": 1005414,
+        "samplesPeakBytes": [
+          1005942,
+          1005710,
+          1005414,
+          1005254,
+          1005142
+        ],
+        "medianRetainedBytes": 966884,
+        "samplesRetainedBytes": [
+          967460,
+          967188,
+          966884,
+          966732,
+          966628
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianPeakBytes": 2231173,
+        "samplesPeakBytes": [
+          2231709,
+          2231461,
+          2231173,
+          2231029,
+          2230925
+        ],
+        "medianRetainedBytes": 2083727,
+        "samplesRetainedBytes": [
+          2084119,
+          2083919,
+          2083727,
+          2083631,
+          2083575
+        ]
+      },
+      "peakCurrentToBaselineRatio": 2.219158476010877,
+      "retainedCurrentToBaselineRatio": 2.155095130336214
+    },
+    {
+      "operation": "tokenize",
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 9012,
+        "medianPeakBytes": 2469253,
+        "samplesPeakBytes": [
+          2469373,
+          2469333,
+          2469253,
+          2469213,
+          2469173
+        ],
+        "medianRetainedBytes": 2308819,
+        "samplesRetainedBytes": [
+          2308819,
+          2308819,
+          2308819,
+          2308819,
+          2308819
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 9012,
+        "medianPeakBytes": 2457165,
+        "samplesPeakBytes": [
+          2457285,
+          2457245,
+          2457165,
+          2457125,
+          2457085
+        ],
+        "medianRetainedBytes": 2309075,
+        "samplesRetainedBytes": [
+          2309075,
+          2309075,
+          2309075,
+          2309075,
+          2309075
+        ]
+      },
+      "peakCurrentToBaselineRatio": 0.9951045923605236,
+      "retainedCurrentToBaselineRatio": 1.0001108791984128
+    },
+    {
+      "operation": "parseScript",
+      "fixture": "medium-es2017.js",
+      "bytes": 34412,
+      "range": true,
+      "baseline": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianPeakBytes": 1874844,
+        "samplesPeakBytes": [
+          1875494,
+          1875182,
+          1874844,
+          1874684,
+          1874590
+        ],
+        "medianRetainedBytes": 1837572,
+        "samplesRetainedBytes": [
+          1838108,
+          1837836,
+          1837572,
+          1837428,
+          1837348
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianPeakBytes": 2812309,
+        "samplesPeakBytes": [
+          2812789,
+          2812581,
+          2812309,
+          2812197,
+          2812093
+        ],
+        "medianRetainedBytes": 2664863,
+        "samplesRetainedBytes": [
+          2665199,
+          2665039,
+          2664863,
+          2664799,
+          2664743
+        ]
+      },
+      "peakCurrentToBaselineRatio": 1.5000229352415455,
+      "retainedCurrentToBaselineRatio": 1.4502087537250241
+    }
+  ],
+  "sourceHashesStable": true,
+  "assessment": {
+    "tokenizerLatency": "Ranges disabled: +4.6% to +5.9%; ranges enabled: +11.4% to +15.5% on these supported ES2017 inputs.",
+    "tokenizerAllocation": "Peak Python allocation remains essentially unchanged (0.99\u20131.01 times baseline).",
+    "parserAllocation": "Per-operation peak Python allocation grows1.48\u20132.22times; retained AST allocation grows1.39\u20132.16times. Internal diagnostic metadata and current AST shape add retained work; static validation also allocates temporary state.",
+    "importAllocation": "Fresh source-import peak Python allocation is about40% lower, and retained Python allocation is about77% lower; compressed pinned Unicode tables avoid the original large character-set construction.",
+    "limits": "Per-operation allocations exclude pre-imported modules and source loading. They must not be presented as whole-process RSS. Cold imports use source compilation, which differs from cached installed-wheel bytecode imports.",
+    "coverageManifest": "No reviewed project clause-to-fixture coverage manifest was found; existing manifests inventory corpora and docCONFORMANCE summarizes broad feature groups only."
+  }
+}
