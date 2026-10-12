@@ -32,6 +32,7 @@ import unittest
 
 from esprima import parse, tokenize, Error, toDict
 from esprima.nodes import Script
+from esprima.schema import migrate_legacy_fixture
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -61,7 +62,7 @@ def test_factory(path):
         def test(self):
             with open(result_file, 'rb') as f:
                 expected_json = f.read()
-            expected = toDict(json.loads(expected_json.decode('utf-8')))
+            expected = migrate_legacy_fixture(toDict(json.loads(expected_json.decode('utf-8'))))
             if isinstance(expected, dict):
                 expected.pop('description', None)  # Not all json failure files include description
                 expected.pop('tokenize', None)  # tokenize is not part of errors

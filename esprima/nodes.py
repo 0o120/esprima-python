@@ -33,7 +33,7 @@ class Node(Object):
         return list(self.__dict__.keys())
 
     def __iter__(self):
-        return self.__iter__
+        return iter(self.__dict__)
 
     def keys(self):
         return self.__dict__.keys()
@@ -90,9 +90,9 @@ class AsyncArrowFunctionExpression(Node):
 
 
 class AsyncFunctionDeclaration(Node):
-    def __init__(self, id, params, body):
+    def __init__(self, id, params, body, generator=False):
         self.type = Syntax.FunctionDeclaration
-        self.generator = False
+        self.generator = generator
         self.expression = False
         self.isAsync = True
         self.id = id
@@ -101,9 +101,9 @@ class AsyncFunctionDeclaration(Node):
 
 
 class AsyncFunctionExpression(Node):
-    def __init__(self, id, params, body):
+    def __init__(self, id, params, body, generator=False):
         self.type = Syntax.FunctionExpression
-        self.generator = False
+        self.generator = generator
         self.expression = False
         self.isAsync = True
         self.id = id
@@ -119,7 +119,7 @@ class AwaitExpression(Node):
 
 class BinaryExpression(Node):
     def __init__(self, operator, left, right):
-        self.type = Syntax.LogicalExpression if operator in ('||', '&&') else Syntax.BinaryExpression
+        self.type = Syntax.LogicalExpression if operator in ('||', '&&', '??') else Syntax.BinaryExpression
         self.operator = operator
         self.left = left
         self.right = right
@@ -138,10 +138,11 @@ class BreakStatement(Node):
 
 
 class CallExpression(Node):
-    def __init__(self, callee, args):
+    def __init__(self, callee, args, optional=False):
         self.type = Syntax.CallExpression
         self.callee = callee
         self.arguments = args
+        self.optional = optional
 
 
 class CatchClause(Node):
@@ -174,11 +175,12 @@ class ClassExpression(Node):
 
 
 class ComputedMemberExpression(Node):
-    def __init__(self, object, property):
+    def __init__(self, object, property, optional=False):
         self.type = Syntax.MemberExpression
         self.computed = True
         self.object = object
         self.property = property
+        self.optional = optional
 
 
 class ConditionalExpression(Node):
@@ -220,9 +222,11 @@ class EmptyStatement(Node):
 
 
 class ExportAllDeclaration(Node):
-    def __init__(self, source):
+    def __init__(self, source, exported=None, attributes=None):
         self.type = Syntax.ExportAllDeclaration
         self.source = source
+        self.exported = exported
+        self.attributes = [] if attributes is None else attributes
 
 
 class ExportDefaultDeclaration(Node):
@@ -232,11 +236,12 @@ class ExportDefaultDeclaration(Node):
 
 
 class ExportNamedDeclaration(Node):
-    def __init__(self, declaration, specifiers, source):
+    def __init__(self, declaration, specifiers, source, attributes=None):
         self.type = Syntax.ExportNamedDeclaration
         self.declaration = declaration
         self.specifiers = specifiers
         self.source = source
+        self.attributes = [] if attributes is None else attributes
 
 
 class ExportSpecifier(Node):
@@ -268,11 +273,12 @@ class ForInStatement(Node):
 
 
 class ForOfStatement(Node):
-    def __init__(self, left, right, body):
+    def __init__(self, left, right, body, allowAwait=False):
         self.type = Syntax.ForOfStatement
         self.left = left
         self.right = right
         self.body = body
+        self.allowAwait = allowAwait
 
 
 class ForStatement(Node):
@@ -321,15 +327,17 @@ class IfStatement(Node):
 
 
 class ImportExpression(Node):
-    def __init__(self, source):
+    def __init__(self, source, options=None):
         self.type = Syntax.ImportExpression
         self.source = source
+        self.options = options
 
 class ImportDeclaration(Node):
-    def __init__(self, specifiers, source):
+    def __init__(self, specifiers, source, attributes=None):
         self.type = Syntax.ImportDeclaration
         self.specifiers = specifiers
         self.source = source
+        self.attributes = [] if attributes is None else attributes
 
 
 class ImportDefaultSpecifier(Node):
@@ -390,6 +398,40 @@ class FieldDefinition(Node):
         self.value = value
         self.kind = kind
         self.static = isStatic
+
+
+class PropertyDefinition(Node):
+    def __init__(self, key, computed, value, isStatic=False):
+        self.type = Syntax.PropertyDefinition
+        self.key = key
+        self.computed = computed
+        self.value = value
+        self.static = isStatic
+
+
+class PrivateIdentifier(Node):
+    def __init__(self, name):
+        self.type = Syntax.PrivateIdentifier
+        self.name = name
+
+
+class StaticBlock(Node):
+    def __init__(self, body):
+        self.type = Syntax.StaticBlock
+        self.body = body
+
+
+class ChainExpression(Node):
+    def __init__(self, expression):
+        self.type = Syntax.ChainExpression
+        self.expression = expression
+
+
+class ImportAttribute(Node):
+    def __init__(self, key, value):
+        self.type = Syntax.ImportAttribute
+        self.key = key
+        self.value = value
 
 
 class Module(Node):
@@ -472,11 +514,12 @@ class SpreadElement(Node):
 
 
 class StaticMemberExpression(Node):
-    def __init__(self, object, property):
+    def __init__(self, object, property, optional=False):
         self.type = Syntax.MemberExpression
         self.computed = False
         self.object = object
         self.property = property
+        self.optional = optional
 
 
 class Super(Node):
