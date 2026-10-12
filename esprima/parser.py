@@ -432,10 +432,14 @@ class Parser(object):
         return node
 
     def externalOffset(self, index):
-        return index if self.config.positionEncoding == 'scalar' else self.scanner.utf16Offset(index)
+        if self.config.positionEncoding == 'scalar' or (self.scanner._sourceIsAscii and 0 <= index <= self.scanner.length):
+            return index
+        return self.scanner.utf16Offset(index)
 
     def externalColumn(self, index, column):
-        return column if self.config.positionEncoding == 'scalar' else self.scanner.utf16Column(index, index - column)
+        if self.config.positionEncoding == 'scalar' or (self.scanner._sourceIsAscii and 0 <= index-column <= index <= self.scanner.length):
+            return column
+        return self.scanner.utf16Column(index, index - column)
 
     # Expect the next token to match the specified punctuator.
     # If not, an exception will be thrown.

@@ -186,9 +186,15 @@ class Scanner(object):
         return index + bisect_left(self._utf16Astral, index)
 
     def utf16Column(self, index, lineStart):
-        if self._sourceIsAscii and 0 <= lineStart <= index <= self.length:
-            return index - lineStart
-        return self.utf16Offset(index) - self.utf16Offset(lineStart)
+        if self._sourceIsAscii:
+            if 0 <= lineStart <= index <= self.length:
+                return index - lineStart
+            return min(max(index, 0), self.length) - min(max(lineStart, 0), self.length)
+        if self._utf16Astral is None:
+            self._utf16Astral = tuple(match.start() for match in _ASTRAL_SOURCE.finditer(self.source))
+        index = index if 0 <= index <= self.length else min(max(index, 0), self.length)
+        lineStart = lineStart if 0 <= lineStart <= self.length else min(max(lineStart, 0), self.length)
+        return index - lineStart + bisect_left(self._utf16Astral, index) - bisect_left(self._utf16Astral, lineStart)
 
     def saveState(self):
         return ScannerState(
