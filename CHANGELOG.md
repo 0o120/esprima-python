@@ -2,6 +2,12 @@
 
 ## 5.0.0 development
 
+- Accelerate identifier/digit runs, long comments and plain strings, decimal
+  BigInt metadata, cover-grammar propagation and source-position conversion.
+  Reduce validation dispatch/context/scope work for provably untouched parser
+  trees and reuse bounded successful regex facts. Custom/standalone validation,
+  diagnostics, edition checks and AST identity retain their complete behavior;
+  see the current paired measurements in `docs/PERFORMANCE.md`.
 - Require Python 3.11+ and fix the fork's wheel, entry point, README and version
   metadata. Retain `import esprima` and the historical version tuple.
 - Restore every legacy fixture with unique discovery and explicit edition and

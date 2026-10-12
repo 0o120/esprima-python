@@ -60,3 +60,9 @@ tests. Reference parsers are development-only: `npm ci --prefix tools/reference`
 Frozen Test262 corpora run without a network or a JavaScript runtime; Node is
 used for independent pipeline/source-map comparisons. Build wheels from source
 archives and run `python tools/check_distribution.py` before release.
+
+The [performance report](docs/PERFORMANCE.md) records paired original/start/current
+measurements. The latest pass reduces default ES2017 parsing time by 20–28%
+relative to the preceding modern checkpoint and improves long comments, strings
+and decimal BigInts substantially. General parsing remains 19–28% slower than
+the original port on the paired fixtures, with scope checks enabled.

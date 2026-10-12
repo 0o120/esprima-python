@@ -1,0 +1,1033 @@
+{
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "method": "Fresh isolated exact-source workers; public parsing always retains static/early errors; latency and Python allocations measured separately; trusted sources never executed.",
+  "currentHead": "78a3bfcb237da0255a0cedc805f6f1e38de34287",
+  "sourceHashes": {
+    "character.py": "720ee5dc1b9286023ceb63e2a96481291c3fa755a0246aed02f43aa418de7c9a",
+    "comment_handler.py": "857b686494b942baa527dc21d181cb80a7773b227943342dc56c242d8b5c4154",
+    "compat.py": "6d225541b46c3f0ca816ab5d348a24f095e0029999caffeb77684cfb7d1917a8",
+    "error_handler.py": "54861cb12219a100e514b93be994d498664dc7e200bb56d339503ea3aba59c5d",
+    "esprima.py": "9fc1d7bbfd15c9c10553610694326ce1fe49b179bbf57670335ec0df52b9110b",
+    "jsx_nodes.py": "57847114af4b046092bdaab4a1aef7adf2c41641bd0208f0c20a73891921be02",
+    "jsx_parser.py": "4e700e18aa9853d2ac97896033c72d73de61154a6932e1f160e1e982a8be2075",
+    "jsx_syntax.py": "70dbdc270e7644b5205d9c90ba9ac4cba92738ed7cec492bf4efdda849b08e87",
+    "messages.py": "3b5dc2beea79e93c9a0386e4cb377189d501bc669d0129e2896b61fc0942f8fc",
+    "nodes.py": "1b098c91afb757138f62a295f984252938cf0c9c84f7a1d9f4ca899db0db7c79",
+    "objects.py": "df76ae8dc7373a5800e28eca5f11b6183d858cf2e53f2e11ed18c4e4ec4c089e",
+    "parser.py": "38010465e6d926f35491fd0d2a4182cb26e6e436b9c13a2ba439112424bde577",
+    "regexp_validator.py": "616f81917d2f1fa7a4e38417bbe7f4a833f30c1dbb8a5ec7bd6227b4344b6d85",
+    "scanner.py": "7eef270d376f7a3274346e7171393ca8699023a2768c4e07d63ee1ce0b53ab67",
+    "schema.py": "427d938ef57809fc5596444cf6ad104e50b66cd579b8e2d280d6bb76ddf018a2",
+    "syntax.py": "248d5eb0c7eee48199ecee690f69627bc4be4657a2632b84f63ea9dde15a3fbf",
+    "token.py": "fc22dc5d9beb3fc21af46d801a7a36fdeb8f3f22ef8c60b9e2394d3316cd48bd",
+    "tokenizer.py": "f3246834a2419eda3d905e8b6ca6a40c31dd4bcda922b154931e422554ec81e8",
+    "utils.py": "3d8360655a98f47745057060cee83c558732d84db6cf1d3b4370ef1d43a9f166",
+    "validation.py": "0d6c88e0f7fe6957ee73c1f1b1700b3b55f270c0b35fe7793c00a506dfda8277",
+    "visitor.py": "c16fc0f9646347c9ff16d980d8a0520e14597688e8ba779c1d7c0907ef002cbc",
+    "xhtml_entities.py": "5cfb5db9242d880f6a62b83f8bb66d42c8ae005a13b03899391ad0a853eecbb0",
+    "_regexp_properties.py": "f9e46abcaa3beb22fee8569a6d12051f5a2a56149d959f103459b46dae6f1627",
+    "_unicode_data.py": "bc1de8a333d23f575fd832db9b1a5852480f9058be1fe82d66f4ec0bf64bd1a7",
+    "_version.py": "2e7ca49241ea77fc302c57faec7e0e71cafc19a85ddad6ed4505e9edcd2af4af",
+    "__init__.py": "3829efcb20714bb9a07cced0a70664bef3df172e3e8c48c68ce094e58bb2f351",
+    "__main__.py": "23246478d23d89b45a2d6487c2a54d6e0662263e73fd89ad13b12ce3c4b9045b"
+  },
+  "cases": [
+    {
+      "name": "small-es2017",
+      "sourceType": "script",
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 472,
+      "sourceSha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.0009412000072188675,
+        "samplesSeconds": [
+          0.0009498999861534685,
+          0.0009580999903846532,
+          0.0009313999908044934,
+          0.0008643750043120235,
+          0.0009412000072188675,
+          0.0009821999992709607,
+          0.0009107750083785504,
+          0.000960250006755814,
+          0.0008790499996393919
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.0015305500128306448,
+        "samplesSeconds": [
+          0.0015821499982848763,
+          0.001480375009123236,
+          0.0014788749977014959,
+          0.0014432999887503684,
+          0.0015922000166028738,
+          0.0015848249895498157,
+          0.0014636499981861562,
+          0.0015305500128306448,
+          0.001543525024317205
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.001204400003189221,
+        "samplesSeconds": [
+          0.001204400003189221,
+          0.0012377999955788255,
+          0.0013252249918878078,
+          0.0014339499757625163,
+          0.001195199991343543,
+          0.0011642000172287226,
+          0.0011807499977294356,
+          0.0011926500010304153,
+          0.001388274977216497
+        ]
+      },
+      "toStarting": 0.7869066630248611,
+      "toOld": 1.2796430024985632
+    },
+    {
+      "name": "small-es2017",
+      "sourceType": "script",
+      "oldCompatible": true,
+      "metadata": true,
+      "bytes": 472,
+      "sourceSha256": "2ecf90a3fc4c3ce2cc2a327d9d29a6d7fc3c9adf523b560c4aa41ad4b6423428",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.001631600025575608,
+        "samplesSeconds": [
+          0.0015681750082876533,
+          0.0016767750203143805,
+          0.0016653000202495605,
+          0.0016852749977260828,
+          0.001572849985677749,
+          0.0015180750051513314,
+          0.0018082500027958304,
+          0.0015900750004220754,
+          0.001631600025575608
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.0025760249991435558,
+        "samplesSeconds": [
+          0.002578849991550669,
+          0.0025760249991435558,
+          0.0026996000087819993,
+          0.002428149979095906,
+          0.0024394000065512955,
+          0.002577400009613484,
+          0.0024116249987855554,
+          0.002480049995938316,
+          0.0027618999883998185
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 6,
+        "medianSeconds": 0.002067599998554215,
+        "samplesSeconds": [
+          0.0022721999848727137,
+          0.002067599998554215,
+          0.0020280249882489443,
+          0.002183849981520325,
+          0.0021284249960444868,
+          0.0019986250263173133,
+          0.0020341500057838857,
+          0.002275675011333078,
+          0.002042649983195588
+        ]
+      },
+      "toStarting": 0.8026319617401323,
+      "toOld": 1.2672223376711407
+    },
+    {
+      "name": "medium-es2017",
+      "sourceType": "script",
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 34412,
+      "sourceSha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.06370759999845177,
+        "samplesSeconds": [
+          0.06263209995813668,
+          0.06699700001627207,
+          0.06370759999845177,
+          0.06471130007412285,
+          0.06532890000380576,
+          0.06308880005963147,
+          0.06342070002574474,
+          0.06557570002041757,
+          0.06349060009233654
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.1032328000292182,
+        "samplesSeconds": [
+          0.099370599957183,
+          0.11347950005438179,
+          0.10064229997806251,
+          0.1032328000292182,
+          0.10519270005170256,
+          0.10041990003082901,
+          0.11062269995454699,
+          0.10785689996555448,
+          0.10267229995224625
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.07547979999799281,
+        "samplesSeconds": [
+          0.07453079998958856,
+          0.07543860003352165,
+          0.07702949992381036,
+          0.08079160004854202,
+          0.07541659998241812,
+          0.07511009997688234,
+          0.07547979999799281,
+          0.0812231000745669,
+          0.07569720002356917
+        ]
+      },
+      "toStarting": 0.7311610261140801,
+      "toOld": 1.184784860830217,
+      "allocation": {
+        "old": {
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "statements": 100,
+          "medianPeakBytes": 1005622,
+          "samplesPeakBytes": [
+            1006142,
+            1005854,
+            1005622,
+            1005326,
+            1005166
+          ]
+        },
+        "starting": {
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+          "statements": 100,
+          "medianPeakBytes": 2231429,
+          "samplesPeakBytes": [
+            2232069,
+            2231677,
+            2231429,
+            2231141,
+            2230997
+          ]
+        },
+        "current": {
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "statements": 100,
+          "medianPeakBytes": 2221766,
+          "samplesPeakBytes": [
+            2222453,
+            2222061,
+            2221766,
+            2221525,
+            2221381
+          ]
+        }
+      }
+    },
+    {
+      "name": "medium-es2017",
+      "sourceType": "script",
+      "oldCompatible": true,
+      "metadata": true,
+      "bytes": 34412,
+      "sourceSha256": "572264378ee4e3b46c296e157d67c8b527744b9896695ad8fc954a70f8ad2cc9",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.11081850004848093,
+        "samplesSeconds": [
+          0.12156889995094389,
+          0.11160279996693134,
+          0.11081850004848093,
+          0.1245991000905633,
+          0.11181809997651726,
+          0.10972399997990578,
+          0.10830399999395013,
+          0.10842409997712821,
+          0.11040010000579059
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.17456010007299483,
+        "samplesSeconds": [
+          0.16551170009188354,
+          0.17456010007299483,
+          0.1733636000426486,
+          0.17243070004042238,
+          0.17006110004149377,
+          0.17648290004581213,
+          0.17782029998488724,
+          0.18489549995865673,
+          0.1982599999755621
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 100,
+        "medianSeconds": 0.14612309995573014,
+        "samplesSeconds": [
+          0.14212910004425794,
+          0.151181900058873,
+          0.14382590004242957,
+          0.147580899996683,
+          0.14612309995573014,
+          0.14897770003881305,
+          0.14472860004752874,
+          0.14466569991782308,
+          0.14862220000941306
+        ]
+      },
+      "toStarting": 0.837093355781915,
+      "toOld": 1.318580380458174
+    },
+    {
+      "name": "minified-functions",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 5050,
+      "sourceSha256": "8af1835db9b78fe421baf51a06002072b402912a975ce977dc418d17a4d27c17",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.01533095000195317,
+        "samplesSeconds": [
+          0.014834299974609166,
+          0.015337574994191527,
+          0.015018724981928244,
+          0.01533095000195317,
+          0.01720215001842007,
+          0.01697437500115484,
+          0.016131550015415996,
+          0.01501727499999106,
+          0.014881475013680756
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.02512800000840798,
+        "samplesSeconds": [
+          0.024793799995677546,
+          0.02512800000840798,
+          0.025329750002129003,
+          0.024847224995028228,
+          0.025568150012986735,
+          0.025548750010784715,
+          0.02468457497889176,
+          0.025497399998130277,
+          0.024870774999726564
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.018831900000805035,
+        "samplesSeconds": [
+          0.01846647498314269,
+          0.018278775009093806,
+          0.019099700002698228,
+          0.018506075022742152,
+          0.018816775002051145,
+          0.019089175009867176,
+          0.019151799991959706,
+          0.018831900000805035,
+          0.01883902499685064
+        ]
+      },
+      "toStarting": 0.7494388727516622,
+      "toOld": 1.2283583208089417
+    },
+    {
+      "name": "comments-strings",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 54860,
+      "sourceSha256": "f4f8836017eb31149f5cb52cbb604ddabf0dddb69045656647c935e7776b9506",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.015478399931453168,
+        "samplesSeconds": [
+          0.01569459994789213,
+          0.015460100024938583,
+          0.015658400021493435,
+          0.015312399948015809,
+          0.014911999925971031,
+          0.01576270000077784,
+          0.015478399931453168,
+          0.015391599969007075,
+          0.017439599963836372
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.018482599989511073,
+        "samplesSeconds": [
+          0.018334100022912025,
+          0.01855699997395277,
+          0.01967290008906275,
+          0.017607699963264167,
+          0.01848760002758354,
+          0.017895799945108593,
+          0.02055890008341521,
+          0.018126899958588183,
+          0.018482599989511073
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.006161900004372001,
+        "samplesSeconds": [
+          0.006161900004372001,
+          0.006055000005289912,
+          0.006194400019012392,
+          0.006074099917896092,
+          0.006121800048276782,
+          0.006187599967233837,
+          0.006242200033739209,
+          0.006495699984952807,
+          0.006077400059439242
+        ]
+      },
+      "toStarting": 0.3333892421990898,
+      "toOld": 0.39809670454699897,
+      "allocation": {
+        "old": {
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+          "statements": 120,
+          "medianPeakBytes": 140370,
+          "samplesPeakBytes": [
+            140450,
+            140410,
+            140370,
+            140290,
+            140250
+          ]
+        },
+        "starting": {
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+          "statements": 120,
+          "medianPeakBytes": 248711,
+          "samplesPeakBytes": [
+            248839,
+            248775,
+            248711,
+            248583,
+            248519
+          ]
+        },
+        "current": {
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "statements": 120,
+          "medianPeakBytes": 237799,
+          "samplesPeakBytes": [
+            237929,
+            237826,
+            237347,
+            237799,
+            237179
+          ]
+        }
+      }
+    },
+    {
+      "name": "comments-strings",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": true,
+      "bytes": 54860,
+      "sourceSha256": "f4f8836017eb31149f5cb52cbb604ddabf0dddb69045656647c935e7776b9506",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.0203424000646919,
+        "samplesSeconds": [
+          0.0203424000646919,
+          0.02128619991708547,
+          0.02095709997229278,
+          0.02021960006095469,
+          0.020331599982455373,
+          0.020565700018778443,
+          0.020577299990691245,
+          0.020244200015440583,
+          0.020259000011719763
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.02534000005107373,
+        "samplesSeconds": [
+          0.024194999947212636,
+          0.0257381999399513,
+          0.02591029996983707,
+          0.02534000005107373,
+          0.024915399961173534,
+          0.026883200043812394,
+          0.02483129990287125,
+          0.02479910000693053,
+          0.025636799982748926
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.012860900023952127,
+        "samplesSeconds": [
+          0.0134101000148803,
+          0.012131699942983687,
+          0.012548100086860359,
+          0.01322019996587187,
+          0.01338159991428256,
+          0.012860900023952127,
+          0.012754200026392937,
+          0.013714600005187094,
+          0.012798400013707578
+        ]
+      },
+      "toStarting": 0.5075335437265389,
+      "toOld": 0.6322213693100384
+    },
+    {
+      "name": "arithmetic-arrays",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 10850,
+      "sourceSha256": "9737327697431b11465967470949bbf6032f8a1d933617d37176a06e8fa9b18a",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 300,
+        "medianSeconds": 0.033380125008989125,
+        "samplesSeconds": [
+          0.03338989999610931,
+          0.03374712498043664,
+          0.03320105001330376,
+          0.03284364999854006,
+          0.03421509999316186,
+          0.033274374989559874,
+          0.03282617498189211,
+          0.034899774997029454,
+          0.033380125008989125
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 300,
+        "medianSeconds": 0.04919667498324998,
+        "samplesSeconds": [
+          0.0494163500261493,
+          0.04919667498324998,
+          0.04937612501089461,
+          0.04928192499210127,
+          0.048538199975155294,
+          0.04924557500635274,
+          0.04873999999836087,
+          0.04884722499991767,
+          0.04888552500051446
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 300,
+        "medianSeconds": 0.035338599991519004,
+        "samplesSeconds": [
+          0.035338599991519004,
+          0.0352493500104174,
+          0.034853674995247275,
+          0.03534737500012852,
+          0.03564657497918233,
+          0.035148574999766424,
+          0.0370454499789048,
+          0.034689174994127825,
+          0.03536184999393299
+        ]
+      },
+      "toStarting": 0.718312772225984,
+      "toOld": 1.0586718887961764
+    },
+    {
+      "name": "numbers",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 7810,
+      "sourceSha256": "6eacb6396a5f0e41c5725c4e5d3ced116a84b76bef7cbf2b70d6d250b7149b07",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.01078974999836646,
+        "samplesSeconds": [
+          0.01086577499518171,
+          0.011277799989329651,
+          0.010604299983242527,
+          0.010640299995429814,
+          0.01078974999836646,
+          0.010601399990264326,
+          0.01121805000002496,
+          0.010475524992216378,
+          0.010802425007568672
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.01699562498833984,
+        "samplesSeconds": [
+          0.016860575007740408,
+          0.017034049989888445,
+          0.016671350022079423,
+          0.01675087498733774,
+          0.017330350005067885,
+          0.017013899981975555,
+          0.01691572502022609,
+          0.01699562498833984,
+          0.017012249998515472
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.011235874990234151,
+        "samplesSeconds": [
+          0.011041074991226196,
+          0.011083699995651841,
+          0.011448100005509332,
+          0.011231750017032027,
+          0.011449674988398328,
+          0.011411874991608784,
+          0.011235399986617267,
+          0.011235874990234151,
+          0.011274724995018914
+        ]
+      },
+      "toStarting": 0.6611039604570428,
+      "toOld": 1.0413471110948107
+    },
+    {
+      "name": "classes-modules",
+      "sourceType": "module",
+      "jsx": false,
+      "oldCompatible": false,
+      "metadata": false,
+      "bytes": 7120,
+      "sourceSha256": "7a30618d95a08cd7fbfeac88c4707ea1fcfc2fec55278c33bb45d7009cc673be",
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 70,
+        "medianSeconds": 0.028020775003824383,
+        "samplesSeconds": [
+          0.028014374984195456,
+          0.0281340750225354,
+          0.02862717499374412,
+          0.028020775003824383,
+          0.027949299983447418,
+          0.028004374995362014,
+          0.028060025011654943,
+          0.02831940000760369,
+          0.02792422502534464
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 70,
+        "medianSeconds": 0.021759675000794232,
+        "samplesSeconds": [
+          0.021313675009878352,
+          0.021851274999789894,
+          0.022083975025452673,
+          0.02168135001556948,
+          0.021593924990156665,
+          0.021759675000794232,
+          0.021678650024114177,
+          0.02184674999443814,
+          0.021870475000469014
+        ]
+      },
+      "toStarting": 0.7765550737916559
+    },
+    {
+      "name": "regexes",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": false,
+      "metadata": false,
+      "bytes": 4090,
+      "sourceSha256": "54f382c0e376ddb1e7b29b55053c05a5490a0e5f1742c13b77e524a7012763f9",
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.013253424986032769,
+        "samplesSeconds": [
+          0.01319252498797141,
+          0.01347467498271726,
+          0.013253424986032769,
+          0.013407924998318776,
+          0.013269125018268824,
+          0.013212274992838502,
+          0.013367400009883568,
+          0.013167299999622628,
+          0.013123400014592335
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 120,
+        "medianSeconds": 0.0064250499999616295,
+        "samplesSeconds": [
+          0.0065990249859169126,
+          0.006025124981533736,
+          0.006048949988326058,
+          0.006100074999267235,
+          0.00597787500009872,
+          0.007072150008752942,
+          0.006633774988586083,
+          0.0064250499999616295,
+          0.006631299998844042
+        ]
+      },
+      "toStarting": 0.4847841223482022
+    },
+    {
+      "name": "bigint-decimal",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": false,
+      "metadata": false,
+      "bytes": 30014,
+      "sourceSha256": "faca6fc75d7584f4d36112f9a563414096546d8b3fb28aa38e138962de26c7e4",
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 1,
+        "medianSeconds": 0.09175609995145351,
+        "samplesSeconds": [
+          0.09494329988956451,
+          0.09175859997048974,
+          0.09230740007478744,
+          0.09100529993884265,
+          0.0908773000119254,
+          0.09175609995145351,
+          0.09059040003921837,
+          0.09481449995655566,
+          0.09089570003561676
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 1,
+        "medianSeconds": 0.0005167999770492315,
+        "samplesSeconds": [
+          0.0007707999320700765,
+          0.0005384000251069665,
+          0.000601799925789237,
+          0.0004681000718846917,
+          0.0006230000872164965,
+          0.0005167999770492315,
+          0.0005091000348329544,
+          0.00047179998364299536,
+          0.00045199994929134846
+        ]
+      },
+      "toStarting": 0.005632322835459017,
+      "allocation": {
+        "starting": {
+          "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+          "statements": 1,
+          "medianPeakBytes": 312672,
+          "samplesPeakBytes": [
+            312784,
+            312728,
+            312672,
+            312560,
+            312504
+          ]
+        },
+        "current": {
+          "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+          "statements": 1,
+          "medianPeakBytes": 99074,
+          "samplesPeakBytes": [
+            99250,
+            99162,
+            99074,
+            98898,
+            98810
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode-positions",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": false,
+      "bytes": 5810,
+      "sourceSha256": "88240a4a378600d4ae9c8e65b6a641c13ec434b2a7c1efbf521adbcbfa778934",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.005665424978360534,
+        "samplesSeconds": [
+          0.005665424978360534,
+          0.005626400001347065,
+          0.005756449972977862,
+          0.005612224980723113,
+          0.005657100002281368,
+          0.006424324994441122,
+          0.005779350001830608,
+          0.005645575001835823,
+          0.005671374994562939
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.009345200000097975,
+        "samplesSeconds": [
+          0.00928219998604618,
+          0.009345200000097975,
+          0.009338225005194545,
+          0.009504550020210445,
+          0.009268300025723875,
+          0.00949977501295507,
+          0.009127650002483279,
+          0.009482324996497482,
+          0.009391175000928342
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.007443725015036762,
+        "samplesSeconds": [
+          0.007315299997571856,
+          0.0074466000078246,
+          0.007441649999236688,
+          0.0076032750075683,
+          0.007431000005453825,
+          0.007419450004817918,
+          0.007443725015036762,
+          0.007614625006681308,
+          0.007451949990354478
+        ]
+      },
+      "toStarting": 0.7965292358599839,
+      "toOld": 1.3138864327863422
+    },
+    {
+      "name": "unicode-positions",
+      "sourceType": "script",
+      "jsx": false,
+      "oldCompatible": true,
+      "metadata": true,
+      "bytes": 5810,
+      "sourceSha256": "88240a4a378600d4ae9c8e65b6a641c13ec434b2a7c1efbf521adbcbfa778934",
+      "old": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.011255175020778552,
+        "samplesSeconds": [
+          0.011081100004957989,
+          0.011014000017894432,
+          0.011521599983097985,
+          0.010877500026253983,
+          0.011289999994914979,
+          0.011359975003870204,
+          0.011255175020778552,
+          0.01132582500576973,
+          0.011248250026255846
+        ]
+      },
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.020421825000084937,
+        "samplesSeconds": [
+          0.020397549989866093,
+          0.020619874994736165,
+          0.019941175007261336,
+          0.020421825000084937,
+          0.02011117502115667,
+          0.019921400002203882,
+          0.02042337498278357,
+          0.020769700000528246,
+          0.02079934999346733
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 160,
+        "medianSeconds": 0.017455299996072426,
+        "samplesSeconds": [
+          0.01721985000767745,
+          0.017934400006197393,
+          0.017135575006250292,
+          0.017222499998752028,
+          0.018004050012677908,
+          0.01797254997654818,
+          0.017455299996072426,
+          0.018155850004404783,
+          0.017377524985931814
+        ]
+      },
+      "toStarting": 0.8547375171415791,
+      "toOld": 1.5508688193517755
+    },
+    {
+      "name": "jsx",
+      "sourceType": "script",
+      "jsx": true,
+      "oldCompatible": false,
+      "metadata": false,
+      "bytes": 5180,
+      "sourceSha256": "42d1fad49ef047e32afad5adf0b74fe7fe7f87da25a6c5834a102285bd9c80c9",
+      "starting": {
+        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py",
+        "statements": 80,
+        "medianSeconds": 0.02230025001335889,
+        "samplesSeconds": [
+          0.02287247500498779,
+          0.022186649992363527,
+          0.02261347501189448,
+          0.02188564999960363,
+          0.021762999997008592,
+          0.02230025001335889,
+          0.02208082500146702,
+          0.02239247498800978,
+          0.022372799983713776
+        ]
+      },
+      "current": {
+        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "statements": 80,
+        "medianSeconds": 0.019544924987712875,
+        "samplesSeconds": [
+          0.019439925003098324,
+          0.01963850000174716,
+          0.019961550016887486,
+          0.019791049999184906,
+          0.019440999982180074,
+          0.01945917500415817,
+          0.020448399998713285,
+          0.01921274999040179,
+          0.019544924987712875
+        ]
+      },
+      "toStarting": 0.8764442091906841
+    }
+  ],
+  "exactAstGate": [
+    {
+      "case": "small-es2017",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "small-es2017",
+      "metadata": true,
+      "equal": true
+    },
+    {
+      "case": "medium-es2017",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "medium-es2017",
+      "metadata": true,
+      "equal": true
+    },
+    {
+      "case": "minified-functions",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "comments-strings",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "comments-strings",
+      "metadata": true,
+      "equal": true
+    },
+    {
+      "case": "arithmetic-arrays",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "numbers",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "classes-modules",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "regexes",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "bigint-decimal",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "unicode-positions",
+      "metadata": false,
+      "equal": true
+    },
+    {
+      "case": "unicode-positions",
+      "metadata": true,
+      "equal": true
+    },
+    {
+      "case": "jsx",
+      "metadata": false,
+      "equal": true
+    }
+  ],
+  "sourceStable": true,
+  "headAtStart": "2e96b55853d4f3c56c4fccdc7c746900fd1fd493",
+  "sourceMatchesHead": true,
+  "revisionRecording": "HEAD advanced by committing the already-measured no-var sources during timing; all measured files were unchanged during the run and individually verified against the recorded committed source."
+}
