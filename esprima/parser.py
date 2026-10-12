@@ -1425,7 +1425,14 @@ class Parser(object):
             if precedence <= minimum:
                 break
             operator = self.nextToken().value
+            # Each RHS begins its own operand cover state. Preserve a pending
+            # LHS initialized-name error even if an RHS arrow clears its frame.
+            previousCoverError = self.context.firstCoverInitializedNameError
+            self.context.isAssignmentTarget = True
+            self.context.isBindingElement = True
+            self.context.firstCoverInitializedNameError = None
             right = self.parseBinaryExpression(precedence)
+            self.context.firstCoverInitializedNameError = previousCoverError or self.context.firstCoverInitializedNameError
             for child in (left, right):
                 if child.type == Syntax.LogicalExpression and not child._parenthesized:
                     if (operator == '??' and child.operator in ('&&', '||')) or (operator in ('&&', '||') and child.operator == '??'):
