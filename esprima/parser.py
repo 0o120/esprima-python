@@ -116,6 +116,8 @@ class Parser(object):
         self.errorHandler.tolerant = self.config.tolerant
         self.scanner = Scanner(code, self.errorHandler)
         self.scanner.trackComment = self.config.comment
+        import re
+        self._lineStarts = [0] + [match.end() for match in re.finditer(r'\r\n|[\r\n\u2028\u2029]', code)]
 
         self.operatorPrecedence = {
             '||': 1,
@@ -261,21 +263,29 @@ class Parser(object):
                         node = Node.BlockComment(self.scanner.source[e.slice[0]:e.slice[1]])
                     else:
                         node = Node.LineComment(self.scanner.source[e.slice[0]:e.slice[1]])
+                    if e.hashbang:
+                        node.hashbang = True
+                    location = SourceLocation(
+                        start=Position(line=e.loc.start.line,
+                                       column=self.externalColumn(e.range[0], e.loc.start.column)),
+                        end=Position(line=e.loc.end.line,
+                                     column=self.externalColumn(e.range[1], e.loc.end.column)),
+                    )
                     if self.config.range:
-                        node.range = e.range
+                        node.range = [self.externalOffset(e.range[0]), self.externalOffset(e.range[1])]
                     if self.config.loc:
-                        node.loc = e.loc
+                        node.loc = location
                     if self.delegate:
                         metadata = SourceLocation(
                             start=Position(
                                 line=e.loc.start.line,
-                                column=e.loc.start.column,
-                                offset=e.range[0],
+                                column=location.start.column,
+                                offset=self.externalOffset(e.range[0]),
                             ),
                             end=Position(
                                 line=e.loc.end.line,
-                                column=e.loc.end.column,
-                                offset=e.range[1],
+                                column=location.end.column,
+                                offset=self.externalOffset(e.range[1]),
                             )
                         )
                         new_node = self.delegate(node, metadata)
@@ -365,11 +375,11 @@ class Parser(object):
         )
 
     def startNode(self, token, lastLineStart=0):
-        column = token.start - token.lineStart
-        line = token.lineNumber
-        if column < 0:
-            column += lastLineStart
-            line -= 1
+        # Raw tokens can finish on a later line than they start (strings and
+        # templates). Their saved lineStart then describes the ending line.
+        import bisect
+        line = bisect.bisect_right(self._lineStarts, token.start)
+        column = token.start - self._lineStarts[line - 1]
 
         return Marker(
             index=token.start,
@@ -2534,6 +2544,8 @@ class Parser(object):
         self.expectKeyword('function')
 
         isGenerator = self.match('*')
+        if isAsync and isGenerator and self.config.ecmaVersion < 2018:
+            self.throwUnexpectedToken(self.lookahead)
         if isGenerator:
             self.nextToken()
 
@@ -2595,6 +2607,8 @@ class Parser(object):
         self.expectKeyword('function')
 
         isGenerator = self.match('*')
+        if isAsync and isGenerator and self.config.ecmaVersion < 2018:
+            self.throwUnexpectedToken(self.lookahead)
         if isGenerator:
             self.nextToken()
 
@@ -2819,7 +2833,9 @@ class Parser(object):
             key = self.parsePropertyIdentifier() if self.lookahead.private else self.parseObjectPropertyKey()
         if self.match('('):
             if not computed and self.isPropertyKey(key, 'constructor') and not isStatic:
-                if kind != 'method' or generator or isAsync:
+                if isAsync:
+                    self.throwUnexpectedToken(self.lookahead, Messages.ConstructorIsAsync)
+                if kind != 'method' or generator:
                     self.throwUnexpectedToken(token, Messages.ConstructorSpecialMethod)
                 if hasConstructor.value:
                     self.throwUnexpectedToken(token, Messages.DuplicateConstructor)
@@ -2850,11 +2866,15 @@ class Parser(object):
         previous = (self.context.allowAwait, self.context.allowYield)
         self.context.allowAwait = isAsync
         self.context.allowYield = not generator
+        if isAsync and generator and self.config.ecmaVersion < 2018:
+            self.throwError('Async generators require ECMAScript 2018')
         params = self.parseFormalParameters()
         if kind == 'get' and params.params:
-            self.throwError(Messages.BadGetterArity)
-        if kind == 'set' and (len(params.params) != 1 or params.params[0].type == Syntax.RestElement):
-            self.throwError(Messages.BadSetterArity)
+            self.tolerateError(Messages.BadGetterArity)
+        if kind == 'set' and len(params.params) != 1:
+            self.tolerateError(Messages.BadSetterArity)
+        elif kind == 'set' and params.params[0].type == Syntax.RestElement:
+            self.tolerateError(Messages.BadSetterRestParameter)
         body = self.parsePropertyMethod(params)
         self.context.allowAwait, self.context.allowYield = previous
         function = Node.FunctionExpression(None, params.params, body, generator)
@@ -2920,7 +2940,7 @@ class Parser(object):
     def parseModule(self):
         self.context.strict = True
         self.context.isModule = True
-        self.context.allowAwait = True
+        self.context.allowAwait = self.config.ecmaVersion >= 2022
         self.scanner.isModule = True
         node = self.createNode()
         body = self.parseDirectivePrologues()
@@ -2950,13 +2970,14 @@ class Parser(object):
     # import {<foo as bar>} ...
     def parseImportSpecifier(self):
         node = self.createNode()
+        token = self.lookahead
         stringName = self.lookahead.type == Token.StringLiteral
         imported = self.parseModuleExportName()
         if self.matchContextualKeyword('as'):
             self.nextToken()
             local = self.parseVariableIdentifier()
         else:
-            if stringName or imported.name in ('default', 'await') or self.scanner.isKeyword(imported.name):
+            if token.type != Token.Identifier or stringName or imported.name in ('default', 'await') or self.scanner.isKeyword(imported.name):
                 self.throwUnexpectedToken(self.lookahead)
             local = imported
         return self.finalize(node, Node.ImportSpecifier(local, imported))

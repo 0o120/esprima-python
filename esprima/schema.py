@@ -39,6 +39,19 @@ def migrate_legacy_fixture(value):
     kind = result.get('type')
     if kind == 'Import':
         result['type'] = kind = 'ImportExpression'
+    if kind == 'CallExpression' and result.get('callee', {}).get('type') == 'ImportExpression':
+        arguments = result.get('arguments', [])
+        if arguments:
+            result = {key: item for key, item in result.items()
+                      if key not in ('callee', 'arguments', 'optional')}
+            result.update(type='ImportExpression', source=arguments[0],
+                          options=arguments[1] if len(arguments) > 1 else None)
+            kind = 'ImportExpression'
+    if kind == 'FieldDefinition':
+        result['type'] = kind = 'PropertyDefinition'
+        result.pop('kind', None)
+    if kind == 'TemplateElement' and 'value' in result:
+        result['value']['raw'] = result['value']['raw'].replace('\r\n', '\n').replace('\r', '\n')
     for field in NULLABLE_FIELDS.get(kind, ()):
         result.setdefault(field, None)
     if kind in ('MemberExpression', 'CallExpression'):

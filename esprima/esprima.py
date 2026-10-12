@@ -41,8 +41,12 @@ __all__ = ['Syntax', 'JSXSyntax', 'Error', 'NodeVisitor', 'nodes', 'jsx_nodes',
 
 
 def parse(code, options=None, delegate=None, **kwargs):
+    if not isinstance(code, str):
+        raise TypeError('JavaScript source must be a string')
     options = {} if options is None else options.copy()
     options.update(kwargs)
+    if options.get('sourceType', 'script') not in ('script', 'module'):
+        raise ValueError('sourceType must be script or module')
 
     # ESNext presset:
     if options.get('esnext', False):
@@ -77,6 +81,8 @@ def parse(code, options=None, delegate=None, **kwargs):
         parser = Parser(code, options=options, delegate=parserDelegate)
 
     ast = parser.parseModule() if isModule else parser.parseScript()
+    if parser.scanner.hashbang is not None:
+        ast.hashbang = parser.scanner.hashbang
 
     if collectComment and commentHandler:
         ast.comments = commentHandler.comments

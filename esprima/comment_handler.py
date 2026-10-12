@@ -150,6 +150,8 @@ class CommentHandler(object):
             comment.range = node.range
         if node.loc:
             comment.loc = node.loc
+        if node.hashbang:
+            comment.hashbang = True
         self.comments.append(comment)
 
         if self.attach:
@@ -163,6 +165,8 @@ class CommentHandler(object):
             )
             if node.loc:
                 entry.comment.loc = node.loc
+            if node.hashbang:
+                entry.comment.hashbang = True
             node.type = type
             self.leading.append(entry)
             self.trailing.append(entry)
