@@ -51,6 +51,12 @@ _ASCII_IDENTIFIER_RE = re.compile(r'[$A-Za-z_][$A-Za-z_0-9]*')
 _TRIVIA_STARTS = frozenset(WHITE_SPACE | LINE_TERMINATOR | {'/', '<', '-', '#'})
 _ASCII_HORIZONTAL_SPACE = frozenset(' \t\v\f')
 _ASCII_HORIZONTAL_RE = re.compile(r'[ \t\v\f]+')
+_DIGIT_RUNS = {
+    '0123456789': re.compile(r'[0-9]+'),
+    '0123456789abcdefABCDEF': re.compile(r'[0-9a-fA-F]+'),
+    '01': re.compile(r'[01]+'),
+    '01234567': re.compile(r'[0-7]+'),
+}
 # Longest first, indexed by the first character; single-character punctuation
 # never needs to scan the multi-character vocabulary.
 _PUNCTUATOR_PREFIXES = {
@@ -685,6 +691,15 @@ class Scanner(object):
 
     def _scanDigits(self, allowed, required=True):
         start = self.index
+        # A single digit avoids match allocation; longer ordinary runs use C.
+        if self.source[start] in allowed:
+            end = start + 1
+            match = _DIGIT_RUNS[allowed].match(self.source, start) if self.source[end] in allowed else None
+            if match is not None:
+                end = match.end()
+            if self.source[end] != '_':
+                self.index = end
+                return match.group() if match is not None else self.source[start]
         digits = []
         previousDigit = False
         while not self.eof():
@@ -748,14 +763,14 @@ class Scanner(object):
             if fraction or exponent or legacy:
                 self.throwUnexpectedToken()
             self.index += 1
-            # Avoid Python's decimal-input digit limit for valid arbitrary-sized BigInt.
-            integer = 0
-            for digit in digits:
-                integer = integer * base + hexValue(digit)
-            if len(digits) > 4300 and base == 10:
+            # Decimal BigInt metadata is already in its required representation.
+            # Constructing an arbitrary-size integer only to serialize it again
+            # adds quadratic work and encounters host decimal conversion limits.
+            if base == 10:
                 bigint = digits.lstrip('0') or '0'
             else:
-                # Decimal serialization is performed in chunks for oversized nondecimal values.
+                integer = int(digits, base)
+                # Chunked decimal output preserves caller digit-limit settings.
                 chunks = []
                 while integer >= 10 ** 9:
                     integer, rem = divmod(integer, 10 ** 9)
