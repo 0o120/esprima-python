@@ -10,8 +10,8 @@ authors = [
 ]
 requires-python = ">=3.11"
 description = "ECMAScript parsing infrastructure for multipurpose analysis in Python"
-license = "BSD-2-Clause"
-license-files = ["LICENSE.BSD", "LICENSE"]
+license = "BSD-2-Clause AND Unicode-3.0"
+license-files = ["LICENSE.BSD", "LICENSE", "data/unicode/LICENSE.txt"]
 readme = "README.md"
 keywords = [
 	"esprima",
@@ -21,7 +21,7 @@ keywords = [
 	"ast"
 ]
 classifiers = [
-	"Development Status :: 5 - Production/Stable",
+	"Development Status :: 4 - Beta",
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
 	"Topic :: Software Development :: Code Generators",

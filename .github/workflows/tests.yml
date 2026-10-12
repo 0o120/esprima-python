@@ -1,0 +1,54 @@
+name: Tests and distributions
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
+        include:
+          - os: macos-latest
+            python: '3.11'
+          - os: macos-latest
+            python: '3.15'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: 0o120/esutils-python
+          ref: codex/modernize-ecmascript-2026
+          path: .dependencies/esutils
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: 0o120/acornwalk-python
+          ref: codex/modernize-ecmascript-2026
+          path: .dependencies/acornwalk
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: 0o120/escodegen-python
+          ref: codex/modernize-ecmascript-2026
+          path: .dependencies/escodegen
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - run: python -m pip install --require-hashes -r requirements-dev.lock
+      - run: python -m pip install .dependencies/esutils .dependencies/acornwalk .dependencies/escodegen .
+      - run: npm ci --ignore-scripts --no-audit --no-fund --prefix tools/reference
+      - run: python -W error::SyntaxWarning -m unittest discover -v
+      - run: python tools/generate_unicode.py --check
+      - run: python tools/generate_regexp_properties.py --check
+      - run: python -m build --no-isolation
+      - run: python -m twine check dist/*
+      - run: python tools/check_distribution.py

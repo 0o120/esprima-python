@@ -54,4 +54,16 @@ output = [
 ]
 for name, values in [('BINARY_PROPERTIES', binary), ('GENERAL_CATEGORIES', categories), ('SCRIPTS', scripts)]:
     output.append(name + ' = frozenset(' + repr(tuple(sorted(values))) + ')')
-(ROOT / 'esprima' / '_regexp_properties.py').write_text('\n'.join(output) + '\n', encoding='utf-8')
+import argparse
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--check', action='store_true')
+args = parser.parse_args()
+target = ROOT / 'esprima' / '_regexp_properties.py'
+expected = '\n'.join(output) + '\n'
+if args.check:
+    if target.read_text(encoding='utf-8') != expected:
+        raise SystemExit('Generated regex property data is stale')
+    print('Regex property source checksums and generated aliases verified')
+else:
+    target.write_text(expected, encoding='utf-8', newline='\n')
+

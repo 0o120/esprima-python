@@ -16,6 +16,8 @@ from a required null. Regular expression literals have `value: null` and
 `regex: {pattern, flags}`; parsing does not compile a Python regular expression.
 BigInt literals have `value: null` and a decimal `bigint` string. Ordinary Number
 literals follow JavaScript binary64 semantics rather than arbitrary Python ints.
+Nonfinite supplied Number values use null plus a `number` descriptor
+(`Infinity`, `-Infinity`, `NaN`) in the JSON-safe interchange extension.
 
 Canonical `range`, `start`/`end`, location columns and delegate offsets use UTF-16
 code units. The scanner retains Python scalar indices for slicing internally.

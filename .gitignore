@@ -11,3 +11,7 @@ dist/
 docs/_build/
 *_flymake*
 .DS_Store
+node_modules/
+.venv/
+.pytest_cache/
+.dependencies/

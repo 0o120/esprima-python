@@ -64,4 +64,4 @@ if __name__ == '__main__':
             raise SystemExit('Generated Unicode data is stale')
         print('Unicode source checksum and generated tables verified')
     else:
-        target.write_text(expected, encoding='utf-8')
+        target.write_text(expected, encoding='utf-8', newline='\n')
