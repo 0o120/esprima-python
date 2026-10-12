@@ -97,7 +97,7 @@ class ScannerPerformancePathTests(unittest.TestCase):
         self.assertEqual(ascii_scanner.utf16Column(8, 5), 3)
         self.assertEqual(ascii_scanner.utf16Column(10, 5), 3)
         self.assertEqual(ascii_scanner.utf16Column(-2, -1), 0)
-        self.assertIsNone(ascii_scanner._utf16Offsets)
+        self.assertIsNone(ascii_scanner._utf16Astral)
         for source, expected in [('a\U0001F600b', [0, 1, 3, 4]), ('a\ud83d\ude00b', [0, 1, 2, 3, 4])]:
             scanner = Scanner(source, ErrorHandler())
             self.assertEqual([scanner.utf16Offset(index) for index in range(len(source) + 1)], expected)

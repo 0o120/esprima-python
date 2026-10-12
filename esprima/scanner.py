@@ -24,6 +24,10 @@
 from __future__ import absolute_import, unicode_literals
 
 import math
+import re
+from bisect import bisect_left
+
+_ASTRAL_SOURCE = re.compile(r"[\U00010000-\U0010ffff]")
 
 from .regexp_validator import validate_regexp, RegExpSyntaxError, RegExpEditionError
 
@@ -142,7 +146,7 @@ class Scanner(object):
         self.lineNumber = 1 if self.length > 0 else 0
         self.lineStart = 0
         self.curlyStack = []
-        self._utf16Offsets = None
+        self._utf16Astral = None
         self.hashbang = None
         # Internal indices remain scalar; public clients select diagnostic units.
         self.positionEncoding = 'scalar'
@@ -156,12 +160,12 @@ class Scanner(object):
         """Convert a Python scalar source index to the ESTree UTF-16 unit index."""
         if self._sourceIsAscii:
             return index if 0 <= index <= self.length else min(max(index, 0), self.length)
-        if self._utf16Offsets is None:
-            offsets = [0]
-            for ch in self.source[:-1]:
-                offsets.append(offsets[-1] + (2 if ord(ch) > 0xFFFF else 1))
-            self._utf16Offsets = offsets
-        return self._utf16Offsets[min(max(index, 0), self.length)]
+        if self._utf16Astral is None:
+            # Only supplementary scalars change Python-to-UTF-16 positions.
+            # A sparse index avoids one Python integer per source character.
+            self._utf16Astral = tuple(match.start() for match in _ASTRAL_SOURCE.finditer(self.source))
+        index = index if 0 <= index <= self.length else min(max(index, 0), self.length)
+        return index + bisect_left(self._utf16Astral, index)
 
     def utf16Column(self, index, lineStart):
         if self._sourceIsAscii and 0 <= lineStart <= index <= self.length:

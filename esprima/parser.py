@@ -396,7 +396,7 @@ class Parser(object):
         node._start = marker.index
         node._end = self.lastMarker.index
         node._line = marker.line
-        node._column = self.externalColumn(marker.index, marker.column)
+        node._column = marker.column if self.scanner._sourceIsAscii or self.config.positionEncoding == 'scalar' else self.externalColumn(marker.index, marker.column)
         if self.config.range:
             node.range = [self.externalOffset(marker.index), self.externalOffset(self.lastMarker.index)]
 
