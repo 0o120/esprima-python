@@ -1326,6 +1326,9 @@ class Parser(object):
         if self.match('++', '--'):
             node = self.startNode(startToken)
             token = self.nextToken()
+            # Validate this operand independently of a preceding binary LHS.
+            # The update expression itself always finishes as a non-target.
+            self.context.isAssignmentTarget = True
             expr = self.inheritCoverGrammar(self.parseUnaryExpression)
             if self.context.strict and expr.type is Syntax.Identifier and self.scanner.isRestrictedWord(expr.name):
                 self.tolerateError(Messages.StrictLHSPrefix)
