@@ -114,6 +114,8 @@ class Parser(object):
         self.scanner = Scanner(code, self.errorHandler)
         self.scanner.positionEncoding = self.config.positionEncoding
         self.scanner.ecmaVersion = self.config.ecmaVersion
+        # Comment grammar depends on the lexical goal before the first token.
+        self.scanner.isModule = options.get('sourceType', 'script') == 'module'
         self.scanner.trackComment = self.config.comment
         import re
         self._lineStarts = [0] + [match.end() for match in re.finditer(r'\r\n|[\r\n\u2028\u2029]', code)]
