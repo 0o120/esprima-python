@@ -26,7 +26,8 @@ from __future__ import absolute_import, unicode_literals
 from collections import deque
 
 from .objects import Object
-from .error_handler import ErrorHandler
+from .error_handler import ErrorHandler, Error
+from .messages import Messages
 from .scanner import Scanner, SourceLocation, Position, RegExp
 from .token import Token, TokenName
 
@@ -52,10 +53,10 @@ class Reader(object):
             'return', 'case', 'delete', 'throw', 'void',
             # assignment operators
             '=', '+=', '-=', '*=', '**=', '/=', '%=', '<<=', '>>=', '>>>=',
-            '&=', '|=', '^=', ',',
+            '&=', '|=', '^=', '&&=', '||=', '??=', ',',
             # binary/unary operators
             '+', '-', '*', '**', '/', '%', '++', '--', '<<', '>>', '>>>', '&',
-            '|', '^', '!', '~', '&&', '||', '?', ':', '===', '==', '>=',
+            '|', '^', '!', '~', '&&', '||', '??', '?', ':', '===', '==', '>=',
             '<=', '<', '>', '!=', '!=='
         )
 
@@ -121,6 +122,7 @@ class Tokenizer(object):
         self.errorHandler.tolerant = self.config.tolerant
         self.scanner = Scanner(code, self.errorHandler)
         self.scanner.trackComment = self.config.comment
+        self.scanner.isModule = getattr(self.config, "sourceType", None) == "module"
 
         self.trackRange = self.config.range
         self.trackLoc = self.config.loc
@@ -141,9 +143,14 @@ class Tokenizer(object):
                         type='BlockComment' if e.multiLine else 'LineComment',
                         value=value
                     )
+                    if getattr(e, "hashbang", False):
+                        comment.hashbang = True
                     if self.trackRange:
-                        comment.range = e.range
+                        comment.range = [self.scanner.utf16Offset(x) for x in e.range]
                     if self.trackLoc:
+                        # Comments carry scalar columns; convert at the public boundary.
+                        for position, offset in ((e.loc.start, e.range[0]), (e.loc.end, e.range[1])):
+                            position.column = self.scanner.utf16Column(offset, offset - position.column)
                         comment.loc = e.loc
                     self.buffer.append(comment)
 
@@ -152,7 +159,7 @@ class Tokenizer(object):
                     loc = SourceLocation(
                         start=Position(
                             line=self.scanner.lineNumber,
-                            column=self.scanner.index - self.scanner.lineStart
+                            column=self.scanner.utf16Column(self.scanner.index, self.scanner.lineStart)
                         ),
                         end=Position(),
                     )
@@ -162,7 +169,9 @@ class Tokenizer(object):
                     state = self.scanner.saveState()
                     try:
                         token = self.scanner.scanRegExp()
-                    except Exception:
+                    except Error as error:
+                        if Messages.UnterminatedRegExp not in error.message:
+                            raise
                         self.scanner.restoreState(state)
                         token = self.scanner.lex()
                 else:
@@ -175,11 +184,11 @@ class Tokenizer(object):
                     value=self.scanner.source[token.start:token.end]
                 )
                 if self.trackRange:
-                    entry.range = [token.start, token.end]
+                    entry.range = [self.scanner.utf16Offset(token.start), self.scanner.utf16Offset(token.end)]
                 if self.trackLoc:
                     loc.end = Position(
                         line=self.scanner.lineNumber,
-                        column=self.scanner.index - self.scanner.lineStart
+                        column=self.scanner.utf16Column(self.scanner.index, self.scanner.lineStart)
                     )
                     entry.loc = loc
                 if token.type is Token.RegularExpression:

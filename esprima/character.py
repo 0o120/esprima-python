@@ -23,48 +23,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import unicodedata
-from collections import defaultdict
-
-from .compat import uchr, xrange
-
-# https://stackoverflow.com/questions/14245893/efficiently-list-all-characters-in-a-given-unicode-category
-U_CATEGORIES = defaultdict(list)
-for c in map(uchr, xrange(0x10000)):
-    U_CATEGORIES[unicodedata.category(c)].append(c)
-UNICODE_LETTER = set(
-    U_CATEGORIES['Lu'] + U_CATEGORIES['Ll'] +
-    U_CATEGORIES['Lt'] + U_CATEGORIES['Lm'] +
-    U_CATEGORIES['Lo'] + U_CATEGORIES['Nl']
-)
-UNICODE_OTHER_ID_START = set((
-    # Other_ID_Start
-    '\u1885', '\u1886', '\u2118', '\u212E', '\u309B', '\u309C',
-    # New in Unicode 8.0
-    '\u08B3', '\u0AF9', '\u13F8', '\u9FCD', '\uAB60', '\U00010CC0', '\U000108E0', '\U0002B820',
-    # New in Unicode 9.0
-    '\u1C80', '\U000104DB', '\U0001E922',
-    '\U0001EE00', '\U0001EE06', '\U0001EE0A',
-))
-UNICODE_OTHER_ID_CONTINUE = set((
-    # Other_ID_Continue
-    '\xB7', '\u0387', '\u1369', '\u136A', '\u136B', '\u136C',
-    '\u136D', '\u136E', '\u136F', '\u1370', '\u1371', '\u19DA',
-    # New in Unicode 8.0
-    '\u08E3', '\uA69E', '\U00011730',
-    # New in Unicode 9.0
-    '\u08D4', '\u1DFB', '\uA8C5', '\U00011450',
-    '\U0001EE03', '\U0001EE0B',
-))
-UNICODE_COMBINING_MARK = set(U_CATEGORIES['Mn'] + U_CATEGORIES['Mc'])
-UNICODE_DIGIT = set(U_CATEGORIES['Nd'])
-UNICODE_CONNECTOR_PUNCTUATION = set(U_CATEGORIES['Pc'])
-IDENTIFIER_START = UNICODE_LETTER.union(UNICODE_OTHER_ID_START).union(set(('$', '_', '\\')))
-IDENTIFIER_PART = IDENTIFIER_START.union(UNICODE_COMBINING_MARK).union(UNICODE_DIGIT).union(UNICODE_CONNECTOR_PUNCTUATION).union(set(('\u200D', '\u200C'))).union(UNICODE_OTHER_ID_CONTINUE)
+from bisect import bisect_right
+from ._unicode_data import ID_START, ID_CONTINUE, UNICODE_VERSION
+from .compat import uchr
 
 WHITE_SPACE = set((
     '\x09', '\x0B', '\x0C', '\x20', '\xA0',
-    '\u1680', '\u180E', '\u2000', '\u2001', '\u2002',
+    '\u1680', '\u2000', '\u2001', '\u2002',
     '\u2003', '\u2004', '\u2005', '\u2006', '\u2007',
     '\u2008', '\u2009', '\u200A', '\u202F', '\u205F',
     '\u3000', '\uFEFF',
@@ -79,10 +44,6 @@ for n, c in enumerate('ABCDEF', 10):
 DECIMAL_DIGIT = set(DECIMAL_CONV.keys())
 OCTAL_DIGIT = set(OCTAL_CONV.keys())
 HEX_DIGIT = set(HEX_CONV.keys())
-
-del U_CATEGORIES, UNICODE_LETTER, UNICODE_COMBINING_MARK
-del UNICODE_DIGIT, UNICODE_CONNECTOR_PUNCTUATION
-# del DECIMAL_CONV, OCTAL_CONV, HEX_CONV
 
 class Character:
     @staticmethod
@@ -105,11 +66,11 @@ class Character:
 
     @staticmethod
     def isIdentifierStart(ch):
-        return ch in IDENTIFIER_START
+        return len(ch) == 1 and (ch == '\\' or bool(bisect_right(ID_START, ord(ch)) % 2))
 
     @staticmethod
     def isIdentifierPart(ch):
-        return ch in IDENTIFIER_PART
+        return len(ch) == 1 and (ch == '\\' or bool(bisect_right(ID_CONTINUE, ord(ch)) % 2))
 
     # https://tc39.github.io/ecma262/#sec-literals-numeric-literals
 
