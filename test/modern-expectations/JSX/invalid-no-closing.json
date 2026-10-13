@@ -1,0 +1,17 @@
+{
+  "message": "Error: Line 2: Expected corresponding JSX closing tag for a",
+  "index": 4,
+  "lineNumber": 2,
+  "column": 1,
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "script"
+  }
+}

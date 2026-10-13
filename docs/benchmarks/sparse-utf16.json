@@ -1,0 +1,152 @@
+{
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "beforeRevision": "ce98a6e8f2a18d1eb0c7a0ba3854a8510c5ab44c",
+  "currentRevision": "c3b783a805300b601a0872697c284b6ed46367f1",
+  "sourceSha256": "2fe61983ec682a9aaf79dd317ebba19b9ef5c3cb9c3cdf157bf820f11ad116f4",
+  "astralCharacters": 1,
+  "method": "Identical modern grammar/static checks; isolated source imports. Unicode variant of medium fixture with literal supplementary scalar. Uninstrumented latency and separate warmed tracemalloc allocation medians; no source execution.",
+  "rows": [
+    {
+      "range": false,
+      "before": {
+        "module": "<workspace>/implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianSeconds": 0.11466070000703137,
+        "samplesSeconds": [
+          0.114239599982587,
+          0.11555706666937719,
+          0.11606650000127654,
+          0.1111754666781053,
+          0.11466070000703137,
+          0.11882480001077056,
+          0.11438566667493433
+        ],
+        "medianPeakBytes": 3704337,
+        "samplesPeakBytes": [
+          3704873,
+          3704625,
+          3704337,
+          3704146,
+          3704089
+        ],
+        "medianRetainedBytes": 2083725,
+        "samplesRetainedBytes": [
+          2084117,
+          2083917,
+          2083725,
+          2083582,
+          2083573
+        ]
+      },
+      "current": {
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianSeconds": 0.10962379999303569,
+        "samplesSeconds": [
+          0.10962379999303569,
+          0.10679543336542945,
+          0.1081399666533495,
+          0.10969166667200625,
+          0.10860336665064096,
+          0.10992463332756112,
+          0.11297700003099938
+        ],
+        "medianPeakBytes": 2334424,
+        "samplesPeakBytes": [
+          2334960,
+          2334665,
+          2334424,
+          2334280,
+          2334176
+        ],
+        "medianRetainedBytes": 2083764,
+        "samplesRetainedBytes": [
+          2084156,
+          2083909,
+          2083764,
+          2083668,
+          2083612
+        ]
+      },
+      "latencyRatio": 0.9560712605654178,
+      "peakRatio": 0.6301867243719996
+    },
+    {
+      "range": true,
+      "before": {
+        "module": "<workspace>/implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianSeconds": 0.11856003330710034,
+        "samplesSeconds": [
+          0.12097883333141606,
+          0.11859556663936625,
+          0.1183056333490337,
+          0.11992476667122294,
+          0.11823293333873153,
+          0.11856003330710034,
+          0.11735546666507919
+        ],
+        "medianPeakBytes": 4285473,
+        "samplesPeakBytes": [
+          4285953,
+          4285745,
+          4285473,
+          4285361,
+          4285257
+        ],
+        "medianRetainedBytes": 2954397,
+        "samplesRetainedBytes": [
+          2954733,
+          2954573,
+          2954397,
+          2954333,
+          2954277
+        ]
+      },
+      "current": {
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
+        "warmups": 5,
+        "sampleCount": 5,
+        "batch": 1,
+        "resultCount": 100,
+        "medianSeconds": 0.11138243332970887,
+        "samplesSeconds": [
+          0.11307243331490706,
+          0.11088080001839747,
+          0.11138243332970887,
+          0.11338276668296506,
+          0.11201956666385134,
+          0.11121469999973972,
+          0.1111686333315447
+        ],
+        "medianPeakBytes": 3377416,
+        "samplesPeakBytes": [
+          3377896,
+          3377688,
+          3377416,
+          3377304,
+          3377200
+        ],
+        "medianRetainedBytes": 3126756,
+        "samplesRetainedBytes": [
+          3127092,
+          3126932,
+          3126756,
+          3126692,
+          3126636
+        ]
+      },
+      "latencyRatio": 0.9394602061320304,
+      "peakRatio": 0.7881081038195784
+    }
+  ]
+}

@@ -98,3 +98,27 @@ class JSXText(Node):
         self.type = JSXSyntax.JSXText
         self.value = value
         self.raw = raw
+
+
+class JSXOpeningFragment(Node):
+    def __init__(self):
+        self.type = JSXSyntax.JSXOpeningFragment
+
+
+class JSXClosingFragment(Node):
+    def __init__(self):
+        self.type = JSXSyntax.JSXClosingFragment
+
+
+class JSXFragment(Node):
+    def __init__(self, openingFragment, children, closingFragment):
+        self.type = JSXSyntax.JSXFragment
+        self.openingFragment = openingFragment
+        self.children = children
+        self.closingFragment = closingFragment
+
+
+class JSXSpreadChild(Node):
+    def __init__(self, expression):
+        self.type = JSXSyntax.JSXSpreadChild
+        self.expression = expression

@@ -32,17 +32,20 @@ import unittest
 
 from esprima import parse, tokenize, Error, toDict
 from esprima.nodes import Script
+from esprima.schema import migrate_legacy_fixture
 
 BASE_DIR = os.path.dirname(__file__)
+MIGRATIONS_FILE = os.path.join(BASE_DIR, 'fixture-migrations.json')
+with open(MIGRATIONS_FILE, encoding='utf-8') as migration_file:
+    FIXTURE_MIGRATIONS = json.load(migration_file)
 
 SOURCE_RE = re.compile(br'''^var\s+source\s*=\s*(['"])(.*)\1;\s*$''', re.DOTALL)
 
 EXPECTED_FAULRES = (
-    ('TestExpression', u'u_flag_surrogate_pair'),  # Regex comes with no value
 )
 
 
-def test_factory(_path):
+def test_factory(path):
     def test_file(filename):
         result_path = os.path.dirname(filename)
         result_syntax_path = os.path.join(result_path, 'syntax')
@@ -57,11 +60,16 @@ def test_factory(_path):
                 break
         else:
             return
+        relative_fixture = os.path.relpath(filename, BASE_DIR).replace(os.sep, '/')
+        if relative_fixture in FIXTURE_MIGRATIONS:
+            migration = FIXTURE_MIGRATIONS[relative_fixture]
+            result_file = os.path.join(BASE_DIR, migration['snapshot'])
+            result_type = migration['kind']
 
         def test(self):
             with open(result_file, 'rb') as f:
                 expected_json = f.read()
-            expected = toDict(json.loads(expected_json.decode('utf-8')))
+            expected = migrate_legacy_fixture(toDict(json.loads(expected_json.decode('utf-8'))))
             if isinstance(expected, dict):
                 expected.pop('description', None)  # Not all json failure files include description
                 expected.pop('tokenize', None)  # tokenize is not part of errors
@@ -72,7 +80,7 @@ def test_factory(_path):
             with open(filename, 'rb') as f:
                 actual_code = f.read()
             if '.source.' in filename:
-                actual_code = SOURCE_RE.sub(r'\2', actual_code).decode('unicode_escape')
+                actual_code = SOURCE_RE.sub(br'\2', actual_code).decode('unicode_escape')
             else:
                 actual_code = actual_code.decode('utf-8')
 
@@ -100,6 +108,12 @@ def test_factory(_path):
                             'source': None,
                             'sourceType': expected.get('sourceType', sourceType),
                         }
+
+                    relative = os.path.relpath(filename, BASE_DIR).replace(os.sep, '/')
+                    if relative.startswith('fixtures/ES6/'):
+                        options.setdefault('ecmaVersion', 2015)
+                    elif relative.startswith('fixtures/es2017/'):
+                        options.setdefault('ecmaVersion', 2017)
 
                     if options.get('comment'):
                         def hasAttachedComment(expected):
@@ -136,7 +150,8 @@ def test_factory(_path):
 
             self.assertEqual(expected, actual)
 
-        test_name = os.path.basename(os.path.splitext(filename)[0])
+        test_name = os.path.splitext(os.path.relpath(filename, BASE_DIR))[0]
+        test_name = test_name.replace(os.sep, '_')
         test_name = re.sub(r'[-. _]+', '_', test_name)
         if not test_name.isupper():
             test_name = re.sub(r'(?<=[^_])([A-Z])', r'_\1', test_name)
@@ -214,9 +229,18 @@ for fixture_path in glob.glob(os.path.join(BASE_DIR, 'fixtures', '*')):
     for path in glob.glob(os.path.join(fixture_path, '*')):
         if os.path.isdir(path) or fnmatch.fnmatch(path, '*.js'):
             for test_name, test in test_factory(path):
-                if (class_name, test_name) in EXPECTED_FAULRES:
+                if any(class_name == group and test_name.endswith(name)
+                       for group, name in EXPECTED_FAULRES):
                     test = unittest.expectedFailure(test)
+                if hasattr(Test, 'test_%s' % test_name):
+                    raise RuntimeError('Duplicate fixture test: %s' % test_name)
                 setattr(Test, 'test_%s' % test_name, test)
+
+# A class alias here makes unittest execute the last fixture class twice.
+del Test
+
+# Keep pytest from collecting this fixture-generation utility as a test.
+test_factory.__test__ = False
 
 
 def main():

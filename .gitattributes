@@ -1,0 +1,5 @@
+# Preserve exact source bytes used by fixture and Unicode checksums.
+data/unicode/** -text
+tests/fixtures/** -text
+test/fixtures/** -text
+test/modern-expectations/** -text

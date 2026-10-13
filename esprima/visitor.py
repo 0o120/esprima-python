@@ -277,17 +277,25 @@ class ToDictVisitor(Visitor):
     visit_Array = visit_list
 
     def visit_dict(self, obj):
+        from .schema import NULLABLE_FIELDS
+        import math
+        nullable = NULLABLE_FIELDS.get(obj.get('type'), ())
         items = []
         for k, item in obj.items():
-            if item is not None and not k.startswith('_'):
-                v = yield item
+            if not k.startswith('_') and (item is not None or k in nullable or k == 'cooked'):
+                if obj.get('type') == 'Literal' and k == 'value' and 'regex' in obj:
+                    v = None
+                else:
+                    v = yield item
                 k = unicode(k)
                 items.append((self.map.get(k, k), v))
         items = dict(items)
-        if "type" in items.keys() and "raw" in items.keys() and items["type"] == 'Literal' and items["raw"] == "null":
+        if items.get('type') == 'Literal' and ('regex' in items or items.get('raw') == 'null'):
             items["value"] = None
-        if "type" in items.keys() and "raw" in items.keys() and items["type"] == 'Literal' and "regex" in items.keys() and type(items["value"]) == re.Pattern:
-            items["value"] = None
+        numeric = obj.get('value')
+        if obj.get('type') == 'Literal' and isinstance(numeric, float) and not math.isfinite(numeric):
+            items['value'] = None
+            items['number'] = 'NaN' if math.isnan(numeric) else ('Infinity' if numeric > 0 else '-Infinity')
         yield Visited(items)
 
     def visit_SRE_Pattern(self, obj):

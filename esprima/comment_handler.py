@@ -59,10 +59,15 @@ class CommentHandler(object):
     def insertInnerComments(self, node, metadata):
         #  innnerComments for properties empty block
         #  `function a(:/** comments **\/}`
-        if node.type is Syntax.BlockStatement and not node.body:
+        empty_container = (
+            node.type in (Syntax.BlockStatement, Syntax.ClassBody, Syntax.StaticBlock) and not node.body
+            or node.type in (Syntax.ObjectExpression, Syntax.ObjectPattern) and not node.properties
+            or node.type in (Syntax.ArrayExpression, Syntax.ArrayPattern) and not node.elements
+        )
+        if empty_container:
             innerComments = []
             for i, entry in enumerate(self.leading):
-                if metadata.end.offset >= entry.start:
+                if metadata.start.offset <= entry.start <= metadata.end.offset:
                     innerComments.append(entry.comment)
                     self.leading[i] = None
                     self.trailing[i] = None
@@ -150,6 +155,8 @@ class CommentHandler(object):
             comment.range = node.range
         if node.loc:
             comment.loc = node.loc
+        if node.hashbang:
+            comment.hashbang = True
         self.comments.append(comment)
 
         if self.attach:
@@ -163,6 +170,8 @@ class CommentHandler(object):
             )
             if node.loc:
                 entry.comment.loc = node.loc
+            if node.hashbang:
+                entry.comment.hashbang = True
             node.type = type
             self.leading.append(entry)
             self.trailing.append(entry)

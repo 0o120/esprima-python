@@ -23,7 +23,8 @@
 
 from __future__ import absolute_import
 
-version = '4.0.1'
-__version__ = (4, 0, 1)
+from ._version import __version__ as version
+# Preserve the historical tuple while deriving it from the package version.
+__version__ = tuple(int(part) for part in version.split('.')[:3])
 
 from .esprima import *  # NOQA

@@ -1,0 +1,106 @@
+{
+  "type": "Program",
+  "sourceType": "script",
+  "body": [
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "Literal",
+        "value": "8",
+        "raw": "\"\\8\"",
+        "range": [
+          0,
+          4
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 4
+          }
+        }
+      },
+      "directive": "\\8",
+      "range": [
+        0,
+        5
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 5
+        }
+      }
+    }
+  ],
+  "range": [
+    0,
+    5
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 1,
+      "column": 5
+    }
+  },
+  "tokens": [
+    {
+      "type": "String",
+      "value": "\"\\8\"",
+      "range": [
+        0,
+        4
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 4
+        }
+      }
+    },
+    {
+      "type": "Punctuator",
+      "value": ";",
+      "range": [
+        4,
+        5
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 4
+        },
+        "end": {
+          "line": 1,
+          "column": 5
+        }
+      }
+    }
+  ],
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "script"
+  }
+}

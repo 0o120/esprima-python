@@ -62,6 +62,8 @@ TokenName[JSXToken.Text] = "JSXText"
 
 # Fully qualified element name, e.g. <svg:path> returns "svg:path"
 def getQualifiedElementName(elementName):
+    if elementName is None:
+        return ''
     typ = elementName.type
     if typ is JSXSyntax.JSXIdentifier:
         id = elementName
@@ -116,50 +118,33 @@ class JSXParser(Parser):
             column=self.scanner.index - self.scanner.lineStart
         )
 
-    def scanXHTMLEntity(self, quote):
-        result = '&'
-
-        valid = True
-        terminated = False
-        numeric = False
-        hex = False
-
-        while not self.scanner.eof() and valid and not terminated:
-            ch = self.scanner.source[self.scanner.index]
-            if ch == quote:
+    def scanXHTMLEntity(self, quote=None):
+        # The caller consumed '&'. Never swallow a JSX or quote boundary when
+        # an unknown/incomplete reference has no semicolon.
+        start = self.scanner.index - 1
+        cursor = self.scanner.index
+        while cursor < self.scanner.length:
+            ch = self.scanner.source[cursor]
+            if ch == ';':
+                raw = self.scanner.source[start:cursor + 1]
+                name = self.scanner.source[start + 1:cursor]
+                self.scanner.index = cursor + 1
+                if name in XHTMLEntities:
+                    return XHTMLEntities[name]
+                base = 16 if name.startswith('#x') else 10
+                digits = name[2:] if base == 16 else name[1:] if name.startswith('#') else ''
+                allowed = '0123456789abcdefABCDEF' if base == 16 else '0123456789'
+                if digits and all(char in allowed for char in digits):
+                    significant = digits.lstrip('0') or '0'
+                    if len(significant) > (6 if base == 16 else 7):
+                        return raw
+                    code = int(significant, base)
+                    return chr(code) if code <= 0x10FFFF else raw
+                return raw
+            if ch in ('<', '{', '&', '"', "'", ' ', '\t', '\r', '\n', '\u2028', '\u2029') or ch == quote:
                 break
-
-            terminated = (ch == ';')
-            result += ch
-            self.scanner.index += 1
-            if not terminated:
-                length = len(result)
-                if length == 2:
-                    # e.g. '&#123;'
-                    numeric = (ch == '#')
-                elif length == 3:
-                    if numeric:
-                        # e.g. '&#x41;'
-                        hex = ch == 'x'
-                        valid = hex or Character.isDecimalDigit(ch)
-                        numeric = numeric and not hex
-                else:
-                    valid = valid and not (numeric and not Character.isDecimalDigit(ch))
-                    valid = valid and not (hex and not Character.isHexDigit(ch))
-
-        if valid and terminated and len(result) > 2:
-            # e.g. '&#x41;' becomes just '#x41'
-            st = result[1:-1]
-            if numeric and len(st) > 1:
-                result = uchr(int(st[1:], 10))
-            elif hex and len(st) > 2:
-                result = uchr(int(st[2:], 16))
-            elif not numeric and not hex and st in XHTMLEntities:
-                result = XHTMLEntities[st]
-
-        return result
-
-    # Scan the next JSX token. This replaces Scanner#lex when in JSX mode.
+            cursor += 1
+        return '&'
 
     def lexJSX(self):
         ch = self.scanner.source[self.scanner.index]
@@ -192,6 +177,12 @@ class JSXParser(Parser):
                     str += self.scanXHTMLEntity(quote)
                 else:
                     str += ch
+                    if Character.isLineTerminator(ch):
+                        self.scanner.lineNumber += 1
+                        if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':
+                            str += '\n'
+                            self.scanner.index += 1
+                        self.scanner.lineStart = self.scanner.index
 
             return RawJSXToken(
                 type=Token.StringLiteral,
@@ -287,11 +278,16 @@ class JSXParser(Parser):
             if ch in ('{', '<'):
                 break
 
+            if ch in ('>', '}'):
+                self.scanner.throwUnexpectedToken('Escape > or } in JSX text')
             self.scanner.index += 1
-            text += ch
+            if ch == '&':
+                text += self.scanXHTMLEntity()
+            else:
+                text += '\n' if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n' else ch
             if Character.isLineTerminator(ch):
                 self.scanner.lineNumber += 1
-                if ch == '\r' and self.scanner.source[self.scanner.index] == '\n':
+                if ch == '\r' and not self.scanner.eof() and self.scanner.source[self.scanner.index] == '\n':
                     self.scanner.index += 1
 
                 self.scanner.lineStart = self.scanner.index
@@ -441,6 +437,9 @@ class JSXParser(Parser):
         node = self.createJSXNode()
 
         self.expectJSX('<')
+        if self.matchJSX('>'):
+            self.expectJSX('>')
+            return self.finalize(node, JSXNode.JSXOpeningFragment())
         name = self.parseJSXElementName()
         attributes = self.parseJSXAttributes()
         selfClosing = self.matchJSX('/')
@@ -457,10 +456,16 @@ class JSXParser(Parser):
         self.expectJSX('<')
         if self.matchJSX('/'):
             self.expectJSX('/')
+            if self.matchJSX('>'):
+                self.expectJSX('>')
+                return self.finalize(node, JSXNode.JSXClosingFragment())
             elementName = self.parseJSXElementName()
             self.expectJSX('>')
             return self.finalize(node, JSXNode.JSXClosingElement(elementName))
 
+        if self.matchJSX('>'):
+            self.expectJSX('>')
+            return self.finalize(node, JSXNode.JSXOpeningFragment())
         name = self.parseJSXElementName()
         attributes = self.parseJSXAttributes()
         selfClosing = self.matchJSX('/')
@@ -483,6 +488,13 @@ class JSXParser(Parser):
         node = self.createJSXNode()
         self.expectJSX('{')
 
+        if self.matchJSX('...'):
+            self.expectJSX('...')
+            self.finishJSX()
+            expression = self.parseAssignmentExpression()
+            self.reenterJSX()
+            return self.finalize(node, JSXNode.JSXSpreadChild(expression))
+
         if self.matchJSX('}'):
             expression = self.parseJSXEmptyExpression()
             self.expectJSX('}')
@@ -504,7 +516,7 @@ class JSXParser(Parser):
                 child = self.finalize(node, JSXNode.JSXText(token.value, raw))
                 children.append(child)
 
-            if self.scanner.source[self.scanner.index] == '{':
+            if not self.scanner.eof() and self.scanner.source[self.scanner.index] == '{':
                 container = self.parseJSXExpressionContainer()
                 children.append(container)
             else:
@@ -512,62 +524,42 @@ class JSXParser(Parser):
 
         return children
 
-    def parseComplexJSXElement(self, el):
-        stack = []
+    def makeJSXElement(self, opening, children, closing):
+        if opening.type == JSXSyntax.JSXOpeningFragment:
+            return JSXNode.JSXFragment(opening, children, closing)
+        return JSXNode.JSXElement(opening, children, closing)
 
+    def parseComplexJSXElement(self, el):
         while not self.scanner.eof():
             el.children.extend(self.parseJSXChildren())
+            if self.scanner.eof():
+                break
             node = self.createJSXChildNode()
-            element = self.parseJSXBoundaryElement()
-            if element.type is JSXSyntax.JSXOpeningElement:
-                opening = element
-                if opening.selfClosing:
-                    child = self.finalize(node, JSXNode.JSXElement(opening, [], None))
-                    el.children.append(child)
-                else:
-                    stack.append(el)
-                    el = MetaJSXElement(
-                        node=node,
-                        opening=opening,
-                        closing=None,
-                        children=[],
-                    )
-
-            if element.type is JSXSyntax.JSXClosingElement:
-                el.closing = element
-                open = getQualifiedElementName(el.opening.name)
-                close = getQualifiedElementName(el.closing.name)
-                if open != close:
-                    self.tolerateError('Expected corresponding JSX closing tag for %0', open)
-
-                if stack:
-                    child = self.finalize(el.node, JSXNode.JSXElement(el.opening, el.children, el.closing))
-                    el = stack[-1]
-                    el.children.append(child)
-                    stack.pop()
-                else:
-                    break
-
+            boundary = self.parseJSXBoundaryElement()
+            if boundary.type in (JSXSyntax.JSXOpeningElement, JSXSyntax.JSXOpeningFragment):
+                nested = MetaJSXElement(node=node, opening=boundary, closing=None, children=[])
+                if not boundary.selfClosing:
+                    nested = self.parseComplexJSXElement(nested)
+                el.children.append(self.finalize(node, self.makeJSXElement(boundary, nested.children, nested.closing)))
+            else:
+                opening_fragment = el.opening.type == JSXSyntax.JSXOpeningFragment
+                closing_fragment = boundary.type == JSXSyntax.JSXClosingFragment
+                name = getQualifiedElementName(el.opening.name)
+                close = getQualifiedElementName(boundary.name)
+                if opening_fragment != closing_fragment or name != close:
+                    self.tolerateError('Expected corresponding JSX closing tag for %0', name or '<>')
+                el.closing = boundary
+                return el
+        self.tolerateError('Expected corresponding JSX closing tag for %0', getQualifiedElementName(el.opening.name) or '<>')
         return el
 
     def parseJSXElement(self):
         node = self.createJSXNode()
-
         opening = self.parseJSXOpeningElement()
-        children = []
-        closing = None
-
+        el = MetaJSXElement(node=node, opening=opening, children=[], closing=None)
         if not opening.selfClosing:
-            el = self.parseComplexJSXElement(MetaJSXElement(
-                node=node,
-                opening=opening,
-                closing=closing,
-                children=children
-            ))
-            children = el.children
-            closing = el.closing
-
-        return self.finalize(node, JSXNode.JSXElement(opening, children, closing))
+            el = self.parseComplexJSXElement(el)
+        return self.finalize(node, self.makeJSXElement(opening, el.children, el.closing))
 
     def parseJSXRoot(self):
         # Pop the opening '<' added from the lookahead.

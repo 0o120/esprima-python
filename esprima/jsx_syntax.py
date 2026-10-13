@@ -36,3 +36,7 @@ class JSXSyntax:
     JSXOpeningElement = "JSXOpeningElement"
     JSXSpreadAttribute = "JSXSpreadAttribute"
     JSXText = "JSXText"
+    JSXFragment = "JSXFragment"
+    JSXOpeningFragment = "JSXOpeningFragment"
+    JSXClosingFragment = "JSXClosingFragment"
+    JSXSpreadChild = "JSXSpreadChild"

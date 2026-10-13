@@ -1,0 +1,18 @@
+{
+  "message": "Error: Line 1: Export 'foo' is not defined",
+  "index": 8,
+  "lineNumber": 1,
+  "column": 9,
+  "options": {
+    "jsx": true,
+    "comment": false,
+    "range": true,
+    "loc": true,
+    "tokens": true,
+    "raw": true,
+    "tolerant": false,
+    "source": null,
+    "sourceType": "module",
+    "ecmaVersion": 2015
+  }
+}

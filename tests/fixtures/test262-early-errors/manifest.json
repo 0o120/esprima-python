@@ -1,0 +1,39 @@
+{
+  "test262Revision": "2e0a56762801e275a9fdf96dc49d90ba0cddcf63",
+  "target": "ECMAScript 2026",
+  "count": 4152,
+  "scope": "All selected core-language parse-phase SyntaxError negatives; no runtime or resolution negatives.",
+  "modePolicy": "module flag uses module; onlyStrict injects a directive; remaining cases preserve raw/non-strict source.",
+  "sourceEncoding": "UTF-8 decoded, line endings normalized to LF before freezing and per-source checksums.",
+  "excludedFeatures": [
+    "Intl.Era-monthcode",
+    "Intl.Locale-info",
+    "Intl.NumberFormat-v3",
+    "Iterator.prototype.join",
+    "ShadowRealm",
+    "await-dictionary",
+    "decorators",
+    "error-stack-accessor",
+    "explicit-resource-management",
+    "export-defer",
+    "immutable-arraybuffer",
+    "import-bytes",
+    "import-defer",
+    "import-text",
+    "legacy-regexp",
+    "nonextensible-applies-to-private",
+    "source-phase-imports",
+    "source-phase-imports-module-source"
+  ],
+  "omitted": {
+    "import-defer": 92,
+    "source-phase-imports": 149,
+    "source-phase-imports-module-source": 63,
+    "explicit-resource-management": 61
+  },
+  "files": {
+    "cases.json": "cc6da647268733cd9cb6752312c3d09a7c52fd209ae1a04f7c4fddbcbd429630",
+    "LICENSE": "4dd9244dfe8197c75348c4b24ab53d29d3b1cfad143ac76b5a3d8942aa354ce0"
+  },
+  "resourceLimits": "RecursionError and other resource failures never count as SyntaxError rejection."
+}
