@@ -481,6 +481,17 @@ class _Validator:
             self.error("Invalid binding or assignment pattern", pattern)
 
     def assignment_target(self, target, context, allow_pattern):
+
+        if self._parser_tree and target is not None:
+            kind = target.type
+            if kind == "Identifier":
+                if context.strict and target.name in {"eval", "arguments"}:
+                    self.error("Assigning to eval or arguments is forbidden in strict mode", target)
+                self.visit(target, context)
+                return
+            if kind == "MemberExpression" and not target.optional:
+                self.visit(target, context)
+                return
         kind = _kind(target)
         if kind == "Identifier":
             if context.strict and _get(target, "name") in {"eval", "arguments"}:
@@ -628,6 +639,79 @@ class _Validator:
     def visit(self, node, context, parent=None):
         if node is None:
             return
+
+        # The facade alone attests this unexposed, canonical native graph.
+        if self._parser_tree:
+            kind = node.type
+            if kind == "Identifier":
+                name = node.name
+                if context.forbid_arguments and name == "arguments":
+                    self.error("arguments is forbidden in class field initializers and static blocks", node)
+                if name == "await" and (context.module or context.allow_await or context.await_reserved):
+                    self.error("await is a reserved word in this context", node)
+                if name == "yield" and (context.strict or context.allow_yield or context.yield_reserved):
+                    self.error("yield is a reserved word in this context", node)
+                return
+            if kind == "Literal":
+                if type(node) is _nodes.RegexLiteral:
+                    from .regexp_validator import regexp_features
+                    regexp_features(node.regex.pattern, node.regex.flags)
+                return
+            if kind in {"ThisExpression", "TemplateElement"}:
+                return
+            if kind in {"BinaryExpression", "LogicalExpression"} and node.left.type != "PrivateIdentifier":
+                self.visit(node.left, context, kind)
+                self.visit(node.right, context, kind)
+                return
+            if kind == "MemberExpression" and node.object.type != "Super" and node.property.type != "PrivateIdentifier":
+                self.visit(node.object, context)
+                if node.computed:
+                    self.visit(node.property, context)
+                return
+            if kind in {"CallExpression", "NewExpression"} and node.callee.type != "Super":
+                self.visit(node.callee, context, kind)
+                for argument in node.arguments:
+                    self.visit(argument, context, kind)
+                return
+            if kind == "ConditionalExpression":
+                self.visit(node.test, context, kind)
+                self.visit(node.consequent, context, kind)
+                self.visit(node.alternate, context, kind)
+                return
+            if kind in {"SequenceExpression", "ArrayExpression"}:
+                for child in (node.expressions if kind == "SequenceExpression" else node.elements):
+                    self.visit(child, context, kind)
+                return
+            if kind == "UnaryExpression" and node.operator != "delete":
+                self.visit(node.argument, context, kind)
+                return
+            if kind in {"SpreadElement", "ChainExpression"}:
+                self.visit(node.argument if kind == "SpreadElement" else node.expression, context, kind)
+                return
+            if kind == "TemplateLiteral":
+                for child in node.quasis:
+                    self.visit(child, context, kind)
+                for child in node.expressions:
+                    self.visit(child, context, kind)
+                return
+            if kind == "TaggedTemplateExpression":
+                self.visit(node.tag, context, kind)
+                self.visit(node.quasi, context, kind)
+                return
+            if kind == "ExpressionStatement":
+                expression = node.expression
+                if expression.type == "ClassExpression" and not expression._parenthesized:
+                    self.error("A class expression statement requires parentheses", expression)
+                self.visit(expression, context, kind)
+                return
+            if kind == "ReturnStatement":
+                if not context.in_function:
+                    self.error("Illegal return statement", node)
+                self.visit(node.argument, context, kind)
+                return
+            if kind == "ThrowStatement":
+                self.visit(node.argument, context, kind)
+                return
         node_type = type(node)
         ordinary = node_type is dict or node_type in _NATIVE_TYPES
         if ordinary:
