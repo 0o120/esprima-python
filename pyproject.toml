@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.27"]
+requires = ["hatchling>=1.32.4,<2"]
 build-backend = "hatchling.build"
 
 [project]
@@ -8,8 +8,9 @@ dynamic = ["version"]
 authors = [
 	{ name="German M. Bravo (Kronuz)", email="german.mb@gmail.com" }
 ]
+maintainers = [{ name="0x78", email="contact@0x78.com" }]
 requires-python = ">=3.11"
-description = "ECMAScript parsing infrastructure for multipurpose analysis in Python"
+description = "Pure Python ECMAScript 2026 parser and tokenizer with ESTree output"
 license = "BSD-2-Clause AND Unicode-3.0"
 license-files = ["LICENSE.BSD", "LICENSE", "data/unicode/LICENSE.txt"]
 readme = "README.md"
@@ -21,7 +22,7 @@ keywords = [
 	"ast"
 ]
 classifiers = [
-	"Development Status :: 4 - Beta",
+	"Development Status :: 5 - Production/Stable",
 	"Intended Audience :: Developers",
 	"Operating System :: OS Independent",
 	"Topic :: Software Development :: Code Generators",
@@ -39,14 +40,18 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/0o120/esprima-python"
+"Source" = "https://github.com/0o120/esprima-python"
 "Issues" = "https://github.com/0o120/esprima-python/issues"
+"Documentation" = "https://github.com/0o120/esprima-python/blob/master/README.md"
+"Changelog" = "https://github.com/0o120/esprima-python/blob/master/CHANGELOG.md"
+"PyPI" = "https://pypi.org/project/esprima-fork/"
 "Upstream" = "https://github.com/Kronuz/esprima-python"
 
 [project.scripts]
 esprima = "esprima.__main__:main"
 
 [project.optional-dependencies]
-dev = ["hatchling>=1.27", "pytest>=8.3", "hypothesis>=6.120", "build>=1.2", "twine>=6", "ruff>=0.9"]
+dev = ["hatchling>=1.32.4,<2", "pytest>=8.3", "hypothesis>=6.120", "build>=1.2", "twine>=6", "ruff>=0.9"]
 
 [tool.hatch.version]
 path = "esprima/_version.py"

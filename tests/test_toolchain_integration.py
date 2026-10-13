@@ -3,13 +3,16 @@
 Optional dependencies are installed together by the coordinated release check.
 Reference parser dependencies are development-only and never execute fixtures.
 """
+import ast
 import copy
+from importlib import metadata
 import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tomllib
 import unittest
 
 import esprima
@@ -94,10 +97,26 @@ process.stdout.write(JSON.stringify(output, function(key,value){
     "coordinated parser/walker/generator/utility installations required")
 class ToolchainIntegrationTests(unittest.TestCase):
     def test_candidate_versions_and_optional_installed_origins(self):
-        expected = ((esprima, (5, 0, 0)), (acornwalk, "2.0.0"), (escodegen, "2.0.0"), (esutils, "2.0.0"))
-        for module, version in expected:
-            self.assertEqual(module.__version__, version)
+        distributions = ((esprima, "esprima-fork"), (acornwalk, "acornwalk"),
+                         (escodegen, "escodegen"), (esutils, "esutils"))
+        for module, distribution in distributions:
+            version = module.version if module is esprima else module.__version__
+            self.assertIsInstance(version, str)
+            package_root = Path(module.__file__).resolve().parents[1]
+            project_file = package_root / "pyproject.toml"
+            if project_file.is_file():
+                project = tomllib.loads(project_file.read_text(encoding="utf-8"))
+                version_file = package_root / project["tool"]["hatch"]["version"]["path"]
+                declared = next(ast.literal_eval(statement.value)
+                                for statement in ast.parse(version_file.read_text(encoding="utf-8")).body
+                                if isinstance(statement, ast.Assign)
+                                and any(isinstance(target, ast.Name) and target.id == "__version__"
+                                        for target in statement.targets))
+                self.assertEqual(version, declared)
+            if module is esprima:
+                self.assertEqual(module.__version__, tuple(int(part) for part in version.split(".")[:3]))
             if os.environ.get("TOOLCHAIN_EXPECT_INSTALLED"):
+                self.assertEqual(metadata.version(distribution), version)
                 self.assertIn("site-packages", str(Path(module.__file__).resolve()), module.__name__)
         self.assertEqual(esutils.code.UNICODE_VERSION, "17.0.0")
 

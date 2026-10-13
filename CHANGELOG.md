@@ -1,6 +1,10 @@
 # Changelog
 
-## 5.0.0 development
+## 5.0.0 — pending publication
+
+- Prepare stable distribution/runtime version metadata, PyPI documentation links,
+  retained author and maintainer credits, and version-independent package checks.
+  The import name remains `esprima`, and `__version__` remains a numeric tuple.
 
 - Avoid native AST dictionary materialization during owned expression/scope
   validation and reuse proven BMP/UTF-16 identity positions. A separate large
