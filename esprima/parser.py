@@ -437,12 +437,14 @@ class Parser(object):
         return node
 
     def externalOffset(self, index):
-        if self.config.positionEncoding == 'scalar' or (self.scanner._utf16IsIdentity and 0 <= index <= self.scanner.length):
+        if self.config.positionEncoding == 'scalar' or ((self.scanner._sourceIsAscii or
+                (self._ownedByFacade and self.scanner._utf16IsIdentity)) and 0 <= index <= self.scanner.length):
             return index
         return self.scanner.utf16Offset(index)
 
     def externalColumn(self, index, column):
-        if self.config.positionEncoding == 'scalar' or (self.scanner._utf16IsIdentity and 0 <= index-column <= index <= self.scanner.length):
+        if self.config.positionEncoding == 'scalar' or ((self.scanner._sourceIsAscii or
+                (self._ownedByFacade and self.scanner._utf16IsIdentity)) and 0 <= index-column <= index <= self.scanner.length):
             return column
         return self.scanner.utf16Column(index, index - column)
 
