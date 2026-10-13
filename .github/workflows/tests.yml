@@ -22,19 +22,19 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: 0o120/esutils-python
-          ref: codex/modernize-ecmascript-2026
+          ref: ${{ (github.head_ref || github.ref_name) == 'codex/modernize-ecmascript-2026' && 'codex/modernize-ecmascript-2026' || 'master' }}
           path: .dependencies/esutils
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
         with:
           repository: 0o120/acornwalk-python
-          ref: codex/modernize-ecmascript-2026
+          ref: ${{ (github.head_ref || github.ref_name) == 'codex/modernize-ecmascript-2026' && 'codex/modernize-ecmascript-2026' || 'master' }}
           path: .dependencies/acornwalk
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
         with:
           repository: 0o120/escodegen-python
-          ref: codex/modernize-ecmascript-2026
+          ref: ${{ (github.head_ref || github.ref_name) == 'codex/modernize-ecmascript-2026' && 'codex/modernize-ecmascript-2026' || 'master' }}
           path: .dependencies/escodegen
           persist-credentials: false
       - uses: actions/setup-python@v7.0.0
