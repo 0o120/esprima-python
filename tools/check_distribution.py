@@ -1,4 +1,5 @@
 """Check wheel metadata, clean imports, CLI streams and packaged examples."""
+import argparse
 import ast
 import email
 import json
@@ -14,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--dist', type=Path, default=ROOT / 'dist')
+    args = parser.parse_args()
     project = tomllib.loads((ROOT / 'pyproject.toml').read_text(encoding='utf-8'))['project']
     version_source = ast.parse((ROOT / 'esprima/_version.py').read_text(encoding='utf-8'))
     expected_version = next(ast.literal_eval(statement.value) for statement in version_source.body
@@ -24,7 +28,7 @@ def main():
     readme = (ROOT / 'README.md').read_text(encoding='utf-8')
     assert all(target.startswith(('https://', 'http://', '#'))
                for target in re.findall(r'\]\(([^)]+)\)', readme)), 'README links must work on PyPI'
-    wheel = max((ROOT / 'dist').glob('*.whl'), key=lambda path: path.stat().st_mtime)
+    wheel = max(args.dist.glob('*.whl'), key=lambda path: path.stat().st_mtime)
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
         metadata = email.message_from_bytes(archive.read(next(name for name in names if name.endswith('/METADATA'))))
@@ -54,7 +58,7 @@ def main():
                                     input='const x=1;', text=True, capture_output=True, check=True)
             assert json.loads(result.stdout)['type'] == 'Program'
             assert not result.stderr
-    assert (ROOT / 'dist' / f"esprima_fork-{expected_version}.tar.gz").is_file()
+    assert (args.dist / f"esprima_fork-{expected_version}.tar.gz").is_file()
     print('Source archive, wheel metadata, licenses, clean modern imports and CLI verified')
 
 
