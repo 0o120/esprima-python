@@ -157,6 +157,10 @@ to the preceding implementation, with identical positions.
 
 ## Reproducible evidence and history
 
+Published benchmark JSON uses `<workspace>` and `<python>` labels for local
+filesystem prefixes; numerical results, file hashes and revisions are
+unchanged. The Python version and platform remain recorded explicitly.
+
 - [Current 15-case parser samples and source hashes](benchmarks/round2-parser.json)
 - [Current tokens, cold imports and first-parse samples](benchmarks/round2-secondary.json)
 - [Previous modern checkpoint](benchmarks/parser.json)

@@ -1,6 +1,6 @@
 {
   "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
-  "executable": "C:\\Python312\\python.exe",
+  "executable": "<python>/python.exe",
   "method": "Only validate_program is timed on the same preparsed native AST; alternating order, GC enabled, 14 samples per validator, no source executed.",
   "beforeSha256": "a0ee9b5eda4c4fa3fe2ae294babf41dadf3ee983c79e42e76f9361f0639fda5c",
   "afterSha256": "d9f93e2ffd52acc8d5ce77524d95917abdd25cafb57a64d4591bd423e2c61571",

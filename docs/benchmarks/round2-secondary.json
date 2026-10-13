@@ -129,7 +129,7 @@
           0.00046385001041926444
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.0005392749881139025,
@@ -150,7 +150,7 @@
           0.0005993500235490501
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.0005386375123634934,
@@ -171,7 +171,7 @@
           0.0005150749930180609
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.8794179520413515,
       "toOld": 0.8783783940583985
@@ -199,7 +199,7 @@
           0.0005606499908026308
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.0005593124951701611,
@@ -220,7 +220,7 @@
           0.0005444999842438847
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.0005996999971102923,
@@ -241,7 +241,7 @@
           0.0005781750078313053
         ],
         "tokens": 131,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.9121644257234768,
       "toOld": 0.9780310795739644
@@ -269,7 +269,7 @@
           0.03531644999748096
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.03693608749017585,
@@ -290,7 +290,7 @@
           0.03770100002293475
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.038776000001234934,
@@ -311,7 +311,7 @@
           0.038362924999091774
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.9011737285255625,
       "toOld": 0.9460642659489688
@@ -339,7 +339,7 @@
           0.03922249999595806
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.03960230000666343,
@@ -360,7 +360,7 @@
           0.0387176499934867
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.04340931249316782,
@@ -381,7 +381,7 @@
           0.043224349996307865
         ],
         "tokens": 9012,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.9223513391882774,
       "toOld": 1.0110179839195934
@@ -409,7 +409,7 @@
           0.0031401000160258263
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.013451562510454096,
@@ -430,7 +430,7 @@
           0.013242199987871572
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.01369531248928979,
@@ -451,7 +451,7 @@
           0.013664024998433888
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.23073040570510975,
       "toOld": 0.2349113721514734
@@ -479,7 +479,7 @@
           0.0035706750059034675
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.013856724996003322,
@@ -500,7 +500,7 @@
           0.016010774997994304
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.014275650013587438,
@@ -521,7 +521,7 @@
           0.014250249980250373
         ],
         "tokens": 600,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.24139881445404598,
       "toOld": 0.2486969316223606
@@ -549,7 +549,7 @@
           0.0034069499815814197
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.0037658624933101237,
@@ -570,7 +570,7 @@
           0.0038224500021897256
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.003790100003243424,
@@ -591,7 +591,7 @@
           0.00383922501350753
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.8967441463269119,
       "toOld": 0.9025156914093035
@@ -619,7 +619,7 @@
           0.00451332499505952
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py"
       },
       "old": {
         "medianSeconds": 0.003955037507694215,
@@ -640,7 +640,7 @@
           0.003895274974638596
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py"
       },
       "starting": {
         "medianSeconds": 0.004801350005436689,
@@ -661,7 +661,7 @@
           0.004902050015516579
         ],
         "tokens": 800,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
+        "module": "<workspace>/implementation-artifacts\\performance-round2\\starting-repositories\\esprima-python\\esprima\\__init__.py"
       },
       "toStarting": 0.8943422180327184,
       "toOld": 1.085716634813176

@@ -1,6 +1,6 @@
 {
   "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
-  "executable": "C:\\Python312\\python.exe",
+  "executable": "<python>/python.exe",
   "platform": "Windows-10-10.0.19045-SP0",
   "baselineRevision": "e3b8965b0216c9a9f07b2d46a4c6c2a40256b89b",
   "currentRevision": "c3b783a805300b601a0872697c284b6ed46367f1",
@@ -54,7 +54,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 6,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
         "samplesSeconds": [
           0.0009135699986169735,
           0.0009122033331853648,
@@ -78,7 +78,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 6,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "samplesSeconds": [
           0.0016314733307808637,
           0.0015609633371544381,
@@ -110,7 +110,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 6,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
         "samplesSeconds": [
           0.0009777033313487966,
           0.0009990733310890694,
@@ -134,7 +134,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 6,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "samplesSeconds": [
           0.0016703766654245556,
           0.0017027733304227392,
@@ -166,7 +166,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 100,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
         "samplesSeconds": [
           0.06184906663838774,
           0.06133729999419302,
@@ -190,7 +190,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 100,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "samplesSeconds": [
           0.10365816667520751,
           0.10078416667723407,
@@ -222,7 +222,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 100,
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-baseline\\esprima\\__init__.py",
         "samplesSeconds": [
           0.06338566665848096,
           0.06366896664258093,
@@ -246,7 +246,7 @@
         "sampleCount": 14,
         "warmups": 5,
         "topLevelStatements": 100,
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "samplesSeconds": [
           0.10232620003322761,
           0.1037597666727379,

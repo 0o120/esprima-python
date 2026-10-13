@@ -9,7 +9,7 @@
     {
       "range": false,
       "before": {
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
         "warmups": 5,
         "sampleCount": 5,
         "batch": 1,
@@ -42,7 +42,7 @@
         ]
       },
       "current": {
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "warmups": 5,
         "sampleCount": 5,
         "batch": 1,
@@ -80,7 +80,7 @@
     {
       "range": true,
       "before": {
-        "module": "C:\\Github\\old_repos\\implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
+        "module": "<workspace>/implementation-artifacts\\performance-before-sparse\\esprima\\__init__.py",
         "warmups": 5,
         "sampleCount": 5,
         "batch": 1,
@@ -113,7 +113,7 @@
         ]
       },
       "current": {
-        "module": "C:\\Github\\old_repos\\esprima-python\\esprima\\__init__.py",
+        "module": "<workspace>/esprima-python\\esprima\\__init__.py",
         "warmups": 5,
         "sampleCount": 5,
         "batch": 1,
