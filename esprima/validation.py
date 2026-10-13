@@ -242,6 +242,78 @@ def replace(context, **changes):
     return context._replace(**changes)
 
 
+
+def _parsed_kind(node):
+    return None if node is None else node.type
+
+
+def _parsed_bindings(pattern):
+    if pattern is None:
+        return
+    kind = pattern.type
+    if kind == "Identifier":
+        yield pattern.name, pattern
+    elif kind == "RestElement":
+        yield from _parsed_bindings(pattern.argument)
+    elif kind == "AssignmentPattern":
+        yield from _parsed_bindings(pattern.left)
+    elif kind == "ArrayPattern":
+        for item in pattern.elements:
+            yield from _parsed_bindings(item)
+    elif kind == "ObjectPattern":
+        for prop in pattern.properties:
+            yield from _parsed_bindings(prop.argument if prop.type == "RestElement" else prop.value)
+
+
+def _parsed_declaration_names(node):
+    if node is None:
+        return
+    kind = node.type
+    if kind == "VariableDeclaration":
+        for declaration in node.declarations:
+            yield from _parsed_bindings(declaration.id)
+    elif kind in {"FunctionDeclaration", "ClassDeclaration"}:
+        yield from _parsed_bindings(node.id)
+    elif kind == "ImportDeclaration":
+        for specifier in node.specifiers:
+            yield from _parsed_bindings(specifier.local)
+    elif kind in {"ExportNamedDeclaration", "ExportDefaultDeclaration"}:
+        yield from _parsed_declaration_names(node.declaration)
+
+
+_PARSED_SCOPE_BOUNDARIES = _FUNCTIONS | _CLASSES
+
+
+def _parsed_var_names(node, cache):
+    if node is None:
+        return ()
+    kind = node.type
+    # Source-owned leaves cannot declare vars in this enclosing scope. Keeping
+    # them out of the cache avoids needless tuples, ids and managed dictionaries.
+    if kind in _PARSED_SCOPE_BOUNDARIES or kind in _VAR_LEAVES:
+        return ()
+    cached = cache.get(node)
+    if cached is not None:
+        return cached
+    if kind == "VariableDeclaration":
+        result = tuple(_parsed_declaration_names(node)) if node.kind == "var" else ()
+    else:
+        fields = _VAR_CHILD_FIELDS.get(kind)
+        if fields is None:
+            # Conservatively retain existing traversal for any unlisted
+            # extension container; its cache format remains the generic one.
+            return _var_names(node)
+        result = []
+        for field in fields:
+            value = getattr(node, field)
+            children = value if type(value) is list else (value,)
+            for child in children:
+                result.extend(_parsed_var_names(child, cache))
+        result = tuple(result)
+    # Native objects have identity hash/equality; the key itself retains them.
+    cache[node] = result
+    return result
+
 class _Validator:
     def __init__(self, report, edition, parser_tree=False, no_var=False):
         self.report = report
@@ -249,6 +321,10 @@ class _Validator:
         self._parser_tree = parser_tree
         self._no_var = parser_tree and no_var
         self._var_cache = {}
+        self._read_kind = _parsed_kind if parser_tree else _kind
+        self._read_bindings = _parsed_bindings if parser_tree else _bindings
+        self._read_declaration_names = _parsed_declaration_names if parser_tree else _declaration_names
+        self._read_var_names = _parsed_var_names if parser_tree else _var_names
 
     def error(self, message, node):
         self.report(message, node)
@@ -290,34 +366,42 @@ class _Validator:
             lexical[name] = (binding, None)
         for statement in statements:
             statement_type = type(statement)
-            if statement_type is dict or statement_type in _NATIVE_TYPES:
-                kind = _kind(statement)
+            if self._parser_tree:
+                declaration = statement
+                kind = statement.type
+                if kind in {"ExportNamedDeclaration", "ExportDefaultDeclaration"}:
+                    declaration = statement.declaration
+                while declaration is not None and declaration.type == "LabeledStatement":
+                    declaration = declaration.body
+                kind = None if declaration is None else declaration.type
+            elif statement_type is dict or statement_type in _NATIVE_TYPES:
+                kind = self._read_kind(statement)
                 if kind not in {"ExportNamedDeclaration", "ExportDefaultDeclaration", "LabeledStatement"}:
                     declaration = statement
                 else:
                     declaration = _declaration_item(statement)
-                    kind = _kind(declaration)
+                    kind = self._read_kind(declaration)
             else:
                 declaration = _declaration_item(statement)
-                kind = _kind(declaration)
+                kind = self._read_kind(declaration)
             is_lexical = (kind == "VariableDeclaration" and _get(declaration, "kind") != "var"
                 or kind in {"ClassDeclaration", "ImportDeclaration"}
                 or kind == "FunctionDeclaration" and scope_kind not in {"script", "function", "static"})
             if is_lexical:
-                for name, binding in _declaration_names(declaration):
+                for name, binding in self._read_declaration_names(declaration):
                     if name in lexical:
                         prior = lexical[name][1]
                         annex_b_duplicate = (not context.strict and scope_kind in {"block", "switch"}
-                            and _kind(prior) == "FunctionDeclaration" and kind == "FunctionDeclaration"
+                            and self._read_kind(prior) == "FunctionDeclaration" and kind == "FunctionDeclaration"
                             and not _async(prior) and not _async(declaration)
                             and not _get(prior, "generator", False) and not _get(declaration, "generator", False))
                         if not annex_b_duplicate:
                             self.duplicate(name, binding)
                     lexical[name] = (binding, declaration)
             elif kind == "FunctionDeclaration" and scope_kind in {"script", "function", "static"}:
-                var_names.extend(_declaration_names(declaration))
+                var_names.extend(self._read_declaration_names(declaration))
             if not self._no_var:
-                var_names.extend(_var_names(declaration, self._var_cache))
+                var_names.extend(self._read_var_names(declaration, self._var_cache))
         for name, binding in var_names:
             if name in lexical:
                 self.duplicate(name, binding)
@@ -330,7 +414,7 @@ class _Validator:
         node_type = type(node)
         ordinary = node_type is dict or node_type in _NATIVE_TYPES
         if kind is None or not ordinary:
-            kind = _kind(node)
+            kind = self._read_kind(node)
         # At the latest supported edition every version-only condition is a
         # no-op. Keep descriptor access for custom nodes/mappings, and retain
         # regexp grammar validation even at the modern default.
@@ -378,7 +462,7 @@ class _Validator:
                 self.require(2021, "Logical assignment", node)
         if kind == "ExportAllDeclaration" and _get(node, "exported") is not None:
             self.require(2020, "Namespace reexports", node)
-            if _kind(_get(node, "exported")) == "Literal":
+            if self._read_kind(_get(node, "exported")) == "Literal":
                 self.require(2022, "String module names", node)
         if kind == "TemplateElement" and _get(_get(node, "value"), "cooked") is None:
             self.require(2018, "Tagged invalid template escapes", node)
@@ -410,25 +494,29 @@ class _Validator:
                 self.error(f"Duplicate export '{name}'", node)
             exported.add(name)
         for statement in body:
-            kind = _kind(statement)
+            kind = self._read_kind(statement)
             if kind == "ExportDefaultDeclaration":
                 add("default", statement)
             elif kind == "ExportAllDeclaration":
                 if _get(statement, "exported") is not None:
                     add(_export_name(_get(statement, "exported")), _get(statement, "exported"))
             elif kind == "ExportNamedDeclaration":
-                for name, binding in _declaration_names(_get(statement, "declaration")):
+                for name, binding in self._read_declaration_names(_get(statement, "declaration")):
                     add(name, binding)
                 for specifier in _get(statement, "specifiers", ()) or ():
                     add(_export_name(_get(specifier, "exported")), _get(specifier, "exported"))
                     local = _export_name(_get(specifier, "local"))
-                    if _get(statement, "source") is None and _kind(_get(specifier, "local")) == "Literal":
+                    if _get(statement, "source") is None and self._read_kind(_get(specifier, "local")) == "Literal":
                         self.error("String export names require a reexport source", _get(specifier, "local"))
                     if _get(statement, "source") is None and local not in bindings:
                         self.error(f"Export '{local}' is not defined", _get(specifier, "local"))
 
     def pattern(self, pattern, context, binding=True):
-        kind = _kind(pattern)
+        if self._parser_tree and pattern is not None and pattern.type == "Identifier":
+            if not binding:
+                self.assignment_target(pattern, context, False)
+            return
+        kind = self._read_kind(pattern)
         if pattern is None:
             return
         pattern_type = type(pattern)
@@ -445,28 +533,28 @@ class _Validator:
             argument = _get(pattern, "argument")
             if _get(pattern, "_trailingComma", False):
                 self.error("Rest elements may not have a trailing comma", pattern)
-            if _kind(argument) == "AssignmentPattern":
+            if self._read_kind(argument) == "AssignmentPattern":
                 self.error("Rest elements may not have an initializer", pattern)
             self.pattern(argument, context, binding)
         elif kind == "ArrayPattern":
             elements = _get(pattern, "elements", ()) or ()
-            if elements and _kind(elements[-1]) == "RestElement" and _get(pattern, "_trailingComma", False):
+            if elements and self._read_kind(elements[-1]) == "RestElement" and _get(pattern, "_trailingComma", False):
                 self.error("Rest elements may not have a trailing comma", elements[-1])
             for index, item in enumerate(elements):
-                if _kind(item) == "RestElement" and index != len(elements) - 1:
+                if self._read_kind(item) == "RestElement" and index != len(elements) - 1:
                     self.error("Rest elements must be last in a pattern", item)
                 self.pattern(item, context, binding)
         elif kind == "ObjectPattern":
             properties = _get(pattern, "properties", ()) or ()
-            if properties and _kind(properties[-1]) == "RestElement" and _get(pattern, "_trailingComma", False):
+            if properties and self._read_kind(properties[-1]) == "RestElement" and _get(pattern, "_trailingComma", False):
                 self.error("Rest properties may not have a trailing comma", properties[-1])
             for index, prop in enumerate(properties):
-                if _kind(prop) == "RestElement":
+                if self._read_kind(prop) == "RestElement":
                     if index != len(properties) - 1:
                         self.error("Rest properties must be last in a pattern", prop)
                     self.editions(prop, context, "ObjectPattern")
                     argument = _get(prop, "argument")
-                    if _kind(argument) not in ({"Identifier"} if binding else {"Identifier", "MemberExpression"}):
+                    if self._read_kind(argument) not in ({"Identifier"} if binding else {"Identifier", "MemberExpression"}):
                         self.error("Object rest requires a binding identifier or simple assignment target", argument)
                     self.pattern(prop, context, binding)
                 else:
@@ -492,7 +580,7 @@ class _Validator:
             if kind == "MemberExpression" and not target.optional:
                 self.visit(target, context)
                 return
-        kind = _kind(target)
+        kind = self._read_kind(target)
         if kind == "Identifier":
             if context.strict and _get(target, "name") in {"eval", "arguments"}:
                 self.error("Assigning to eval or arguments is forbidden in strict mode", target)
@@ -509,13 +597,13 @@ class _Validator:
             self.error("Invalid left-hand side in assignment", target)
 
     def function(self, node, context, method=False, super_property=False, super_call=False):
-        arrow = _kind(node) == "ArrowFunctionExpression"
+        arrow = self._read_kind(node) == "ArrowFunctionExpression"
         body = _get(node, "body")
-        statements = _get(body, "body", ()) or () if _kind(body) == "BlockStatement" else ()
+        statements = _get(body, "body", ()) or () if self._read_kind(body) == "BlockStatement" else ()
         own_strict = _strict_directive(statements)
         strict = context.strict or own_strict
         params = _get(node, "params", ()) or ()
-        simple = all(_kind(param) == "Identifier" for param in params)
+        simple = all(self._read_kind(param) == "Identifier" for param in params)
         function_context = replace(context, strict=strict, in_function=True,
             allow_await=_async(node), allow_yield=bool(_get(node, "generator", False)), parameters=False,
             await_reserved=False, yield_reserved=False,
@@ -524,7 +612,7 @@ class _Validator:
             super_call=context.super_call if arrow else super_call,
             forbid_arguments=context.forbid_arguments if arrow else False,
             iteration=0, switch=0, labels=(), uninitialized_const=False)
-        parameter_names = [binding for param in params for binding in _bindings(param)]
+        parameter_names = [binding for param in params for binding in self._read_bindings(param)]
         parameter_context = replace(function_context, parameters=True,
             await_reserved=arrow and (context.allow_await or context.await_reserved),
             yield_reserved=arrow and (context.allow_yield or context.yield_reserved))
@@ -533,15 +621,15 @@ class _Validator:
         # named function expressions bind inside their own function grammar.
         name_context = (replace(function_context, allow_await=context.allow_await, allow_yield=context.allow_yield,
             await_reserved=context.await_reserved, yield_reserved=context.yield_reserved)
-            if _kind(node) == "FunctionDeclaration" else function_context)
-        self.check_names(_bindings(_get(node, "id")), name_context)
+            if self._read_kind(node) == "FunctionDeclaration" else function_context)
+        self.check_names(self._read_bindings(_get(node, "id")), name_context)
         if own_strict and not simple:
             self.error("Illegal 'use strict' directive in function with non-simple parameter list", node)
         for param in params:
             self.pattern(param, parameter_context)
-            if _kind(param) == "RestElement" and _get(param, "_trailingComma", False):
+            if self._read_kind(param) == "RestElement" and _get(param, "_trailingComma", False):
                 self.error("Rest parameters may not have a trailing comma", param)
-        if _kind(body) == "BlockStatement":
+        if self._read_kind(body) == "BlockStatement":
             self.scope(statements, function_context, "function", parameter_names)
             for statement in statements:
                 self.visit(statement, function_context, "FunctionBody")
@@ -549,13 +637,13 @@ class _Validator:
             self.visit(body, function_context)
 
     def class_definition(self, node, context):
-        self.check_names(_bindings(_get(node, "id")), replace(context, strict=True))
+        self.check_names(self._read_bindings(_get(node, "id")), replace(context, strict=True))
         self.visit(_get(node, "superClass"), context)
         elements = _get(_get(node, "body"), "body", ()) or ()
         private_names, constructors = {}, 0
         for element in elements:
-            kind, name = _kind(element), _key(element)
-            private = _kind(_get(element, "key")) == "PrivateIdentifier"
+            kind, name = self._read_kind(element), _key(element)
+            private = self._read_kind(_get(element, "key")) == "PrivateIdentifier"
             if private:
                 if name == "constructor":
                     self.error("Class constructor may not be a private name", _get(element, "key"))
@@ -586,21 +674,21 @@ class _Validator:
             self.editions(element, class_context)
             if _get(element, "computed", False):
                 self.visit(_get(element, "key"), class_context)
-            if _kind(_get(element, "key")) == "PrivateIdentifier":
+            if self._read_kind(_get(element, "key")) == "PrivateIdentifier":
                 self.require(2022, "Private class names", _get(element, "key"))
-            if _kind(element) == "MethodDefinition":
+            if self._read_kind(element) == "MethodDefinition":
                 value = _get(element, "value")
                 self.accessor_arity(element)
                 self.editions(value, class_context)
                 self.function(value, class_context, method=True, super_property=True,
                     super_call=derived and _get(element, "kind") == "constructor" and not _get(element, "static", False))
-            elif _kind(element) in {"PropertyDefinition", "FieldDefinition"}:
+            elif self._read_kind(element) in {"PropertyDefinition", "FieldDefinition"}:
                 field_context = replace(class_context, in_function=False, allow_await=False, allow_yield=False,
                     await_reserved=False, yield_reserved=False,
                     new_target=True, super_property=True, super_call=False, forbid_arguments=True,
                     parameters=False, iteration=0, switch=0, labels=())
                 self.visit(_get(element, "value"), field_context)
-            elif _kind(element) == "StaticBlock":
+            elif self._read_kind(element) == "StaticBlock":
                 static_context = replace(class_context, in_function=False, allow_await=False, allow_yield=False,
                     await_reserved=True, yield_reserved=False,
                     new_target=True, super_property=True, super_call=False, forbid_arguments=True,
@@ -615,19 +703,19 @@ class _Validator:
         params = _get(_get(node, "value"), "params", ()) or ()
         if kind == "get" and params:
             self.error("Getter must not have any formal parameters", node)
-        elif kind == "set" and (len(params) != 1 or _kind(params[0]) == "RestElement"):
+        elif kind == "set" and (len(params) != 1 or self._read_kind(params[0]) == "RestElement"):
             self.error("Setter must have exactly one non-rest formal parameter", node)
 
     def statement(self, node, context, annex_b=False, labels_allowed=False):
         target = node
-        while _kind(target) == "LabeledStatement":
+        while self._read_kind(target) == "LabeledStatement":
             target = _get(target, "body")
-        if target is not node and _kind(target) == "FunctionDeclaration" and not labels_allowed:
+        if target is not node and self._read_kind(target) == "FunctionDeclaration" and not labels_allowed:
             self.error("Labelled functions are not valid in this statement position", target)
-        if _kind(node) == "FunctionDeclaration":
+        if self._read_kind(node) == "FunctionDeclaration":
             if not annex_b or context.strict or _async(node) or _get(node, "generator", False):
                 self.error("Functions in statement position require the sloppy Annex B ordinary-function grammar", node)
-        elif _kind(node) == "ClassDeclaration" or _kind(node) == "VariableDeclaration" and _get(node, "kind") != "var":
+        elif self._read_kind(node) == "ClassDeclaration" or self._read_kind(node) == "VariableDeclaration" and _get(node, "kind") != "var":
             self.error("Lexical declarations require a statement list or block", node)
         self.visit(node, context)
 
@@ -704,6 +792,17 @@ class _Validator:
                     self.error("A class expression statement requires parentheses", expression)
                 self.visit(expression, context, kind)
                 return
+            if kind == "VariableDeclaration":
+                declaration_kind = node.kind
+                if declaration_kind not in {"var", "let", "const"}:
+                    self.error(f"Unsupported declaration kind '{declaration_kind}'", node)
+                self.check_names(self._read_declaration_names(node), context, lexical=declaration_kind != "var")
+                for declaration in node.declarations:
+                    self.pattern(declaration.id, context)
+                    if declaration_kind == "const" and declaration.init is None and not context.uninitialized_const:
+                        self.error("Missing initializer in const declaration", declaration)
+                    self.visit(declaration.init, context)
+                return
             if kind == "ReturnStatement":
                 if not context.in_function:
                     self.error("Illegal return statement", node)
@@ -718,7 +817,7 @@ class _Validator:
             get = (node if node_type is dict else node.__dict__).get
             kind = get("type")
         else:
-            kind = _kind(node)
+            kind = self._read_kind(node)
             # Preserve overridden Mapping.get and inherited/dynamic descriptors.
             def get(field, default=None):
                 return _get(node, field, default)
@@ -738,8 +837,8 @@ class _Validator:
         if self._parser_tree and node_type in _NATIVE_TYPES:
             fields = _PARSER_EXPR_FIELDS.get(kind)
             if (fields is not None and not (kind == "UnaryExpression" and get("operator") == "delete")
-                    and not (kind == "BinaryExpression" and _kind(get("left")) == "PrivateIdentifier")
-                    and not (kind in {"CallExpression", "NewExpression"} and _kind(get("callee")) == "Super")):
+                    and not (kind == "BinaryExpression" and self._read_kind(get("left")) == "PrivateIdentifier")
+                    and not (kind in {"CallExpression", "NewExpression"} and self._read_kind(get("callee")) == "Super")):
                 for field in fields:
                     value = get(field)
                     if type(value) is list:
@@ -756,7 +855,7 @@ class _Validator:
             return
         if kind == "ExpressionStatement":
             expression = get("expression")
-            if _kind(expression) == "ClassExpression" and not _get(expression, "_parenthesized", False):
+            if self._read_kind(expression) == "ClassExpression" and not _get(expression, "_parenthesized", False):
                 self.error("A class expression statement requires parentheses", expression)
         if kind == "BlockStatement":
             body = get("body", ()) or ()
@@ -768,7 +867,7 @@ class _Validator:
             declaration_kind = get("kind")
             if declaration_kind not in {"var", "let", "const"}:
                 self.error(f"Unsupported declaration kind '{declaration_kind}'", node)
-            self.check_names(_declaration_names(node), context, lexical=declaration_kind != "var")
+            self.check_names(self._read_declaration_names(node), context, lexical=declaration_kind != "var")
             for declaration in get("declarations", ()) or ():
                 self.pattern(_get(declaration, "id"), context)
                 if declaration_kind == "const" and _get(declaration, "init") is None and not context.uninitialized_const:
@@ -777,21 +876,21 @@ class _Validator:
             return
         if kind in {"ForStatement", "ForInStatement", "ForOfStatement"}:
             initializer = get("init" if kind == "ForStatement" else "left")
-            if _kind(initializer) == "VariableDeclaration" and _get(initializer, "kind") != "var":
+            if self._read_kind(initializer) == "VariableDeclaration" and _get(initializer, "kind") != "var":
                 self.scope([initializer, get("body")], context, "for")
-            if kind != "ForStatement" and _kind(initializer) == "VariableDeclaration":
+            if kind != "ForStatement" and self._read_kind(initializer) == "VariableDeclaration":
                 declarations = _get(initializer, "declarations", ()) or ()
                 if len(declarations) != 1:
                     self.error("for-in/of requires exactly one binding", initializer)
                 for declaration in declarations:
                     annex_b = (kind == "ForInStatement" and not context.strict and _get(initializer, "kind") == "var"
-                        and _kind(_get(declaration, "id")) == "Identifier")
+                        and self._read_kind(_get(declaration, "id")) == "Identifier")
                     if _get(declaration, "init") is not None and not annex_b:
                         self.error("for-in/of bindings must not have an initializer", declaration)
             if kind == "ForOfStatement" and _await(node) and not context.allow_await:
                 self.error("for await is only valid in async functions or modules", node)
             self.visit(initializer, replace(context, uninitialized_const=kind != "ForStatement"))
-            if kind != "ForStatement" and _kind(initializer) != "VariableDeclaration":
+            if kind != "ForStatement" and self._read_kind(initializer) != "VariableDeclaration":
                 self.assignment_target(initializer, context, True)
             for field in (("test", "update") if kind == "ForStatement" else ("right",)):
                 self.visit(get(field), context)
@@ -814,11 +913,11 @@ class _Validator:
             return
         if kind == "CatchClause":
             parameter = get("param")
-            bindings = list(_bindings(parameter))
+            bindings = list(self._read_bindings(parameter))
             self.check_names(bindings, context, unique=True)
             self.pattern(parameter, context)
             body = _get(get("body"), "body", ()) or ()
-            destructured = parameter is not None and _kind(parameter) != "Identifier"
+            destructured = parameter is not None and self._read_kind(parameter) != "Identifier"
             self.scope(body, context, "catch", parameters=() if destructured else bindings,
                 extra_lexical=bindings if destructured else ())
             for statement in body:
@@ -842,9 +941,9 @@ class _Validator:
                 self.error(f"Label '{label}' has already been declared", get("label"))
             body = get("body")
             target = body
-            while _kind(target) == "LabeledStatement":
+            while self._read_kind(target) == "LabeledStatement":
                 target = _get(target, "body")
-            iteration = _kind(target) in {"WhileStatement", "DoWhileStatement", "ForStatement", "ForInStatement", "ForOfStatement"}
+            iteration = self._read_kind(target) in {"WhileStatement", "DoWhileStatement", "ForStatement", "ForInStatement", "ForOfStatement"}
             self.statement(body, replace(context, labels=context.labels + ((label, iteration),)), annex_b=True, labels_allowed=True)
             return
         if kind in {"BreakStatement", "ContinueStatement"}:
@@ -867,7 +966,7 @@ class _Validator:
         if kind == "ObjectExpression":
             proto_seen = False
             for prop in get("properties", ()) or ():
-                if (_kind(prop) == "Property" and _key(prop) == "__proto__" and _get(prop, "kind") == "init"
+                if (self._read_kind(prop) == "Property" and _key(prop) == "__proto__" and _get(prop, "kind") == "init"
                         and not _get(prop, "method", False) and not _get(prop, "shorthand", False)):
                     if proto_seen:
                         self.error("Duplicate __proto__ fields are not allowed in object literals", prop)
@@ -876,14 +975,14 @@ class _Validator:
             return
         if kind == "Property":
             key = get("key")
-            if (_kind(key) == "PrivateIdentifier" or _kind(key) == "Identifier"
+            if (self._read_kind(key) == "PrivateIdentifier" or self._read_kind(key) == "Identifier"
                     and isinstance(_get(key, "name"), str) and _get(key, "name").startswith("#")):
                 self.error("Private methods and properties are only valid in class bodies", get("key"))
             if get("computed", False):
                 self.visit(get("key"), context)
             value = get("value")
             method = get("method", False) or get("kind") in {"get", "set"}
-            if method and _kind(value) in _FUNCTIONS:
+            if method and self._read_kind(value) in _FUNCTIONS:
                 self.accessor_arity(node)
                 self.editions(value, context)
                 self.function(value, context, method=True, super_property=True)
@@ -894,14 +993,14 @@ class _Validator:
             if not context.module or parent != "Program":
                 self.error("Import and export declarations are only valid at module top level", node)
             if kind == "ImportDeclaration":
-                self.check_names(_declaration_names(node), context, lexical=True)
+                self.check_names(self._read_declaration_names(node), context, lexical=True)
                 for specifier in get("specifiers", ()) or ():
-                    if _kind(_get(specifier, "imported")) == "Literal":
+                    if self._read_kind(_get(specifier, "imported")) == "Literal":
                         self.require(2022, "String module names", specifier)
             else:
                 self.visit(get("declaration"), context, "Program")
                 for specifier in get("specifiers", ()) or ():
-                    if _kind(_get(specifier, "exported")) == "Literal" or _kind(_get(specifier, "local")) == "Literal":
+                    if self._read_kind(_get(specifier, "exported")) == "Literal" or self._read_kind(_get(specifier, "local")) == "Literal":
                         self.require(2022, "String module names", specifier)
             attribute_names = set()
             for attribute in get("attributes", ()) or ():
@@ -914,20 +1013,20 @@ class _Validator:
             return
         if kind == "MemberExpression":
             obj, prop = get("object"), get("property")
-            if _kind(obj) == "Super":
+            if self._read_kind(obj) == "Super":
                 if not context.super_property or get("optional", False):
                     self.error("super property access is not valid in this context", obj)
-                if _kind(prop) == "PrivateIdentifier":
+                if self._read_kind(prop) == "PrivateIdentifier":
                     self.error("Private names cannot be accessed through super", prop)
             else:
                 self.visit(obj, context)
-            if _kind(prop) == "PrivateIdentifier":
+            if self._read_kind(prop) == "PrivateIdentifier":
                 self.editions(prop, context)
                 self.private_reference(prop, context)
             elif get("computed", False):
                 self.visit(prop, context)
             return
-        if kind in {"CallExpression", "NewExpression"} and _kind(get("callee")) == "Super":
+        if kind in {"CallExpression", "NewExpression"} and self._read_kind(get("callee")) == "Super":
             if kind != "CallExpression" or not context.super_call or get("optional", False):
                 self.error("super() is only valid in a derived class constructor", get("callee"))
             for argument in get("arguments", ()) or ():
@@ -941,7 +1040,7 @@ class _Validator:
             if parent != "PrivateBrand":
                 self.error("Private names are only valid as class keys, member properties or an in operand", node)
             return
-        if kind == "BinaryExpression" and _kind(get("left")) == "PrivateIdentifier":
+        if kind == "BinaryExpression" and self._read_kind(get("left")) == "PrivateIdentifier":
             if get("operator") != "in":
                 self.error("A private name expression requires the in operator", node)
             self.visit(get("left"), context, "PrivateBrand")
@@ -961,11 +1060,11 @@ class _Validator:
             self.error("yield is not valid in this context", node)
         if kind == "UnaryExpression" and get("operator") == "delete":
             argument = get("argument")
-            if _kind(argument) == "ChainExpression":
+            if self._read_kind(argument) == "ChainExpression":
                 argument = _get(argument, "expression")
-            if context.strict and _kind(argument) == "Identifier":
+            if context.strict and self._read_kind(argument) == "Identifier":
                 self.error("Deleting an unqualified identifier is forbidden in strict mode", argument)
-            if _kind(argument) == "MemberExpression" and _kind(_get(argument, "property")) == "PrivateIdentifier":
+            if self._read_kind(argument) == "MemberExpression" and self._read_kind(_get(argument, "property")) == "PrivateIdentifier":
                 self.error("Private fields may not be deleted", argument)
         if kind in {"AssignmentExpression", "UpdateExpression"}:
             target = get("left" if kind == "AssignmentExpression" else "argument")
