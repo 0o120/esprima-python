@@ -1,21 +1,69 @@
 # Performance evidence
 
-The October 2026 follow-up reduces default parsing time by 20–28% on the paired
+The third October 2026 pass reduces a separate 10.9 MB production bundle's default
+parse median from 36.539 to 30.818 seconds: 15.7% less time, or 1.186x throughput.
+It avoids unnecessary native AST dictionary allocation during private validation
+and reuses lazily proven BMP/UTF-16 identity positions. Syntax, scope, edition
+and regex checks remain enabled, with default garbage collection.
+
+## Latest large-file comparison
+
+CPython 3.12.0 on Windows x64; three fresh isolated processes per version,
+run sequentially. The baseline is `6652012`; the measured current Python sources
+match `865188a`. Imports, source reading and semantic hashing are outside the
+public `parseScript` timer. Earlier experimental trials remain separate.
+
+| Measurement | Baseline | Current | Less time |
+| --- | ---: | ---: | ---: |
+| Default parse median | 36.539 s | 30.818 s | 15.7% |
+| Static validation median | 7.810 s | 3.874 s | 50.4% |
+| GC time median, within parse | 7.517 s | 5.304 s | 29.4% |
+| Individual parse trials | 36.492 / 36.539 / 38.311 s | 31.426 / 30.818 / 30.492 s | |
+
+GC time is already included in parsing and validation; do not add these rows.
+The historical original-port median is 29.840 seconds on this host/interpreter,
+so the latest median is about 3.3% slower. The earlier old-port measurement uses
+two trials; that parser predates the separate modern static checks.
+
+The complete semantic AST matches the independently established Acorn/Babel
+digest. Both Python floors pass all 1,759 parser methods with warnings treated
+as errors and zero skips. Each native-reader group also passes 36,690 paired
+checks covering 63,833 ordered diagnostics and original node identities.
+Direct/custom parsers retain their overridable scanner position hooks; the new
+BMP shortcut is limited to facade-owned instances. Public standalone validation,
+custom mappings/delegates, subclasses, JSX and historical editions retain their
+complete paths. AST dictionaries remain available when callers request them.
+
+Isolated validation-only allocation studies reduce peak process private bytes
+from approximately 786 MB to 631 MB. The second scope/binding reader group alone
+consistently reduces validation time by 11.5% and peak private bytes by about
+46 MB, but its whole-parse timing gain is small and noisy. Some dictionary work
+is deferred to consumers, so parse-only gains must not be applied unchanged to
+serialization or a full toolchain. The workspace report measures those paths
+separately. Private bytes are a process-memory metric, not `tracemalloc` peaks.
+
+The supplied source, supplemental tests, runners, snapshots and raw results
+remain outside every repository, under the workspace directory
+`implementation-artifacts/performance-youtube-round3`. That directory contains
+`final-latency-summary.json`, per-trial source hashes and the compatibility and
+allocation evidence. No production-bundle fixture is part of this distribution.
+
+## Earlier paired measurements
+
+The preceding October 2026 follow-up reduces default parsing time by 20–28% on the paired
 ES2017 scripts relative to the preceding modern checkpoint. Comment/string-heavy
 parsing is 2.5x as fast as the original port; the 30,000-digit decimal BigInt case
 is about 178x as fast as the preceding modern version. Scope validation, edition
 gates, regex grammar and UTF-16 metadata remain enabled.
 
-General parsing still exceeds the original roughly 10% regression budget:
+At that checkpoint general parsing exceeded the original roughly 10% regression budget:
 default parsing is 19–28% slower than the original on the two ES2017 fixtures.
 The original parser does less static validation. This release-review exception
 does not imply every workload has the same ratio.
 
-## Current paired measurements
-
 CPython 3.12.0 on Windows x64; exact source imports in isolated processes.
 `old` means original master `e3b8965`; `start` means modern checkpoint `618be2b`;
-the measured current sources match commit `78a3bfc`. Timing excludes input
+the table's current sources match commit `78a3bfc`. Timing excludes input
 reading, AST serialization and imports. Four warmups precede nine timing
 samples; GC is enabled, with collection outside each sample. Trusted programs
 are never executed. All 15 start/current AST and metadata comparisons match.

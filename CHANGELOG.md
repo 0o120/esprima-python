@@ -2,6 +2,11 @@
 
 ## 5.0.0 development
 
+- Avoid native AST dictionary materialization during owned expression/scope
+  validation and reuse proven BMP/UTF-16 identity positions. A separate large
+  bundle parses in 30.818 seconds versus 36.539 seconds (15.7% less time), with
+  default GC and all checks retained. Preserve direct Parser/Scanner hooks;
+  see `docs/PERFORMANCE.md` for provenance and consumer-path limits.
 - Accelerate identifier/digit runs, long comments and plain strings, decimal
   BigInt metadata, cover-grammar propagation and source-position conversion.
   Reduce validation dispatch/context/scope work for provably untouched parser
