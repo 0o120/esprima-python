@@ -85,6 +85,9 @@ def parse(code: str, options: Mapping[str, Any] | None = None,
     else:
         parser = Parser(code, options=options, delegate=parserDelegate)
 
+    if type(parser) is Parser and delegate is None:
+        parser._ownedByFacade = True
+
     try:
         ast = parser.parseModule() if isModule else parser.parseScript()
     except RecursionError:

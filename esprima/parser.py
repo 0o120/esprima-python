@@ -110,6 +110,9 @@ class Parser(object):
             raise ValueError('positionEncoding must be utf16 or scalar')
 
         self.delegate = delegate
+        # Public facades own this instance until the returned tree escapes.
+        # Direct Parser users keep their overridable position hooks.
+        self._ownedByFacade = False
 
         self.errorHandler = ErrorHandler()
         self.errorHandler.tolerant = self.config.tolerant
@@ -394,7 +397,9 @@ class Parser(object):
         node._start = marker.index
         node._end = self.lastMarker.index
         node._line = marker.line
-        node._column = marker.column if self.scanner._sourceIsAscii or self.config.positionEncoding == 'scalar' else self.externalColumn(marker.index, marker.column)
+        plainColumn = (self.scanner._sourceIsAscii or self.config.positionEncoding == 'scalar'
+                       or (self.scanner._utf16IsIdentity and self._ownedByFacade))
+        node._column = marker.column if plainColumn else self.externalColumn(marker.index, marker.column)
         if self.config.range:
             node.range = [self.externalOffset(marker.index), self.externalOffset(self.lastMarker.index)]
 
@@ -432,12 +437,12 @@ class Parser(object):
         return node
 
     def externalOffset(self, index):
-        if self.config.positionEncoding == 'scalar' or (self.scanner._sourceIsAscii and 0 <= index <= self.scanner.length):
+        if self.config.positionEncoding == 'scalar' or (self.scanner._utf16IsIdentity and 0 <= index <= self.scanner.length):
             return index
         return self.scanner.utf16Offset(index)
 
     def externalColumn(self, index, column):
-        if self.config.positionEncoding == 'scalar' or (self.scanner._sourceIsAscii and 0 <= index-column <= index <= self.scanner.length):
+        if self.config.positionEncoding == 'scalar' or (self.scanner._utf16IsIdentity and 0 <= index-column <= index <= self.scanner.length):
             return column
         return self.scanner.utf16Column(index, index - column)
 

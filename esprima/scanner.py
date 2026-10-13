@@ -154,6 +154,10 @@ class Scanner(object):
     def __init__(self, code, handler):
         self.source = unicode(code) + '\x00'
         self._sourceIsAscii = self.source.isascii()
+        # BMP characters (including individual surrogate code units) also have
+        # identical Python/UTF-16 positions. Prove this lazily when the sparse
+        # position index is first needed, keeping source classification exact.
+        self._utf16IsIdentity = self._sourceIsAscii
         self.errorHandler = handler
         self.trackComment = False
         self.isModule = False
@@ -176,22 +180,26 @@ class Scanner(object):
 
     def utf16Offset(self, index):
         """Convert a Python scalar source index to the ESTree UTF-16 unit index."""
-        if self._sourceIsAscii:
+        if self._utf16IsIdentity:
             return index if 0 <= index <= self.length else min(max(index, 0), self.length)
         if self._utf16Astral is None:
             # Only supplementary scalars change Python-to-UTF-16 positions.
             # A sparse index avoids one Python integer per source character.
             self._utf16Astral = tuple(match.start() for match in _ASTRAL_SOURCE.finditer(self.source))
+            if type(self.source) is str and not self._utf16Astral:
+                self._utf16IsIdentity = True
         index = index if 0 <= index <= self.length else min(max(index, 0), self.length)
         return index + bisect_left(self._utf16Astral, index)
 
     def utf16Column(self, index, lineStart):
-        if self._sourceIsAscii:
+        if self._utf16IsIdentity:
             if 0 <= lineStart <= index <= self.length:
                 return index - lineStart
             return min(max(index, 0), self.length) - min(max(lineStart, 0), self.length)
         if self._utf16Astral is None:
             self._utf16Astral = tuple(match.start() for match in _ASTRAL_SOURCE.finditer(self.source))
+            if type(self.source) is str and not self._utf16Astral:
+                self._utf16IsIdentity = True
         index = index if 0 <= index <= self.length else min(max(index, 0), self.length)
         lineStart = lineStart if 0 <= lineStart <= self.length else min(max(lineStart, 0), self.length)
         return index - lineStart + bisect_left(self._utf16Astral, index) - bisect_left(self._utf16Astral, lineStart)
