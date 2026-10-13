@@ -42,9 +42,23 @@ is deferred to consumers, so parse-only gains must not be applied unchanged to
 serialization or a full toolchain. The workspace report measures those paths
 separately. Private bytes are a process-memory metric, not `tracemalloc` peaks.
 
-The supplied source, supplemental tests, runners, snapshots and raw results
-remain outside every repository, under the workspace directory
-`implementation-artifacts/performance-youtube-round3`. That directory contains
+In a separate fresh public `parseScript(source).toDict()` pair, total time falls
+from 76.981 to 75.191 seconds (2.3%). Parsing falls from 36.336 to 31.037 seconds,
+but serialization rises from 40.317 to 43.779 seconds (8.6%); temporary native
+tree release is included. Both full mapping digests match the reference.
+Parse-stage peak private bytes fall from 786.8 to 630.5 decimal MB (20%), while
+full consumer peak private bytes stay approximately 1,252 MB. This is one pair,
+not a multi-trial consumer median.
+
+All 15 general fixture AST/metadata comparisons match the frozen baseline.
+Thirteen timing rows improve; JSX is 0.41% slower (0.079 ms) and the decimal
+BigInt fixture is 9.17% slower (0.046 ms). These results do not establish a
+universal speedup.
+
+The supplied source stays in the workspace root, outside every repository.
+Supplemental tests, runners, snapshots and raw results also stay outside the
+repositories, under `implementation-artifacts/performance-youtube-round3`.
+That artifact directory contains
 `final-latency-summary.json`, per-trial source hashes and the compatibility and
 allocation evidence. No production-bundle fixture is part of this distribution.
 
