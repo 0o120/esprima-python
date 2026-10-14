@@ -4,6 +4,14 @@ The modernization targets the published ECMAScript 2026 grammar on Python 3.11+.
 Syntax support is tracked by tests and the feature matrix; an AST node name by
 itself is not a conformance claim. JSX is an explicit extension. Resource
 management declarations and other proposals are outside the core edition gate.
+They can now be explicitly enabled as documented in the README. Resource nodes
+use `VariableDeclaration.kind="using"` or `"await using"`, independently of
+`ForOfStatement.await`. Decorated classes/members optionally contain `decorators`
+arrays of `Decorator` nodes with an expression child. Auto-accessors use
+`AccessorProperty`, retaining required `value: null` when uninitialized.
+Import declarations and expressions retain an optional `phase` of `"source"`
+or `"defer"`; ordinary imports omit it. Experimental default reexports use
+`ExportDefaultSpecifier.exported`; native `.local` remains a compatibility alias.
 
 The interchange format is ESTree. Native Python objects retain safe aliases
 `isAsync` and `allowAwait`, while JSON uses `async` and `await`. Consumers accept
@@ -33,3 +41,8 @@ Each feature is checked in native and serialized form through parse, walk,
 generate and independent reparse. Semantic regressions also compare trusted
 JavaScript execution results. Formatting, raw spelling and comments may change;
 strict directives, evaluation order, literal values and module metadata may not.
+
+Decorators preceding `export` have class ranges that begin before the export
+wrapper's own range, matching the proposal parser's position contract. Walker
+searches account for that traversal boundary while keeping original node bounds
+for matching and preserving callback identity.

@@ -42,6 +42,21 @@ class Node(Object):
         return self.__dict__.items()
 
 
+class Decorator(Node):
+    def __init__(self, expression):
+        self.type = Syntax.Decorator
+        self.expression = expression
+
+
+class AccessorProperty(Node):
+    def __init__(self, key, computed, value, isStatic):
+        self.type = Syntax.AccessorProperty
+        self.key = key
+        self.computed = computed
+        self.value = value
+        self.static = isStatic
+
+
 class ArrayExpression(Node):
     def __init__(self, elements):
         self.type = Syntax.ArrayExpression
@@ -256,7 +271,21 @@ class ExportSpecifier(Node):
 class ExportDefaultSpecifier(Node):
     def __init__(self, local):
         self.type = Syntax.ExportDefaultSpecifier
-        self.local = local
+        self.exported = local
+
+    @property
+    def local(self):
+        return self.exported
+
+    @local.setter
+    def local(self, value):
+        self.exported = value
+
+
+class ExportNamespaceSpecifier(Node):
+    def __init__(self, exported):
+        self.type = Syntax.ExportNamespaceSpecifier
+        self.exported = exported
 
 
 class ExpressionStatement(Node):
@@ -329,17 +358,21 @@ class IfStatement(Node):
 
 
 class ImportExpression(Node):
-    def __init__(self, source, options=None):
+    def __init__(self, source, options=None, phase=None):
         self.type = Syntax.ImportExpression
         self.source = source
         self.options = options
+        if phase is not None:
+            self.phase = phase
 
 class ImportDeclaration(Node):
-    def __init__(self, specifiers, source, attributes=None):
+    def __init__(self, specifiers, source, attributes=None, phase=None):
         self.type = Syntax.ImportDeclaration
         self.specifiers = specifiers
         self.source = source
         self.attributes = [] if attributes is None else attributes
+        if phase is not None:
+            self.phase = phase
 
 
 class ImportDefaultSpecifier(Node):

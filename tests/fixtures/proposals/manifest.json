@@ -1,0 +1,72 @@
+{
+  "upstream": "https://github.com/tc39/test262",
+  "revision": "2e0a56762801e275a9fdf96dc49d90ba0cddcf63",
+  "caseCount": 995,
+  "sourceFileCount": 510,
+  "scope": "Resource-management and decorator syntax/parse-negative checks; no runtime, host or resolution execution.",
+  "options": {
+    "ecmaVersion": 2026,
+    "explicitResourceManagement": true,
+    "decorators": true,
+    "deferredImportEvaluation": true,
+    "sourcePhaseImports": true
+  },
+  "selectionSubjects": [
+    "test/language/expressions/class",
+    "test/language/statements/class",
+    "test/language/statements/using",
+    "test/language/statements/await-using",
+    "test/language/statements/for-of",
+    "test/language/statements/for-await-of",
+    "test/built-ins/AsyncDisposableStack",
+    "test/built-ins/DisposableStack",
+    "test/built-ins/SuppressedError",
+    "test/built-ins/Symbol/asyncDispose",
+    "test/built-ins/Symbol/dispose",
+    "test/built-ins/AsyncIteratorPrototype/Symbol.asyncDispose",
+    "test/built-ins/Iterator/prototype/Symbol.dispose",
+    "test/staging/decorators",
+    "test/staging/explicit-resource-management"
+  ],
+  "selectionFeatures": [
+    "decorators",
+    "explicit-resource-management"
+  ],
+  "excludedFeatures": [
+    "Intl.Era-monthcode",
+    "Intl.Locale-info",
+    "Intl.NumberFormat-v3",
+    "Iterator.prototype.join",
+    "ShadowRealm",
+    "await-dictionary",
+    "error-stack-accessor",
+    "export-defer",
+    "immutable-arraybuffer",
+    "import-bytes",
+    "import-text",
+    "legacy-regexp",
+    "nonextensible-applies-to-private"
+  ],
+  "phaseCorpusFeatures": [
+    "import-defer",
+    "source-phase-imports",
+    "source-phase-imports-module-source"
+  ],
+  "omitted": [],
+  "modeCounts": {
+    "script": 497,
+    "strict": 485,
+    "module": 13
+  },
+  "featureModeCounts": {
+    "decorators": 48,
+    "explicit-resource-management": 947
+  },
+  "parseNegativeChecks": 117,
+  "sourceEncoding": "UTF-8 decoded; line endings normalized to LF.",
+  "resourceLimits": "Resource-limit Error and incidental Python exceptions cannot count as SyntaxError rejection.",
+  "files": {
+    "cases.json": "2f4b007f141a2e0391ba84b00ec3b06cd34e24f1af8ca5f77ec8b59fc03b0a37",
+    "LICENSE": "4dd9244dfe8197c75348c4b24ab53d29d3b1cfad143ac76b5a3d8942aa354ce0"
+  }
+}

@@ -75,7 +75,7 @@ _PUNCTUATOR_PREFIXES = {
     '^': ('^=',),
     '.': ('...',),
 }
-_SINGLE_PUNCTUATORS = frozenset('(){};,[].:?~<>=!+-*%&|^/')
+_SINGLE_PUNCTUATORS = frozenset('(){};,[].:?~<>=!+-*%&|^/@')
 _PLAIN_PUNCTUATORS = _SINGLE_PUNCTUATORS - _PUNCTUATOR_PREFIXES.keys()
 
 
@@ -173,6 +173,7 @@ class Scanner(object):
         # Internal indices remain scalar; public clients select diagnostic units.
         self.positionEncoding = 'scalar'
         self.ecmaVersion = 2026
+        self.decorators = False
 
     def requireFeature(self, edition, name):
         if self.ecmaVersion < edition:
@@ -574,6 +575,10 @@ class Scanner(object):
     def scanPunctuator(self):
         start = self.index
         value = self.source[start]
+        if value == '@' and not self.decorators:
+            self.throwUnexpectedToken()
+        if value == '@':
+            self.requireFeature(2026, 'Decorators')
         if value not in _SINGLE_PUNCTUATORS:
             self.throwUnexpectedToken()
         if value in _PLAIN_PUNCTUATORS:

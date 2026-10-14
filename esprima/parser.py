@@ -105,6 +105,11 @@ class Parser(object):
         self.config = Config(**options)
         self.config.ecmaVersion = normalize_ecma_version(options.get('ecmaVersion', 2026))
         self.config.classProperties = options.get('classProperties', self.config.ecmaVersion >= 2022)
+        self.config.explicitResourceManagement = bool(options.get('explicitResourceManagement', False))
+        self.config.decorators = bool(options.get('decorators', False))
+        self.config.deferredImportEvaluation = bool(options.get('deferredImportEvaluation', False))
+        self.config.sourcePhaseImports = bool(options.get('sourcePhaseImports', False))
+        self.config.exportDefaultFrom = bool(options.get('exportDefaultFrom', False))
         self.config.positionEncoding = options.get('positionEncoding', 'utf16')
         if self.config.positionEncoding not in ('utf16', 'scalar'):
             raise ValueError('positionEncoding must be utf16 or scalar')
@@ -119,6 +124,7 @@ class Parser(object):
         self.scanner = Scanner(code, self.errorHandler)
         self.scanner.positionEncoding = self.config.positionEncoding
         self.scanner.ecmaVersion = self.config.ecmaVersion
+        self.scanner.decorators = self.config.decorators
         # Comment grammar depends on the lexical goal before the first token.
         self.scanner.isModule = options.get('sourceType', 'script') == 'module'
         self.scanner.trackComment = self.config.comment
@@ -644,6 +650,11 @@ class Parser(object):
                 expr = self.inheritCoverGrammar(self.parseArrayInitializer)
             elif value == '{':
                 expr = self.inheritCoverGrammar(self.parseObjectInitializer)
+            elif value == '@':
+                decorators = self.parseDecorators()
+                if not self.matchKeyword('class'):
+                    self.throwUnexpectedToken(self.lookahead)
+                expr = self.parseClassExpression(decorators, node)
             elif value in ('/', '/='):
                 self.context.isAssignmentTarget = False
                 self.context.isBindingElement = False
@@ -1134,19 +1145,35 @@ class Parser(object):
         return args
 
     def matchImportCall(self):
-        match = self.matchKeyword('import')
-        if match:
-            state = self.scanner.saveState()
-            self.scanner.scanComments()
-            next = self.scanner.lex()
-            self.scanner.restoreState(state)
-            match = (next.type is Token.Punctuator) and (next.value == '(')
+        if not self.matchKeyword('import'):
+            return False
+        next = self.peekToken()
+        if next.type is Token.Punctuator and next.value == '(':
+            return True
+        if next.type is Token.Punctuator and next.value == '.':
+            tokens = self.peekTokens(3)
+            return (tokens[1].type is Token.Identifier and not tokens[1].escaped
+                    and tokens[1].value in ('defer', 'source')
+                    and tokens[2].type is Token.Punctuator and tokens[2].value == '(')
+        return False
 
-        return match
+    def requireImportPhase(self, phase):
+        option = 'deferredImportEvaluation' if phase == 'defer' else 'sourcePhaseImports'
+        if not getattr(self.config, option):
+            self.throwError('Import %0 phase requires %1=True', phase, option)
+        if self.config.ecmaVersion < 2026:
+            self.throwError('Import %0 phase extension requires ECMAScript 2026', phase)
 
     def parseImportCall(self):
         node = self.createNode()
         self.expectKeyword('import')
+        phase = None
+        if self.match('.'):
+            self.nextToken()
+            if not self.matchContextualKeyword('defer', 'source'):
+                self.throwUnexpectedToken(self.lookahead)
+            phase = self.nextToken().value
+            self.requireImportPhase(phase)
         self.expect('(')
         if self.match(')'):
             self.tolerateError(Messages.ImportMissingSpecifier)
@@ -1169,20 +1196,29 @@ class Parser(object):
         self.expect(')')
         self.context.isAssignmentTarget = False
         self.context.isBindingElement = False
-        return self.finalize(node, Node.ImportExpression(source, options))
+        return self.finalize(node, Node.ImportExpression(source, options, phase))
 
-    def peekToken(self):
+    def peekTokens(self, count):
         state = self.scanner.saveState()
         curly = self.scanner.curlyStack[:]
         try:
-            self.scanner.scanComments()
-            return self.scanner.lex()
+            tokens = []
+            for _ in range(count):
+                self.scanner.scanComments()
+                tokens.append(self.scanner.lex())
+            return tokens
         finally:
             self.scanner.restoreState(state)
             self.scanner.curlyStack = curly
 
+    def peekToken(self):
+        return self.peekTokens(1)[0]
+
     def matchImportMeta(self):
-        return self.matchKeyword('import') and self.peekToken().value == '.'
+        if not self.matchKeyword('import') or self.peekToken().value != '.':
+            return False
+        prop = self.peekTokens(2)[1]
+        return prop.type is Token.Identifier and prop.value == 'meta'
 
     def parseImportMeta(self):
         node = self.createNode()
@@ -1646,8 +1682,12 @@ class Parser(object):
     # https://tc39.github.io/ecma262/#sec-block
 
     def parseStatementListItem(self):
+        if self.config.decorators and self.match('@'):
+            return self.parseDecoratedClassDeclaration()
         self.context.isAssignmentTarget = True
         self.context.isBindingElement = True
+        if self.config.explicitResourceManagement and self.isResourceDeclaration():
+            return self.parseResourceDeclaration(Params(inFor=False))
         if self.lookahead.type is Token.Keyword:
             value = self.lookahead.value
             if value == 'export':
@@ -1658,6 +1698,8 @@ class Parser(object):
                 if self.matchImportCall() or self.matchImportMeta():
                     statement = self.parseExpressionStatement()
                 else:
+                    if self.peekToken().value == '.':
+                        self.throwUnexpectedToken(self.lookahead, Messages.UnexpectedToken)
                     if not self.context.isModule:
                         self.tolerateUnexpectedToken(self.lookahead, Messages.IllegalImportDeclaration)
                     statement = self.parseImportDeclaration()
@@ -1747,6 +1789,71 @@ class Parser(object):
         declarations = self.parseBindingList(kind, options)
         self.consumeSemicolon()
 
+        return self.finalize(node, Node.VariableDeclaration(declarations, kind))
+
+    def isResourceDeclaration(self, inFor=False):
+        """Recognize contextual resource keywords without consuming a token.
+
+        Both keyword boundaries prohibit a line terminator, including one in a
+        comment. In a for head, ``using of`` remains an assignment for-of head
+        unless ``of`` is followed by an initializer.
+        """
+        if not self.config.explicitResourceManagement or not self.matchContextualKeyword('using', 'await'):
+            return False
+        awaited = self.lookahead.value == 'await'
+        state = self.scanner.saveState()
+        previous = self.lookahead
+        try:
+            self.scanner.scanComments()
+            token = self.scanner.lex()
+            if token.lineNumber != previous.lineNumber:
+                return False
+            if awaited:
+                if token.type is not Token.Identifier or token.value != 'using' or token.escaped:
+                    return False
+                previous = token
+                self.scanner.scanComments()
+                token = self.scanner.lex()
+                if token.lineNumber != previous.lineNumber:
+                    return False
+            if token.type not in (Token.Identifier, Token.Keyword) or token.value in ('in', 'instanceof'):
+                return False
+            if inFor and not awaited and token.value == 'of' and not token.escaped:
+                self.scanner.scanComments()
+                following = self.scanner.lex()
+                return following.type is Token.Punctuator and following.value == '='
+            return True
+        finally:
+            self.scanner.restoreState(state)
+
+    def parseResourceBinding(self, kind, options):
+        node = self.createNode()
+        # Resource declarations require a BindingIdentifier, never a pattern.
+        identifier = self.parseVariableIdentifier(kind)
+        initializer = None
+        if self.match('='):
+            self.nextToken()
+            initializer = self.isolateCoverGrammar(self.parseAssignmentExpression)
+        elif not (options.inFor and (self.matchKeyword('in') or self.matchContextualKeyword('of'))):
+            self.throwError(Messages.DeclarationMissingInitializer, kind)
+        return self.finalize(node, Node.VariableDeclarator(identifier, initializer))
+
+    def parseResourceDeclaration(self, options):
+        if self.config.ecmaVersion < 2026:
+            self.throwError('Explicit resource management requires ECMAScript 2026')
+        node = self.createNode()
+        kind = self.nextToken().value
+        if kind == 'await':
+            if not self.matchContextualKeyword('using'):
+                self.throwUnexpectedToken(self.lookahead)
+            self.nextToken()
+            kind = 'await using'
+        declarations = [self.parseResourceBinding(kind, options)]
+        while self.match(','):
+            self.nextToken()
+            declarations.append(self.parseResourceBinding(kind, options))
+        if not options.inFor:
+            self.consumeSemicolon()
         return self.finalize(node, Node.VariableDeclaration(declarations, kind))
 
     # https://tc39.github.io/ecma262/#sec-destructuring-binding-patterns
@@ -2053,6 +2160,23 @@ class Parser(object):
                     forIn = False
                 else:
                     init = self.finalize(init, Node.VariableDeclaration(declarations, 'var'))
+                    self.expect(';')
+            elif self.config.explicitResourceManagement and self.isResourceDeclaration(inFor=True):
+                previousAllowIn = self.context.allowIn
+                self.context.allowIn = False
+                init = self.parseResourceDeclaration(Params(inFor=True))
+                self.context.allowIn = previousAllowIn
+                if self.matchKeyword('in'):
+                    self.throwError('Resource declarations are not allowed in for-in loops')
+                if self.matchContextualKeyword('of'):
+                    if len(init.declarations) != 1 or init.declarations[0].init is not None:
+                        self.throwError('for-of resource declarations require one binding without an initializer')
+                    self.nextToken()
+                    left = init
+                    right = self.parseAssignmentExpression()
+                    init = None
+                    forIn = False
+                else:
                     self.expect(';')
             elif self.matchKeyword('const') or (self.matchKeyword('let') and (self.context.strict or self.isLexicalDeclaration())):
                 init = self.createNode()
@@ -2784,7 +2908,7 @@ class Parser(object):
         value = self.lookahead.value
         typ = self.lookahead.type
         if typ is Token.Punctuator:
-            start = value in ('[', '(', '{', '+', '-', '!', '~', '++', '--', '/', '/=')  # regular expression literal )
+            start = value in ('[', '(', '{', '+', '-', '!', '~', '++', '--', '/', '/=') or value == '@' and self.config.decorators
 
         elif typ is Token.Keyword:
             start = value in ('class', 'delete', 'function', 'let', 'new', 'super', 'this', 'typeof', 'void', 'yield', 'import')
@@ -2814,16 +2938,66 @@ class Parser(object):
 
     # https://tc39.github.io/ecma262/#sec-class-definitions
 
+    def parseDecoratorExpression(self):
+        # November 2023 decorators: a dotted identifier chain with at most one
+        # final call, or a parenthesized arbitrary expression. This deliberately
+        # does not admit computed/optional access or a member after the call.
+        node = self.createNode()
+        if self.match('('):
+            self.nextToken()
+            expression = self.isolateCoverGrammar(self.parseExpression)
+            self.expect(')')
+            expression._parenthesized = True
+            return expression
+        if self.lookahead.type is not Token.Identifier and not (
+                not self.context.strict and (self.matchKeyword('let') or
+                self.matchKeyword('yield') and self.context.allowYield)):
+            self.throwUnexpectedToken(self.lookahead)
+        expression = self.parsePrimaryExpression()
+        while self.match('.'):
+            self.nextToken()
+            property = self.parsePropertyIdentifier() if self.lookahead.private else self.parseIdentifierName()
+            expression = self.finalize(node, Node.StaticMemberExpression(expression, property))
+        if self.match('('):
+            expression = self.finalize(node, Node.CallExpression(expression, self.parseArguments()))
+        return expression
+
+    def parseDecorators(self):
+        if not self.config.decorators or self.config.ecmaVersion < 2026:
+            self.throwError('Decorators require decorators=True and ECMAScript 2026')
+        decorators = []
+        while self.match('@'):
+            node = self.createNode()
+            self.nextToken()
+            expression = self.isolateCoverGrammar(self.parseDecoratorExpression)
+            decorators.append(self.finalize(node, Node.Decorator(expression)))
+        return decorators
+
+    def parseDecoratedClassDeclaration(self):
+        node = self.createNode()
+        decorators = self.parseDecorators()
+        if self.matchKeyword('export'):
+            if not self.context.isModule:
+                self.throwError(Messages.IllegalExportDeclaration)
+            return self.parseExportDeclaration(decorators, node)
+        if not self.matchKeyword('class'):
+            self.throwUnexpectedToken(self.lookahead)
+        return self.parseClassDeclaration(False, decorators, node)
+
     def parseClassElement(self, hasConstructor):
         node = self.createNode()
+        decorators = self.parseDecorators() if self.match('@') else []
         token = self.lookahead
         isStatic = False
         isAsync = False
+        isAccessor = False
         generator = False
         kind = 'method'
         if self.matchContextualKeyword('static') or self.matchKeyword('static'):
             following = self.peekToken()
             if following.value == '{':
+                if decorators:
+                    self.throwError('Static blocks cannot be decorated')
                 self.nextToken()
                 previous = (self.context.allowAwait, self.context.allowYield, self.context.inFunctionBody)
                 self.context.allowAwait = False
@@ -2840,6 +3014,13 @@ class Parser(object):
                 isStatic = True
                 self.nextToken()
                 token = self.lookahead
+        if self.config.decorators and self.matchContextualKeyword('accessor'):
+            following = self.peekToken()
+            if following.lineNumber == self.lookahead.lineNumber and following.value not in ('(', '=', ';', '}'):
+                if self.config.ecmaVersion < 2026:
+                    self.throwError('Auto-accessors require ECMAScript 2026')
+                isAccessor = True
+                self.nextToken()
         if self.matchContextualKeyword('async'):
             following = self.peekToken()
             if following.lineNumber == self.lookahead.lineNumber and following.value not in ('(', '=', ';', '}'):
@@ -2858,7 +3039,11 @@ class Parser(object):
             computed = self.match('[')
             key = self.parsePropertyIdentifier() if self.lookahead.private else self.parseObjectPropertyKey()
         if self.match('('):
+            if isAccessor:
+                self.throwError('An auto-accessor cannot be a method')
             if not computed and self.isPropertyKey(key, 'constructor') and not isStatic:
+                if decorators:
+                    self.throwError('Class constructors cannot be decorated')
                 if isAsync:
                     self.throwUnexpectedToken(keyToken, Messages.ConstructorIsAsync)
                 if kind != 'method' or generator:
@@ -2870,7 +3055,10 @@ class Parser(object):
             value = self.parseModernMethod(isAsync, generator, kind)
             if isStatic and not computed and self.isPropertyKey(key, 'prototype'):
                 self.throwUnexpectedToken(token, Messages.StaticPrototype)
-            return self.finalize(node, Node.MethodDefinition(key, computed, value, kind, isStatic))
+            method = Node.MethodDefinition(key, computed, value, kind, isStatic)
+            if decorators:
+                method.decorators = decorators
+            return self.finalize(node, method)
         if isAsync or generator or kind != 'method' or not self.config.classProperties:
             self.throwUnexpectedToken(self.lookahead)
         if not computed and (self.isPropertyKey(key, 'constructor') or (isStatic and self.isPropertyKey(key, 'prototype'))):
@@ -2885,7 +3073,10 @@ class Parser(object):
             value = self.isolateCoverGrammar(self.parseAssignmentExpression)
             self.context.allowAwait, self.context.allowYield, self.context.inFunctionBody = previous
         self.consumeSemicolon()
-        return self.finalize(node, Node.PropertyDefinition(key, computed, value, isStatic))
+        field = (Node.AccessorProperty if isAccessor else Node.PropertyDefinition)(key, computed, value, isStatic)
+        if decorators:
+            field.decorators = decorators
+        return self.finalize(node, field)
 
     def parseModernMethod(self, isAsync=False, generator=False, kind='method'):
         node = self.createNode()
@@ -2928,8 +3119,8 @@ class Parser(object):
 
         return self.finalize(node, Node.ClassBody(elementList))
 
-    def parseClassDeclaration(self, identifierIsOptional=False):
-        node = self.createNode()
+    def parseClassDeclaration(self, identifierIsOptional=False, decorators=None, decoratorMarker=None):
+        node = decoratorMarker or self.createNode()
 
         previousStrict = self.context.strict
         self.context.strict = True
@@ -2943,10 +3134,13 @@ class Parser(object):
         classBody = self.parseClassBody()
         self.context.strict = previousStrict
 
-        return self.finalize(node, Node.ClassDeclaration(id, superClass, classBody))
+        declaration = Node.ClassDeclaration(id, superClass, classBody)
+        if decorators:
+            declaration.decorators = decorators
+        return self.finalize(node, declaration)
 
-    def parseClassExpression(self):
-        node = self.createNode()
+    def parseClassExpression(self, decorators=None, decoratorMarker=None):
+        node = decoratorMarker or self.createNode()
 
         previousStrict = self.context.strict
         self.context.strict = True
@@ -2959,7 +3153,10 @@ class Parser(object):
         classBody = self.parseClassBody()
         self.context.strict = previousStrict
 
-        return self.finalize(node, Node.ClassExpression(id, superClass, classBody))
+        expression = Node.ClassExpression(id, superClass, classBody)
+        if decorators:
+            expression.decorators = decorators
+        return self.finalize(node, expression)
 
     # https://tc39.github.io/ecma262/#sec-scripts
     # https://tc39.github.io/ecma262/#sec-modules
@@ -3076,11 +3273,29 @@ class Parser(object):
         self.expectKeyword('import')
 
         specifiers = []
+        phase = None
+        if self.matchContextualKeyword('defer') and self.peekToken().value == '*':
+            phase = self.nextToken().value
+            self.requireImportPhase(phase)
+            specifiers.append(self.parseImportNamespaceSpecifier())
+        elif self.matchContextualKeyword('source'):
+            following = self.peekToken()
+            # `source` is still an ordinary default binding in
+            # `import source from 'm'`; it is also a valid source-phase binding.
+            is_phase = self.isIdentifierName(following) and (
+                following.value != 'from' or self.peekTokens(2)[1].value == 'from')
+            if is_phase:
+                phase = self.nextToken().value
+                self.requireImportPhase(phase)
+                specifiers.append(self.parseImportDefaultSpecifier())
         if self.lookahead.type is Token.StringLiteral:
             # import 'foo'
             src = self.parseModuleSpecifier()
         else:
-            if self.match('{'):
+            if phase is not None:
+                # Phase imports have exactly one prescribed specifier.
+                pass
+            elif self.match('{'):
                 # import {bar
                 specifiers.extend(self.parseNamedImports())
             elif self.match('*'):
@@ -3110,7 +3325,7 @@ class Parser(object):
         attributes = self.parseImportAttributes()
         self.consumeSemicolon()
 
-        return self.finalize(node, Node.ImportDeclaration(specifiers, src, attributes))
+        return self.finalize(node, Node.ImportDeclaration(specifiers, src, attributes, phase))
 
     # https://tc39.github.io/ecma262/#sec-exports
 
@@ -3128,17 +3343,73 @@ class Parser(object):
         local = self.parseIdentifierName()
         return self.finalize(node, Node.ExportDefaultSpecifier(local))
 
-    def parseExportDeclaration(self):
+    def matchExportDefaultFrom(self):
+        if not self.isIdentifierName(self.lookahead):
+            return False
+        following = self.peekToken()
+        if following.type is Token.Punctuator and following.value == ',':
+            return True
+        if following.type is Token.Identifier and not following.escaped and following.value == 'from':
+            # Preserve ordinary `export default from;` and default expressions
+            # involving a reference named `from` in the standard grammar.
+            return self.peekTokens(2)[1].type is Token.StringLiteral
+        return False
+
+    def parseExportDefaultFrom(self, node):
+        if not self.config.exportDefaultFrom:
+            self.throwError('Default-from exports require exportDefaultFrom=True')
+        if self.config.ecmaVersion < 2026:
+            self.throwError('Default-from export extension requires ECMAScript 2026')
+        specifiers = [self.parseExportDefaultSpecifier()]
+        if self.match(','):
+            self.nextToken()
+            if self.match('*'):
+                marker = self.createNode()
+                self.nextToken()
+                if not self.matchContextualKeyword('as'):
+                    self.throwUnexpectedToken(self.lookahead)
+                self.nextToken()
+                exported = self.parseModuleExportName()
+                specifiers.append(self.finalize(marker, Node.ExportNamespaceSpecifier(exported)))
+            else:
+                self.expect('{')
+                while not self.match('}'):
+                    specifiers.append(self.parseExportSpecifier())
+                    if not self.match('}'):
+                        self.expect(',')
+                self.expect('}')
+        if not self.matchContextualKeyword('from'):
+            self.throwError('Default-from exports require a from clause')
+        self.nextToken()
+        source = self.parseModuleSpecifier()
+        attributes = self.parseImportAttributes()
+        self.consumeSemicolon()
+        return self.finalize(node, Node.ExportNamedDeclaration(None, specifiers, source, attributes))
+
+    def parseExportDeclaration(self, decorators=None, decoratorMarker=None):
         if self.context.inFunctionBody:
             self.throwError(Messages.IllegalExportDeclaration)
 
         node = self.createNode()
         self.expectKeyword('export')
 
+        if not decorators and self.matchExportDefaultFrom():
+            return self.parseExportDefaultFrom(node)
+
         if self.matchKeyword('default'):
             # export default ...
             self.nextToken()
-            if self.matchKeyword('function'):
+            if self.match('@'):
+                if decorators:
+                    self.throwError('Decorators may appear before or after export, not both')
+                decoratorMarker = self.createNode()
+                decorators = self.parseDecorators()
+            if decorators:
+                if not self.matchKeyword('class'):
+                    self.throwError('Export decorators must attach to a class')
+                declaration = self.parseClassDeclaration(True, decorators, decoratorMarker)
+                exportDeclaration = self.finalize(node, Node.ExportDefaultDeclaration(declaration))
+            elif self.matchKeyword('function'):
                 # export default function foo (:
                 # export default function (:
                 declaration = self.parseFunctionDeclaration(True)
@@ -3154,8 +3425,6 @@ class Parser(object):
                 declaration = self.parseFunctionDeclaration(True) if self.matchAsyncFunction() else self.parseAssignmentExpression()
                 exportDeclaration = self.finalize(node, Node.ExportDefaultDeclaration(declaration))
             else:
-                if self.matchContextualKeyword('from'):
-                    self.throwError(Messages.UnexpectedToken, self.lookahead.value)
                 # export default {}
                 # export default []
                 # export default (1 + 2)
@@ -3167,6 +3436,17 @@ class Parser(object):
                     declaration = self.parseAssignmentExpression()
                 self.consumeSemicolon()
                 exportDeclaration = self.finalize(node, Node.ExportDefaultDeclaration(declaration))
+
+        elif self.match('@') or decorators:
+            if self.match('@'):
+                if decorators:
+                    self.throwError('Decorators may appear before or after export, not both')
+                decoratorMarker = self.createNode()
+                decorators = self.parseDecorators()
+            if not self.matchKeyword('class'):
+                self.throwError('Export decorators must attach to a class')
+            declaration = self.parseClassDeclaration(False, decorators, decoratorMarker)
+            exportDeclaration = self.finalize(node, Node.ExportNamedDeclaration(declaration, [], None))
 
         elif self.match('*'):
             # export * from 'foo'
@@ -3212,22 +3492,13 @@ class Parser(object):
             attributes = []
             isExportFromIdentifier = False
 
-            expectSpecifiers = True
-            if self.lookahead.type is Token.Identifier:
-                specifiers.append(self.parseExportDefaultSpecifier())
-                if self.match(','):
-                    self.nextToken()
-                else:
-                    expectSpecifiers = False
-
-            if expectSpecifiers:
-                self.expect('{')
-                while not self.match('}'):
-                    isExportFromIdentifier = isExportFromIdentifier or self.matchKeyword('default')
-                    specifiers.append(self.parseExportSpecifier())
-                    if not self.match('}'):
-                        self.expect(',')
-                self.expect('}')
+            self.expect('{')
+            while not self.match('}'):
+                isExportFromIdentifier = isExportFromIdentifier or self.matchKeyword('default')
+                specifiers.append(self.parseExportSpecifier())
+                if not self.match('}'):
+                    self.expect(',')
+            self.expect('}')
 
             if self.matchContextualKeyword('from'):
                 # export {default} from 'foo'

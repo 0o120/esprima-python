@@ -49,8 +49,19 @@ raises a structured parser Error without modifying the process recursion limit;
 32 nested functions are covered. Very deep input is bounded by the host Python
 stack. Collection-only comments require `attachComment=True` for generation.
 
-Resources, import defer, TypeScript, Flow and decorators are outside the core
-scope. Future syntax must use a separately documented extension gate. JSON
+Resource declarations, decorators/auto-accessors, source/deferred imports and
+default reexports are available through independent explicit extension gates:
+`explicitResourceManagement`, `decorators`, `sourcePhaseImports`,
+`deferredImportEvaluation`, and `exportDefaultFrom`. They require edition 2026
+without changing the dated core grammar. Resource-management syntax is integrated
+in the later draft, not the dated 2026 specification; decorators use the November
+2023 proposal. Their grammar, early errors, native/mapping ASTs, positions and
+cross-library roundtrips have separate tests. Dynamic import phases preserve both
+their `phase` and `options`; asynchronous disposal preserves `kind="await using"`
+independently of a surrounding for-await loop.
+
+TypeScript, Flow, unrelated proposals and runtime/host APIs remain outside scope.
+Future syntax must use a separately documented extension gate. JSON
 serialization, transformation, native/mapping traversal, installed-package
 checks, independent reparse and selected runtime comparisons are additional
 cross-repository release gates.
@@ -59,3 +70,19 @@ The [grammar clause index](SPEC_COVERAGE.md) and its machine-readable manifest
 map clauses 12–16, regex grammar and extension exclusions to checked-in tests
 and exact fixture inventories. The [performance report](PERFORMANCE.md) records
 latency and Python allocation measurements, including the parser budget exception.
+
+An additional frozen import-phase corpus covers 495 licensed Test262 files and
+851 script/strict/module mode checks, including 456 parse negatives. Original
+fixtures and YAML flags are retained. Negative corpora reject resource-limit
+diagnostics as evidence of a language early error. The original sources are
+never executed. The broader grammar audit previously established acceptance,
+not exhaustive AST or grammar-branch equality; no finite corpus is a guarantee
+for every input. The added regressions also close accidental default acceptance
+of proposal reexports and restore valid `export default from;` expressions.
+
+A second frozen proposal corpus covers all 510 resource/decorator-tagged files
+in the pinned revision, with 995 mode checks and no feature-tagged omissions:
+947 resource-management and 48 decorator syntax checks, including 117 resource
+parse negatives. These checks cover syntax only, including programs from runtime
+test directories; runtime behavior is not claimed. Curated invalid decorator
+cases supplement the pinned corpus, which contains no decorator parse negatives.

@@ -34,9 +34,10 @@ class Test262EarlyErrorsTests(unittest.TestCase):
                 text = strict_source(source) if case["mode"] == "strict" else source
                 parse = esprima.parseModule if case["mode"] == "module" else esprima.parseScript
                 # Resource limits and incidental Python exceptions must remain
-                # distinct; only a parser Error satisfies the syntax gate.
-                with self.assertRaises(esprima.Error):
+                # distinct; a resource-limit Error does not satisfy the syntax gate.
+                with self.assertRaises(esprima.Error) as rejected:
                     parse(text)
+                self.assertNotIn("resource limit", str(rejected.exception).lower())
 
 
 if __name__ == "__main__":

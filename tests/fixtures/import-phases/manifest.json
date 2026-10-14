@@ -1,0 +1,38 @@
+{
+  "upstream": "https://github.com/tc39/test262",
+  "revision": "2e0a56762801e275a9fdf96dc49d90ba0cddcf63",
+  "caseCount": 851,
+  "sourceFileCount": 495,
+  "scope": "Import-phase proposal syntax and parse-phase SyntaxError checks; original programs never executed.",
+  "options": {
+    "ecmaVersion": 2026,
+    "deferredImportEvaluation": true,
+    "sourcePhaseImports": true
+  },
+  "selectionSubjects": [
+    "expressions/dynamic-import",
+    "expressions/assignmenttargettype",
+    "import",
+    "module-code"
+  ],
+  "selectionFeatures": [
+    "import-defer",
+    "source-phase-imports",
+    "source-phase-imports-module-source"
+  ],
+  "excludedFeatures": [
+    "decorators",
+    "export-defer"
+  ],
+  "modeCounts": {
+    "module": 109,
+    "script": 386,
+    "strict": 356
+  },
+  "parseNegativeChecks": 456,
+  "sourceEncoding": "UTF-8 decoded; line endings normalized to LF.",
+  "files": {
+    "cases.json": "01f7b8f8fe9cccc8db58790df2c4604e828f73e5a3445ff995ba1d4f034f83a7",
+    "LICENSE": "4dd9244dfe8197c75348c4b24ab53d29d3b1cfad143ac76b5a3d8942aa354ce0"
+  }
+}

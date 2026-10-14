@@ -25,7 +25,7 @@ class FixtureInventoryTests(unittest.TestCase):
         self.assertEqual(len(list(legacy.test_factory(str(fixture)))), expected)
 
     def test_schema_and_diagnostic_migrations_are_explicit(self):
-        self.assertEqual(len(legacy.FIXTURE_MIGRATIONS), 34)
+        self.assertEqual(len(legacy.FIXTURE_MIGRATIONS), 35)
         for source, migration in legacy.FIXTURE_MIGRATIONS.items():
             self.assertTrue((pathlib.Path(legacy.BASE_DIR) / source).is_file())
             self.assertTrue((pathlib.Path(legacy.BASE_DIR) / migration['snapshot']).is_file())

@@ -49,6 +49,7 @@ class Syntax:
     ExportNamedDeclaration = "ExportNamedDeclaration"
     ExportSpecifier = "ExportSpecifier"
     ExportDefaultSpecifier = "ExportDefaultSpecifier"
+    ExportNamespaceSpecifier = "ExportNamespaceSpecifier"
     ExpressionStatement = "ExpressionStatement"
     ForStatement = "ForStatement"
     ForOfStatement = "ForOfStatement"
@@ -99,6 +100,8 @@ class Syntax:
     WhileStatement = "WhileStatement"
     WithStatement = "WithStatement"
     YieldExpression = "YieldExpression"
+    Decorator = "Decorator"
+    AccessorProperty = "AccessorProperty"
 
     ArrowParameterPlaceHolder = "ArrowParameterPlaceHolder"
     BlockComment = "BlockComment"

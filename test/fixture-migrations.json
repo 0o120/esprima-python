@@ -202,5 +202,11 @@
     "kind": ".tree",
     "reason": "Normalize CRLF JSXText.value to LF while preserving source raw/ranges, matching Babel JSX text semantics.",
     "independent_acceptance": true
+  },
+  "fixtures/ES6/export-declaration/invalid-export-default.module.js": {
+    "snapshot": "modern-expectations/ES6/export-declaration/invalid-export-default.module.json",
+    "kind": ".failure",
+    "reason": "Default-from remains rejected by the standard grammar; the diagnostic now identifies its explicit proposal gate before consuming the default name.",
+    "independent_acceptance": false
   }
 }

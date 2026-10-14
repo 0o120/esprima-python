@@ -41,6 +41,12 @@ def main(argv=None):
         parser.add_argument("--" + name, action="store_true")
     parser.add_argument("--module", action="store_true", help="Parse an ECMAScript module")
     parser.add_argument("--ecma-version", type=int, default=2026)
+    for option, name in (("explicit-resource-management", "explicitResourceManagement"),
+                         ("decorators", "decorators"),
+                         ("deferred-import-evaluation", "deferredImportEvaluation"),
+                         ("source-phase-imports", "sourcePhaseImports"),
+                         ("export-default-from", "exportDefaultFrom")):
+        parser.add_argument("--" + option, dest=name, action="store_true")
     parser.add_argument("--timing", action="store_true", help="Write timing information to stderr")
     opts = parser.parse_args(argv)
     try:

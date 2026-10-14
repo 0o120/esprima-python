@@ -9,6 +9,7 @@ NULLABLE_FIELDS = {
     'ClassDeclaration': ('id', 'superClass'),
     'ClassExpression': ('id', 'superClass'),
     'PropertyDefinition': ('value',),
+    'AccessorProperty': ('value',),
     'IfStatement': ('alternate',),
     'ForStatement': ('init', 'test', 'update'),
     'ReturnStatement': ('argument',),

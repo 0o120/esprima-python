@@ -17,6 +17,14 @@ _NATIVE_TYPES = frozenset(value for module in (_nodes, _jsx_nodes)
 _SCALAR_TYPES = frozenset((str, int, float, bool, bytes, complex))
 
 _FUNCTIONS = {"FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"}
+_DECORATOR_EXPRESSIONS = frozenset({
+    "Identifier", "Literal", "ThisExpression", "MemberExpression", "CallExpression",
+    "NewExpression", "ChainExpression", "UnaryExpression", "BinaryExpression", "LogicalExpression",
+    "ConditionalExpression", "AssignmentExpression", "UpdateExpression", "SequenceExpression",
+    "ArrayExpression", "ObjectExpression", "FunctionExpression", "ArrowFunctionExpression",
+    "ClassExpression", "AwaitExpression", "YieldExpression", "TemplateLiteral",
+    "TaggedTemplateExpression", "MetaProperty", "ImportExpression", "JSXElement", "JSXFragment",
+})
 _CLASSES = {"ClassDeclaration", "ClassExpression"}
 _STRICT_RESERVED = {"implements", "interface", "let", "package", "private", "protected", "public", "static", "yield"}
 _BINDING_SPECIAL = frozenset(_STRICT_RESERVED | {"eval", "arguments", "await", "yield"})
@@ -39,6 +47,7 @@ _PARSER_EXPR_FIELDS = {
     "NewExpression": ("callee", "arguments"), "ChainExpression": ("expression",),
     "SpreadElement": ("argument",), "TemplateLiteral": ("quasis", "expressions"),
     "TaggedTemplateExpression": ("tag", "quasi"),
+    "Decorator": ("expression",),
 }
 
 
@@ -487,9 +496,20 @@ class _Validator:
                 for feature, edition in regexp_features(pattern, flags).items():
                     self.require(edition, feature, node)
 
+    def import_phase(self, node):
+        phase = _get(node, "phase")
+        if phase is not None:
+            if phase not in ("defer", "source"):
+                self.error("Import phase must be defer or source", node)
+            self.require(2026, "Import phase extensions", node)
+        return phase
+
     def module_exports(self, body, bindings):
         exported = set()
         def add(name, node):
+            if not isinstance(name, str):
+                self.error("Export names must be strings", node)
+                return
             if name in exported:
                 self.error(f"Duplicate export '{name}'", node)
             exported.add(name)
@@ -504,12 +524,46 @@ class _Validator:
                 for name, binding in self._read_declaration_names(_get(statement, "declaration")):
                     add(name, binding)
                 for specifier in _get(statement, "specifiers", ()) or ():
-                    add(_export_name(_get(specifier, "exported")), _get(specifier, "exported"))
+                    name = _get(specifier, "exported", _get(specifier, "local")
+                                if self._read_kind(specifier) == "ExportDefaultSpecifier" else None)
+                    add(_export_name(name), name)
                     local = _export_name(_get(specifier, "local"))
                     if _get(statement, "source") is None and self._read_kind(_get(specifier, "local")) == "Literal":
                         self.error("String export names require a reexport source", _get(specifier, "local"))
-                    if _get(statement, "source") is None and local not in bindings:
+                    if (_get(statement, "source") is None
+                            and (not isinstance(local, str) or local not in bindings)):
                         self.error(f"Export '{local}' is not defined", _get(specifier, "local"))
+
+    def export_default_from(self, node):
+        specifiers = _get(node, "specifiers", ()) or ()
+        defaults = [specifier for specifier in specifiers if self._read_kind(specifier) == "ExportDefaultSpecifier"]
+        namespaces = [specifier for specifier in specifiers if self._read_kind(specifier) == "ExportNamespaceSpecifier"]
+        if not defaults and not namespaces:
+            return
+        self.require(2026, "Default-from export extension", node)
+        source = _get(node, "source")
+        if self._read_kind(source) != "Literal" or not isinstance(_get(source, "value"), str):
+            self.error("Default-from exports require a string reexport source", node)
+        if _get(node, "declaration") is not None:
+            self.error("Default-from exports cannot contain a declaration", node)
+        if len(defaults) != 1 or self._read_kind(specifiers[0]) != "ExportDefaultSpecifier":
+            self.error("Default-from exports require exactly one default specifier first", node)
+        if namespaces and (len(namespaces) != 1 or len(specifiers) != 2):
+            self.error("A default-from namespace clause cannot contain named specifiers", node)
+        for specifier in defaults:
+            exported = _get(specifier, "exported", _get(specifier, "local"))
+            if self._read_kind(exported) != "Identifier" or not isinstance(_get(exported, "name"), str) or not _get(exported, "name"):
+                self.error("A default-from export name must be an Identifier", specifier)
+            local = _get(specifier, "local")
+            if local is not None and _export_name(local) != _export_name(exported):
+                self.error("Conflicting local and exported default-from names", specifier)
+        for specifier in namespaces:
+            exported = _get(specifier, "exported")
+            if self._read_kind(exported) not in {"Identifier", "Literal"} or not isinstance(_export_name(exported), str):
+                self.error("A namespace export requires an exported module name", specifier)
+        for specifier in specifiers:
+            if self._read_kind(specifier) not in {"ExportDefaultSpecifier", "ExportNamespaceSpecifier", "ExportSpecifier"}:
+                self.error("Invalid default-from export specifier", specifier)
 
     def pattern(self, pattern, context, binding=True):
         if self._parser_tree and pattern is not None and pattern.type == "Identifier":
@@ -636,7 +690,27 @@ class _Validator:
         else:
             self.visit(body, function_context)
 
+    def decorators(self, node, context):
+        decorators = _get(node, "decorators")
+        if decorators is None:
+            return
+        if not isinstance(decorators, (list, tuple)):
+            self.error("Decorators must be an array", node)
+            return
+        if decorators:
+            self.require(2026, "Decorators", node)
+        for decorator in decorators:
+            if self._read_kind(decorator) != "Decorator":
+                self.error("Decorators must be Decorator nodes", node)
+                continue
+            expression = _get(decorator, "expression")
+            if self._read_kind(expression) not in _DECORATOR_EXPRESSIONS:
+                self.error("A decorator must contain an expression", decorator)
+                continue
+            self.visit(expression, context)
+
     def class_definition(self, node, context):
+        self.decorators(node, context)
         self.check_names(self._read_bindings(_get(node, "id")), replace(context, strict=True))
         self.visit(_get(node, "superClass"), context)
         elements = _get(_get(node, "body"), "body", ()) or ()
@@ -659,7 +733,7 @@ class _Validator:
                     private_names[name] = (bool(_get(element, "static", False)), form)
             elif name == "prototype" and _get(element, "static", False):
                 self.error("Classes may not have a static property named prototype", element)
-            if kind in {"PropertyDefinition", "FieldDefinition"} and not private and name == "constructor":
+            if kind in {"PropertyDefinition", "FieldDefinition", "AccessorProperty"} and not private and name == "constructor":
                 self.error("Class fields may not be named constructor", element)
             if kind == "MethodDefinition" and not private and not _get(element, "static", False) and name == "constructor":
                 constructors += 1
@@ -668,10 +742,17 @@ class _Validator:
                 value = _get(element, "value")
                 if _get(element, "kind") != "constructor" or _async(value) or _get(value, "generator", False):
                     self.error("Class constructors cannot be async, generators or accessors", element)
+                if _get(element, "decorators"):
+                    self.error("Class constructors cannot be decorated", element)
+            if kind == "StaticBlock" and _get(element, "decorators"):
+                self.error("Static blocks cannot be decorated", element)
         class_context = replace(context, strict=True, private_scopes=context.private_scopes + (frozenset(private_names),))
         derived = _get(node, "superClass") is not None
         for element in elements:
             self.editions(element, class_context)
+            if self._read_kind(element) == "AccessorProperty":
+                self.require(2026, "Auto-accessors", element)
+            self.decorators(element, class_context)
             if _get(element, "computed", False):
                 self.visit(_get(element, "key"), class_context)
             if self._read_kind(_get(element, "key")) == "PrivateIdentifier":
@@ -682,7 +763,7 @@ class _Validator:
                 self.editions(value, class_context)
                 self.function(value, class_context, method=True, super_property=True,
                     super_call=derived and _get(element, "kind") == "constructor" and not _get(element, "static", False))
-            elif self._read_kind(element) in {"PropertyDefinition", "FieldDefinition"}:
+            elif self._read_kind(element) in {"PropertyDefinition", "FieldDefinition", "AccessorProperty"}:
                 field_context = replace(class_context, in_function=False, allow_await=False, allow_yield=False,
                     await_reserved=False, yield_reserved=False,
                     new_target=True, super_property=True, super_call=False, forbid_arguments=True,
@@ -718,6 +799,24 @@ class _Validator:
         elif self._read_kind(node) == "ClassDeclaration" or self._read_kind(node) == "VariableDeclaration" and _get(node, "kind") != "var":
             self.error("Lexical declarations require a statement list or block", node)
         self.visit(node, context)
+
+    def resource_declaration(self, node, context, parent):
+        kind = _get(node, 'kind')
+        if kind not in {'using', 'await using'}:
+            return
+        self.require(2026, 'Explicit resource management', node)
+        if parent == 'Program' and not context.module and not context.in_function:
+            self.error('Resource declarations are not allowed at script top level', node)
+        if parent == 'SwitchCase':
+            self.error('Resource declarations in switch cases require a block', node)
+        if kind == 'await using' and (not context.allow_await or context.parameters):
+            self.error('await using is only valid in async functions or modules', node)
+        for declaration in _get(node, 'declarations', ()) or ():
+            identifier = _get(declaration, 'id')
+            if self._read_kind(identifier) != 'Identifier':
+                self.error('Resource declarations require a binding identifier', identifier or declaration)
+            if _get(declaration, 'init') is None and not context.uninitialized_const:
+                self.error(f'Missing initializer in {kind} declaration', declaration)
 
     def private_reference(self, node, context):
         name = _get(node, "name")
@@ -794,8 +893,10 @@ class _Validator:
                 return
             if kind == "VariableDeclaration":
                 declaration_kind = node.kind
-                if declaration_kind not in {"var", "let", "const"}:
+                if declaration_kind not in {"var", "let", "const", "using", "await using"}:
                     self.error(f"Unsupported declaration kind '{declaration_kind}'", node)
+                if declaration_kind in {'using', 'await using'}:
+                    self.resource_declaration(node, context, parent)
                 self.check_names(self._read_declaration_names(node), context, lexical=declaration_kind != "var")
                 for declaration in node.declarations:
                     self.pattern(declaration.id, context)
@@ -865,8 +966,10 @@ class _Validator:
             return
         if kind == "VariableDeclaration":
             declaration_kind = get("kind")
-            if declaration_kind not in {"var", "let", "const"}:
+            if declaration_kind not in {"var", "let", "const", "using", "await using"}:
                 self.error(f"Unsupported declaration kind '{declaration_kind}'", node)
+            if declaration_kind in {'using', 'await using'}:
+                self.resource_declaration(node, context, parent)
             self.check_names(self._read_declaration_names(node), context, lexical=declaration_kind != "var")
             for declaration in get("declarations", ()) or ():
                 self.pattern(_get(declaration, "id"), context)
@@ -879,6 +982,8 @@ class _Validator:
             if self._read_kind(initializer) == "VariableDeclaration" and _get(initializer, "kind") != "var":
                 self.scope([initializer, get("body")], context, "for")
             if kind != "ForStatement" and self._read_kind(initializer) == "VariableDeclaration":
+                if kind == 'ForInStatement' and _get(initializer, 'kind') in {'using', 'await using'}:
+                    self.error('Resource declarations are not allowed in for-in loops', initializer)
                 declarations = _get(initializer, "declarations", ()) or ()
                 if len(declarations) != 1:
                     self.error("for-in/of requires exactly one binding", initializer)
@@ -993,11 +1098,22 @@ class _Validator:
             if not context.module or parent != "Program":
                 self.error("Import and export declarations are only valid at module top level", node)
             if kind == "ImportDeclaration":
+                phase = self.import_phase(node)
+                specifiers = get("specifiers", ()) or ()
+                if phase in ("defer", "source"):
+                    expected = "ImportNamespaceSpecifier" if phase == "defer" else "ImportDefaultSpecifier"
+                    if len(specifiers) != 1 or self._read_kind(specifiers[0]) != expected:
+                        self.error("Import defer phase requires one namespace specifier" if phase == "defer"
+                                   else "Import source phase requires one default specifier", node)
                 self.check_names(self._read_declaration_names(node), context, lexical=True)
                 for specifier in get("specifiers", ()) or ():
                     if self._read_kind(_get(specifier, "imported")) == "Literal":
                         self.require(2022, "String module names", specifier)
             else:
+                if get("phase") is not None:
+                    self.error("Import phases cannot be used on export declarations", node)
+                if kind == "ExportNamedDeclaration":
+                    self.export_default_from(node)
                 self.visit(get("declaration"), context, "Program")
                 for specifier in get("specifiers", ()) or ():
                     if self._read_kind(_get(specifier, "exported")) == "Literal" or self._read_kind(_get(specifier, "local")) == "Literal":
@@ -1010,6 +1126,16 @@ class _Validator:
                 attribute_names.add(name)
                 if not isinstance(_get(_get(attribute, "value"), "value"), str):
                     self.error("Import attribute values must be strings", attribute)
+            return
+        if kind == "ImportExpression":
+            self.import_phase(node)
+            source, options = get("source"), get("options")
+            if source is None or self._read_kind(source) == "SpreadElement":
+                self.error("Dynamic imports require one source expression", node)
+            if self._read_kind(options) == "SpreadElement":
+                self.error("Dynamic import options cannot be spread", options)
+            self.visit(source, context, kind)
+            self.visit(options, context, kind)
             return
         if kind == "MemberExpression":
             obj, prop = get("object"), get("property")

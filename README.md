@@ -58,6 +58,40 @@ esprima --module --range example.js
 esprima --jsx --tokens example.jsx
 ```
 
+## Opt-in syntax extensions
+
+The dated ECMAScript 2026 grammar remains the default. The following extensions
+require `ecmaVersion=2026` and their own explicit option; `esnext` does not enable
+them implicitly:
+
+| Parser option | Syntax and AST contract |
+| --- | --- |
+| `explicitResourceManagement=True` | `using` and `await using`, including loop declarations; `VariableDeclaration.kind` preserves the distinction |
+| `decorators=True` | November 2023 decorators and auto-accessors; `Decorator.expression`, optional `decorators` arrays, and `AccessorProperty` |
+| `deferredImportEvaluation=True` | Static namespace imports and dynamic `import.defer(...)`, retaining `phase="defer"` |
+| `sourcePhaseImports=True` | Static source bindings and dynamic `import.source(...)`, retaining `phase="source"` |
+| `exportDefaultFrom=True` | Experimental default reexports with a required `from` clause and canonical `ExportDefaultSpecifier.exported` |
+
+```python
+tree = esprima.parseModule('await using resource = acquire();',
+                          {'explicitResourceManagement': True})
+assert tree.toDict()['body'][0]['kind'] == 'await using'
+
+tree = esprima.parseScript('@logged class C { accessor value; }',
+                          {'decorators': True, 'range': True})
+```
+
+The CLI exposes `--explicit-resource-management`, `--decorators`,
+`--deferred-import-evaluation`, `--source-phase-imports`, and
+`--export-default-from`. Invalid contexts remain errors, including top-level
+script resource declarations, decorated constructors, and bare `export value;`.
+
+For generation, enable the corresponding generator `extensions` options
+(`resourceManagement`, `decorators`, `deferredImportEvaluation`,
+`sourcePhaseImports`, `exportDefaultFrom`). The coordinated walker traverses the
+new shapes without modifying nodes. These tools preserve syntax; they do not
+execute, transpile, or implement disposal/decorator/module-loading runtime APIs.
+
 ## Development
 
 ```sh

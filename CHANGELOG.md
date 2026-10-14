@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Add opt-in resource declarations, November 2023 decorators/auto-accessors,
+  deferred/source import phases, and experimental default reexports, with
+  explicit edition/grammar gates, read-only early-error validation and CLI flags.
+- Preserve asynchronous disposal, module phases, nullable accessor values,
+  decorator expressions and UTF-16 ranges through the coordinated toolchain.
+- Reject accidental proposal syntax in the core export grammar, require reexport
+  source clauses, and restore valid core `export default from;` expressions.
+- Freeze 495 additional licensed Test262 import-phase sources and reject parser
+  resource exhaustion as a substitute for an expected language syntax error.
+- Freeze all 510 pinned resource/decorator Test262 sources with licensed,
+  hash-verified offline syntax checks across their required execution goals.
+- Record the 35th explicit failure-diagnostic migration without changing the
+  original 1,604 fixture sources or snapshots.
+
 ## 5.0.0 — 2026-10-13
 
 - Prepare stable distribution/runtime version metadata, PyPI documentation links,

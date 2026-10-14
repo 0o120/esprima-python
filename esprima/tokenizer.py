@@ -127,6 +127,7 @@ class Tokenizer(object):
         self.scanner = Scanner(code, self.errorHandler)
         self.scanner.ecmaVersion = normalize_ecma_version(options.get('ecmaVersion', 2026))
         self.scanner.positionEncoding = self.positionEncoding
+        self.scanner.decorators = bool(options.get('decorators', False))
         self.scanner.trackComment = self.config.comment
         self.scanner.isModule = getattr(self.config, "sourceType", None) == "module"
 
