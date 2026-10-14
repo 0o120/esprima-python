@@ -1,12 +1,55 @@
 # Performance evidence
 
+## Post-gap performance audit — October 2026
+
+An iterative serializer converts ordinary native ASTs and built-in containers
+without allocating a visitor generator and wrapper for every value. It retains
+nullable fields, async/await aliases, regex/nonfinite metadata, field order,
+shared-child copying and Object cycle diagnostics. Custom keys, descriptors,
+objects and modified/subclassed visitors retain the general visitor protocol;
+a late fallback can add work. No cross-call AST cache is retained.
+
+| Operation | Before | After | Less time |
+| --- | ---: | ---: | ---: |
+| Medium `toDict`, milliseconds | 76.225 | 26.875 | 64.7% |
+| Metadata `toDict`, milliseconds | 743.087 | 218.966 | 70.5% |
+| YouTube first `toDict`, seconds | 41.755 | 18.479 | 55.7% |
+| YouTube parse + `toDict`, seconds | 72.934 | 49.375 | 32.3% |
+
+The native tree is retained in the large-file pipeline. Component trees have
+already been converted once; the YouTube conversion is the first conversion.
+Parser/scanner grammar code is unchanged, and standalone parsing remains about
+31 seconds on the 10.9 MB file. Its full public and semantic AST digests match
+the baseline. Generated JavaScript is byte-identical and reparses correctly.
+
+All 1,837 parser CI methods pass on CPython 3.11-3.15. The coordinated audit
+also passes 9,828 generation checks and 4,914 independent Babel round trips.
+Focused regressions cover deep mappings, shared nodes, custom keys/metaclasses,
+descriptors, visitors, aliases and nonfinite values.
+
+Measurements use CPython 3.12.0 on Windows, default garbage collection and
+sequential alternating before/after processes. Large-file figures are medians
+of three fresh processes per version. Component figures use three fresh
+processes per version, seven warmed calls per process and the median of process
+medians. All raw samples, including outliers and small regressions, are retained.
+Imports, input reading and correctness comparisons are outside timing windows.
+
+Reproduction scripts, exact Python source hashes, profiles, logs, environments,
+and distributions are outside the repositories in
+`C:/Users/Ryzen/Benchmarks/toolchain-performance-2026-10-13/`.
+The report covers first-call/allocation costs, compatibility fallbacks and
+Python 3.11/3.15 boundary timings as well as the main comparisons. These are
+workload-specific results, not a universal speed guarantee.
+
+## Earlier performance work
+
 The third October 2026 pass reduces a separate 10.9 MB production bundle's default
 parse median from 36.539 to 30.818 seconds: 15.7% less time, or 1.186x throughput.
 It avoids unnecessary native AST dictionary allocation during private validation
 and reuses lazily proven BMP/UTF-16 identity positions. Syntax, scope, edition
 and regex checks remain enabled, with default garbage collection.
 
-## Latest large-file comparison
+## Earlier large-file comparison
 
 CPython 3.12.0 on Windows x64; three fresh isolated processes per version,
 run sequentially. The baseline is `6652012`; the measured current Python sources

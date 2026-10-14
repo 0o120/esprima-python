@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Accelerate ordinary AST serialization with an iterative data converter and
+  cheaper default scalar visits; preserve custom visitor/object fallbacks,
+  complete metadata, nullable fields and deep-tree behavior.
+
 - Add opt-in resource declarations, November 2023 decorators/auto-accessors,
   deferred/source import phases, and experimental default reexports, with
   explicit edition/grammar gates, read-only early-error validation and CLI flags.

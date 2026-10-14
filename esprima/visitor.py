@@ -114,7 +114,14 @@ class Visitor(object):
                         method = 'visit_' + last.__class__.__name__
                         visitor = getattr(self, method, self.visit_Generic)
                         stack.pop()
-                        stack.append((visitor(last), None))
+                        # The default generic handler only returns its input.
+                        # Avoid allocating a generator and Visited wrapper for
+                        # every scalar; overridden handlers retain dispatch.
+                        if (type(visitor) is types.MethodType and
+                                visitor.__func__ is _DEFAULT_VISIT_GENERIC):
+                            last_result = last
+                        else:
+                            stack.append((visitor(last), None))
                 except StopIteration:
                     stack.pop()
                     if visited and visited in self._visit_context:
@@ -149,6 +156,9 @@ class Visitor(object):
             if not field.startswith('_'):
                 yield value
         yield Visited(obj)
+
+
+_DEFAULT_VISIT_GENERIC = Visitor.visit_Generic
 
 
 class NodeVisitor(Visitor):
@@ -258,6 +268,23 @@ class ToDictVisitor(Visitor):
         'allowAwait': 'await',
     }
 
+    def visit(self, obj):
+        # Subclasses and modified visitors retain the complete dynamic
+        # protocol. The data-only converter may fall back before calling any
+        # user code, including custom mappings, keys, or attribute hooks.
+        if (type(self) is ToDictVisitor and _default_dict_visitor()
+                and not self.__dict__):
+            from ._serialization import to_dict, _UseVisitor
+            try:
+                result = to_dict(obj, self)
+            except _UseVisitor:
+                pass
+            else:
+                self._visit_context = {}
+                self._visit_count = 0
+                return result
+        return super(ToDictVisitor, self).visit(obj)
+
     def visit_RecursionError(self, obj):
         yield Visited({
             'error': "Infinite recursion detected...",
@@ -300,3 +327,20 @@ class ToDictVisitor(Visitor):
 
     def visit_SRE_Pattern(self, obj):
         yield Visited({})
+
+
+_DICT_VISITOR_DECLARATIONS = tuple(vars(ToDictVisitor).items())
+_VISITOR_DECLARATIONS = tuple(vars(Visitor).items())
+_DICT_FIELD_MAP = dict(ToDictVisitor.map)
+
+
+def _default_dict_visitor():
+    for cls, expected in ((ToDictVisitor, _DICT_VISITOR_DECLARATIONS),
+                          (Visitor, _VISITOR_DECLARATIONS)):
+        declarations = vars(cls)
+        if len(declarations) != len(expected) or any(declarations.get(k) is not v for k, v in expected):
+            return False
+    fields = ToDictVisitor.map
+    return (type(fields) is dict and len(fields) == len(_DICT_FIELD_MAP)
+            and all(type(key) is str for key in fields)
+            and all(fields.get(key) is value for key, value in _DICT_FIELD_MAP.items()))
