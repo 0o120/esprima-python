@@ -46,3 +46,15 @@ Decorators preceding `export` have class ranges that begin before the export
 wrapper's own range, matching the proposal parser's position contract. Walker
 searches account for that traversal boundary while keeping original node bounds
 for matching and preserving callback identity.
+
+Line terminators inside a string continuation or template are distinct from
+line terminators in the trivia before that token. Restricted productions
+(`return`, `throw`, `yield`, and async/auto-accessor prefixes) use the latter.
+Public raw-token ending-line metadata and custom position hooks are retained.
+Class getter/setter prefixes may cross line breaks; fields literally named
+`get`/`set` still allow ASI before a following generator method.
+
+Default-exported function/class expressions retain their expression form
+during generation, including expression chains that begin with them. Required
+parentheses preserve module binding visibility and hoisting, independently of
+the optional formatting-parentheses setting.

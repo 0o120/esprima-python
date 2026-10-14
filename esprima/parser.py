@@ -354,8 +354,11 @@ class Parser(object):
             self.startMarker.line = self.scanner.lineNumber
             self.startMarker.column = self.scanner.index - self.scanner.lineStart
 
+        # String continuations and template text can span lines inside the
+        # next token. Restricted productions care only about the gap before it.
+        nextLineNumber = self.scanner.lineNumber
         next = self.scanner.lex()
-        self.hasLineTerminator = token.lineNumber != next.lineNumber
+        self.hasLineTerminator = token.lineNumber != nextLineNumber
 
         if next and self.context.strict and next.type is Token.Identifier:
             if self.scanner.isStrictModeReservedWord(next.value):
@@ -1219,6 +1222,13 @@ class Parser(object):
 
     def peekToken(self):
         return self.peekTokens(1)[0]
+
+    def _peekStartsOnCurrentLine(self, token):
+        # peekToken restores the scanner to the end of the current token.
+        # Compare the peeked token's start with the next line boundary; its
+        # saved lineNumber may instead describe the end of a multiline token.
+        line = self.scanner.lineNumber
+        return line >= len(self._lineStarts) or token.start < self._lineStarts[line]
 
     def matchImportMeta(self):
         if not self.matchKeyword('import') or self.peekToken().value != '.':
@@ -2335,14 +2345,8 @@ class Parser(object):
         node = self.createNode()
         self.expectKeyword('return')
 
-        hasArgument = (
-            (
-                not self.match(';') and not self.match('}') and
-                not self.hasLineTerminator and self.lookahead.type is not Token.EOF
-            ) or
-            self.lookahead.type is Token.StringLiteral or
-            self.lookahead.type is Token.Template
-        )
+        hasArgument = (not self.hasLineTerminator and self.lookahead.type is not Token.EOF
+                       and not self.match(';', '}'))
         argument = self.parseExpression() if hasArgument else None
         self.consumeSemicolon()
 
@@ -3001,7 +3005,7 @@ class Parser(object):
         kind = 'method'
         if self.matchContextualKeyword('static') or self.matchKeyword('static'):
             following = self.peekToken()
-            if following.value == '{':
+            if following.type is Token.Punctuator and following.value == '{':
                 if decorators:
                     self.throwError('Static blocks cannot be decorated')
                 self.nextToken()
@@ -3016,20 +3020,20 @@ class Parser(object):
                 self.expect('}')
                 self.context.allowAwait, self.context.allowYield, self.context.inFunctionBody = previous
                 return self.finalize(node, Node.StaticBlock(body))
-            if following.value not in ('(', '=', ';', '}'):
+            if following.type is not Token.Punctuator or following.value not in ('(', '=', ';', '}'):
                 isStatic = True
                 self.nextToken()
                 token = self.lookahead
         if self.config.decorators and self.matchContextualKeyword('accessor'):
             following = self.peekToken()
-            if following.lineNumber == self.lookahead.lineNumber and following.value not in ('(', '=', ';', '}'):
+            if self._peekStartsOnCurrentLine(following) and (following.type is not Token.Punctuator or following.value not in ('(', '=', ';', '}')):
                 if self.config.ecmaVersion < 2026:
                     self.throwError('Auto-accessors require ECMAScript 2026')
                 isAccessor = True
                 self.nextToken()
         if self.matchContextualKeyword('async'):
             following = self.peekToken()
-            if following.lineNumber == self.lookahead.lineNumber and following.value not in ('(', '=', ';', '}'):
+            if self._peekStartsOnCurrentLine(following) and (following.type is not Token.Punctuator or following.value not in ('(', '=', ';', '}')):
                 isAsync = True
                 self.nextToken()
         if self.match('*'):
@@ -3040,7 +3044,9 @@ class Parser(object):
         computed = self.match('[')
         keyToken = self.lookahead
         key = self.parsePropertyIdentifier() if self.lookahead.private else self.parseObjectPropertyKey()
-        if not isAsync and not generator and not computed and not keyToken.escaped and key.type == Syntax.Identifier and key.name in ('get', 'set') and not self.match('(', '=', ';', '}') and not self.hasLineTerminator:
+        if (not isAsync and not generator and not computed and not keyToken.escaped
+                and key.type == Syntax.Identifier and key.name in ('get', 'set')
+                and self.qualifiedPropertyName(self.lookahead)):
             kind = key.name
             computed = self.match('[')
             key = self.parsePropertyIdentifier() if self.lookahead.private else self.parseObjectPropertyKey()

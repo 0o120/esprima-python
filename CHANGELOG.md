@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Determine restricted-production line breaks from trivia before the next
+  token, preserving return/throw/yield behavior around multiline strings and
+  templates. Keep custom position markers independent of grammar decisions.
+- Recognize multiline getter/setter definitions and async/auto-accessor names
+  containing string continuations, while retaining ASI for fields named
+  get/set before generator methods and real async/accessor line restrictions.
+- Distinguish quoted punctuation property names from actual punctuation during
+  static/async/auto-accessor lookahead, preserving valid string-named members.
+
 - Use compact private identifier/punctuator tokens as read-only node-start
   markers in untouched facade parses. Reduce temporary marker allocations by
   90.7% and large-file parsing time by 4.0% in the recorded experiment; retain
