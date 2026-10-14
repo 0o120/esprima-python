@@ -84,53 +84,7 @@ class Visitor(object):
         if not hasattr(self, 'visitors'):
             self._visit_context = {}
             self._visit_count = 0
-        try:
-            self._visit_count += 1
-            stack = deque()
-            stack.append((obj, None))
-            last_result = None
-            while stack:
-                try:
-                    last, visited = stack[-1]
-                    if isinstance(last, types.GeneratorType):
-                        stack.append((last.send(last_result), None))
-                        last_result = None
-                    elif isinstance(last, Visited):
-                        stack.pop()
-                        last_result = last.result
-                    elif isinstance(last, Object):
-                        if last in self._visit_context:
-                            if self._visit_context[last] == self.visit_Object:
-                                visitor = self.visit_RecursionError
-                            else:
-                                visitor = self.visit_Object
-                        else:
-                            method = 'visit_' + last.__class__.__name__
-                            visitor = getattr(self, method, self.visit_Object)
-                        self._visit_context[last] = visitor
-                        stack.pop()
-                        stack.append((visitor(last), last))
-                    else:
-                        method = 'visit_' + last.__class__.__name__
-                        visitor = getattr(self, method, self.visit_Generic)
-                        stack.pop()
-                        # The default generic handler only returns its input.
-                        # Avoid allocating a generator and Visited wrapper for
-                        # every scalar; overridden handlers retain dispatch.
-                        if (type(visitor) is types.MethodType and
-                                visitor.__func__ is _DEFAULT_VISIT_GENERIC):
-                            last_result = last
-                        else:
-                            stack.append((visitor(last), None))
-                except StopIteration:
-                    stack.pop()
-                    if visited and visited in self._visit_context:
-                        del self._visit_context[visited]
-            return last_result
-        finally:
-            self._visit_count -= 1
-            if self._visit_count <= 0:
-                self._visit_context = {}
+        return _run_visitor(self, deque(((obj, None),)))
 
     def visit_RecursionError(self, obj):
         raise VisitRecursionError
@@ -156,6 +110,54 @@ class Visitor(object):
             if not field.startswith('_'):
                 yield value
         yield Visited(obj)
+
+
+def _run_visitor(self, stack):
+    try:
+        self._visit_count += 1
+        last_result = None
+        while stack:
+            try:
+                last, visited = stack[-1]
+                if isinstance(last, types.GeneratorType):
+                    stack.append((last.send(last_result), None))
+                    last_result = None
+                elif isinstance(last, Visited):
+                    stack.pop()
+                    last_result = last.result
+                elif isinstance(last, Object):
+                    if last in self._visit_context:
+                        if self._visit_context[last] == self.visit_Object:
+                            visitor = self.visit_RecursionError
+                        else:
+                            visitor = self.visit_Object
+                    else:
+                        method = 'visit_' + last.__class__.__name__
+                        visitor = getattr(self, method, self.visit_Object)
+                    self._visit_context[last] = visitor
+                    stack.pop()
+                    stack.append((visitor(last), last))
+                else:
+                    method = 'visit_' + last.__class__.__name__
+                    visitor = getattr(self, method, self.visit_Generic)
+                    stack.pop()
+                    # The default generic handler only returns its input.
+                    # Avoid allocating a generator and Visited wrapper for
+                    # every scalar; overridden handlers retain dispatch.
+                    if (type(visitor) is types.MethodType and
+                            visitor.__func__ is _DEFAULT_VISIT_GENERIC):
+                        last_result = last
+                    else:
+                        stack.append((visitor(last), None))
+            except StopIteration:
+                stack.pop()
+                if visited and visited in self._visit_context:
+                    del self._visit_context[visited]
+        return last_result
+    finally:
+        self._visit_count -= 1
+        if self._visit_count <= 0:
+            self._visit_context = {}
 
 
 _DEFAULT_VISIT_GENERIC = Visitor.visit_Generic
@@ -275,14 +277,19 @@ class ToDictVisitor(Visitor):
         if (type(self) is ToDictVisitor and _default_dict_visitor()
                 and not self.__dict__):
             from ._serialization import to_dict, _UseVisitor
+            continuation = None
             try:
                 result = to_dict(obj, self)
-            except _UseVisitor:
-                pass
+            except _UseVisitor as fallback:
+                continuation = fallback.continuation
             else:
                 self._visit_context = {}
                 self._visit_count = 0
                 return result
+            if continuation is not None:
+                stack, self._visit_context = continuation
+                self._visit_count = 0
+                return _run_visitor(self, stack)
         return super(ToDictVisitor, self).visit(obj)
 
     def visit_RecursionError(self, obj):

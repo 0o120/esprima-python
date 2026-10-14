@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Resume serialization at custom values without redoing a completed acyclic
+  prefix; reduce container-loop overhead while preserving dynamic visitor and
+  field-map changes, exception order, recursion context and input lifetimes.
+- Recognize inherited custom Array iteration before entering the fast path,
+  avoiding duplicate iterator calls during fallback.
+
 - Accelerate ordinary AST serialization with an iterative data converter and
   cheaper default scalar visits; preserve custom visitor/object fallbacks,
   complete metadata, nullable fields and deep-tree behavior.

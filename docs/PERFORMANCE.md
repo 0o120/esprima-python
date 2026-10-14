@@ -1,5 +1,54 @@
 # Performance evidence
 
+## Serialization continuation pass — October 14, 2026
+
+Ordinary AST conversion now consumes scalar fields in a container loop and
+defers assigning a child until its conversion completes. When a custom value
+appears, the general visitor resumes from the pending child instead of
+discarding completed conversions and starting again at the root.
+
+The continuation restores active Object contexts, unconsumed iterators and
+already converted values. It preserves late field-map/method changes,
+custom hook counts, parent mutation, key-hashing/exception order and deep
+inputs. Cyclic prefixes retain the conservative full fallback. There is no
+cross-call AST cache and no library change to GC settings or recursion limits.
+Inherited custom Array iterators are also recognized before iteration, fixing
+a baseline case that invoked an iterator twice during fallback.
+
+| YouTube operation | Before, seconds | After, seconds | Less time |
+| --- | ---: | ---: | ---: |
+| First dictionary conversion | 18.399 | 15.710 | 14.6% |
+| Late custom metadata, warm native dictionaries | 43.088 | 10.941 | 74.6% |
+| Parse plus first conversion | 47.897 | 45.237 | 5.6% |
+
+These are medians of three alternating fresh processes per version on Windows
+CPython 3.12.0, with default garbage collection. First conversion follows a
+fresh parse. The separate custom case uses the same native tree after its
+dictionaries have been materialized; the first output is discarded and an
+explicit collection occurs outside the timer in both versions. Its metadata
+getter must execute exactly once. Hashing and downstream correctness checks
+are outside timing windows. All trials, including outliers, are retained.
+
+The complete standard/custom mappings match after removing only the added
+benchmark field. The semantic AST matches the independent reference; native
+and mapping generation agree byte-for-byte, walker signatures agree, and the
+generated file reparses correctly. All 1,853 parser CI methods pass on Python
+3.11-3.15. Coordinated checks cover 9,828 generation operations and 4,914
+independent Babel round trips. Focused contracts cover callbacks, late map
+changes, errors, active-ancestor references, 3,000-level continuations, visitor
+reuse, and releasing input objects without cyclic GC.
+
+Parsing and scanner source files are unchanged in this pass. Isolated
+punctuation, short-identifier, dispatch and compact-marker candidates did not
+establish a reliable full-file gain, so they were removed. The detailed report
+retains those experiments alongside cold-call, allocation and boundary-runtime
+measurements. This does not establish a performance ceiling or a universal
+speedup across arbitrary inputs and custom protocols.
+
+Scripts, exact source hashes, profiles, logs, environments and distributions
+are outside repositories at
+`C:/Users/Ryzen/Benchmarks/parser-performance-2026-10-14/`.
+
 ## Post-gap performance audit — October 2026
 
 An iterative serializer converts ordinary native ASTs and built-in containers
