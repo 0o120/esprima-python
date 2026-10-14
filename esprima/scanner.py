@@ -136,6 +136,36 @@ class RawToken(Object):
         self.end = end
 
 
+class _CompactToken:
+    """Private identifier/punctuator storage for an untouched, owned parser.
+
+    These tokens cannot span lines. Their start position can therefore serve
+    as a read-only node marker, without allocating another object. Literals,
+    templates, public scanners and customized parsers still use RawToken.
+    """
+    __slots__ = ('type', 'value', 'escaped', 'lineNumber', 'lineStart', 'start', 'end', 'column')
+    bigint = pattern = flags = regex = octal = cooked = head = tail = None
+    private = invalidEscape = False
+
+    def __init__(self, type=None, value=None, escaped=False, lineNumber=None,
+                 lineStart=None, start=None, end=None):
+        self.type = type
+        self.value = value
+        self.escaped = escaped
+        self.lineNumber = lineNumber
+        self.lineStart = lineStart
+        self.start = start
+        self.end = end
+        self.column = start - lineStart
+
+
+# Alias slot descriptors rather than storing duplicate position integers or
+# invoking properties on every finalized node. The parser never mutates these
+# positions; its mutable startMarker/lastMarker remain separate Marker objects.
+_CompactToken.index = _CompactToken.start
+_CompactToken.line = _CompactToken.lineNumber
+
+
 class ScannerState(Object):
     def __init__(self, index=None, lineNumber=None, lineStart=None, curlyStack=None):
         self.index = index
@@ -159,6 +189,7 @@ class Scanner(object):
         # position index is first needed, keeping source classification exact.
         self._utf16IsIdentity = self._sourceIsAscii
         self.errorHandler = handler
+        self._compactTokens = False
         self.trackComment = False
         self.isModule = False
 
@@ -560,7 +591,7 @@ class Scanner(object):
         else:
             type = Token.Identifier
 
-        return RawToken(
+        return (_CompactToken if self._compactTokens else RawToken)(
             type=type,
             value=id,
             escaped=self._identifierEscaped,
@@ -605,7 +636,7 @@ class Scanner(object):
             self.curlyStack.append('{')
         elif value == '}' and self.curlyStack:
             self.curlyStack.pop()
-        return RawToken(type=Token.Punctuator, value=value, lineNumber=self.lineNumber,
+        return (_CompactToken if self._compactTokens else RawToken)(type=Token.Punctuator, value=value, lineNumber=self.lineNumber,
                         lineStart=self.lineStart, start=start, end=self.index)
 
     # https://tc39.github.io/ecma262/#sec-literals-numeric-literals

@@ -1,5 +1,63 @@
 # Performance evidence
 
+## Parser allocation pass — October 14, 2026
+
+Untouched high-level parses use a private slotted token for identifier-like
+words and punctuation. These tokens cannot span lines, so their stored start
+positions also serve as read-only node markers. This avoids allocating a
+second position object and repeating its line lookup. Numeric/string/regex
+literals and templates retain the existing token and marker path.
+
+Public AST classes, fields, dictionaries and node identities are unchanged.
+Direct Parser/Scanner callers, JSX, delegates, comment callbacks, source
+subclasses and modified parser/scanner/token/marker classes retain ordinary
+tokens and markers. A namespace check runs once per eligible parse. Parsing,
+early-error validation, serialization and GC policies remain complete; there
+is no token pool, shared mutable AST cache or compiled extension.
+
+| Full `youtube.js` parse | Before | After |
+| --- | ---: | ---: |
+| Median wall time | 30.404 s | 29.198 s |
+| Range across five fresh processes | 30.319–30.788 s | 29.007–29.410 s |
+| Temporary Marker constructions | 2,508,143 | 234,151 |
+| Ordinary RawToken constructions | 3,204,593 | 221,434 |
+| Private compact token constructions | 0 | 2,983,159 |
+
+This is **4.0% less parsing time** and **2,273,992 fewer marker objects (90.7%)**
+relative to revision `12eac18`. Token count and AST-node construction counts
+are unchanged. Ten thousand retained token instances occupy 2,245,336 traced
+bytes with ordinary RawToken versus 1,045,336 with the private representation,
+including the holding list. These are separate allocation measurements.
+Whole-parse peak allocation is essentially unchanged: the medium fixture uses
+1,457,001 versus 1,457,048 traced bytes; Unicode metadata differs by 0.2%.
+The retained AST dominates memory, so token-storage savings must not be read
+as an equivalent reduction in application peak memory.
+
+Timing uses Windows CPython 3.12.0, default GC, five interleaved fresh processes
+per version and an empty external bytecode-cache prefix per process. The
+10,887,235-byte input has SHA-256
+`f0fcdd0dcfe266b4e588dcadd1211bbbaf0f47d25337d192740fabe686e5bddf`.
+Source loading, hashing, serialization and correctness checks are outside the
+parse timer. Profiles and tracemalloc measurements are separate runs. Smaller
+parse fixtures improve 2.7–5.7% for the medium case and 1.6–6.4% for the modern
+class case across Python 3.11, 3.12 and 3.15. Results are mixed elsewhere:
+the tiny expression is 4.0–7.4% slower, JSX is 1.5–2.4% slower, and public
+tokenization ranges from 4.1% slower to 2.5% faster. The compatibility checks
+and fallback branches have a measurable cost; this is not a universal gain.
+
+All 1,866 parser CI methods pass on Python 3.11–3.15, with all consuming-library
+suites passing and no skipped consumer checks. New contracts cover public
+token fields, mutable independent low-level markers, constructor/method
+patches, subclasses, AST identity, diagnostics and UTF-16/scalar positions.
+Frozen-baseline comparisons match 2,140 complete AST/position/diagnostic/token
+cases and 16,208 scanner cases with 48,414 state replays. Coordinated checks
+cover 9,828 generation operations, 4,914 independent Babel round trips and
+2,457 walker immutability checks.
+
+Benchmarks, source snapshots, profiles, results, reports and build artifacts
+are outside repositories at
+`C:/Users/Ryzen/Benchmarks/parsing-allocations-2026-10-14/`.
+
 ## Serialization continuation pass — October 14, 2026
 
 Ordinary AST conversion now consumes scalar fields in a container loop and

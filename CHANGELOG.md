@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Use compact private identifier/punctuator tokens as read-only node-start
+  markers in untouched facade parses. Reduce temporary marker allocations by
+  90.7% and large-file parsing time by 4.0% in the recorded experiment; retain
+  public AST/token layouts and customized parser/scanner allocation hooks.
+
 - Resume serialization at custom values without redoing a completed acyclic
   prefix; reduce container-loop overhead while preserving dynamic visitor and
   field-map changes, exception order, recursion context and input lifetimes.

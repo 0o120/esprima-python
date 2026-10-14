@@ -28,11 +28,12 @@ from .compat import basestring, unicode
 from .utils import format
 from .error_handler import ErrorHandler
 from .messages import Messages
-from .scanner import RawToken, Scanner, SourceLocation, Position, RegExp
+from .scanner import _CompactToken, RawToken, Scanner, SourceLocation, Position, RegExp
 from .token import Token, TokenName
 from .syntax import Syntax
 from . import nodes as Node
 from .regexp_validator import normalize_ecma_version
+from . import scanner as _scanner_module
 
 
 class Value(object):
@@ -384,9 +385,14 @@ class Parser(object):
         return token
 
     def createNode(self):
+        token = self.lookahead
+        if type(token) is _CompactToken:
+            return token
         return Marker(self.startMarker.index, self.startMarker.line, self.startMarker.column)
 
     def startNode(self, token, lastLineStart=0):
+        if type(token) is _CompactToken:
+            return token
         # Raw tokens can finish on a later line than they start (strings and
         # templates). Their saved lineStart then describes the ending line.
         import bisect
@@ -3519,3 +3525,28 @@ class Parser(object):
             exportDeclaration = self.finalize(node, Node.ExportNamedDeclaration(None, specifiers, source, attributes))
 
         return exportDeclaration
+
+
+# Inspect class namespaces, never the parser instance's managed __dict__.
+# Low-level callers, subclasses, delegates and replaced constructors/methods
+# must retain ordinary mutable tokens and independently allocated markers.
+_COMPACT_PARSER_TYPES = (Parser, Scanner, RawToken, Marker)
+_COMPACT_CLASS_STATE = tuple(
+    (cls, cls.__bases__, dict(vars(cls)))
+    for cls in (*_COMPACT_PARSER_TYPES, Object)
+)
+
+
+def _enable_compact_tokens(parser, code):
+    if (type(code) is not str or type(parser) is not _COMPACT_PARSER_TYPES[0]
+            or type(parser.scanner) is not _COMPACT_PARSER_TYPES[1]
+            or parser.delegate is not None):
+        return
+    if ((Parser, Scanner, RawToken, Marker) != _COMPACT_PARSER_TYPES
+            or _scanner_module.RawToken is not RawToken
+            or _scanner_module.Scanner is not Scanner):
+        return
+    if any(cls.__bases__ != bases or vars(cls) != namespace
+           for cls, bases, namespace in _COMPACT_CLASS_STATE):
+        return
+    parser.scanner._compactTokens = True

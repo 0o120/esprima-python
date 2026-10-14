@@ -28,7 +28,7 @@ from .error_handler import Error
 from .jsx_parser import JSXParser
 from .jsx_syntax import JSXSyntax
 from .objects import Array, toDict
-from .parser import Parser
+from .parser import Parser, _enable_compact_tokens
 from .syntax import Syntax
 from .tokenizer import Tokenizer
 from .visitor import NodeVisitor
@@ -87,6 +87,7 @@ def parse(code: str, options: Mapping[str, Any] | None = None,
 
     if type(parser) is Parser and delegate is None:
         parser._ownedByFacade = True
+        _enable_compact_tokens(parser, code)
 
     try:
         ast = parser.parseModule() if isModule else parser.parseScript()
